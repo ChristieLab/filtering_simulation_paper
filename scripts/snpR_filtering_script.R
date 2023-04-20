@@ -2,16 +2,17 @@
 
 library(snpR); library(ggplot2);
 
-d <- readRDS("data/simulated_coalescent.RDS")
+d <- readRDS("data/monarch_nomaf.RDS")
+d <- d[pop = c("NAM", "HAW", "GUA", "ROT")]
 
-filter_facet <- ".base"
-analysis_facet <- ".base"
+filter_facet <- "pop"
+analysis_facet <- "pop"
 chr <- "group"
 
 mafs <- seq(0, .1, by = .01)
 macs <- c(1, 3, 5)
 hwe <- 1e-6
-hwe_facet <- ".base"
+hwe_facet <- "pop"
 step <- 50
 sigma <- 100
 subset_seed <- 1234
@@ -21,32 +22,40 @@ results <- vector("list", length = length(c(mafs, macs)))
 prog <- 1
 
 ufs <- unique(c(filter_facet, analysis_facet, hwe_facet))
-ufs <- ufs[-grep("\\.base", ufs)]
+if(length(grep("\\.base", ufs)) > 0){
+  ufs <- ufs[-grep("\\.base", ufs)]
+}
 
 # pre-compute maf for efficiency at filter facets (doesn't need to re-run each time the filtering happens)
 if(length(ufs) != 0){
   d <- calc_maf(d, ufs)
 }
 
-flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NULL, hwe, hwe_facet, chr, subset_seed, step, sigma, par = FALSE){
+par <- 6
+
+flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NULL, 
+                     hwe, hwe_facet, chr, subset_seed, step, sigma, par = FALSE){
   
   cat("Filtering.\n")
-  f <- filter_snps(d, maf = maf, mac = mac, maf_facets = filter_facet, hwe = hwe, hwe_facets = hwe_facet, verbose = FALSE)
+  f <- filter_snps(d, maf = maf, mac = mac, maf_facets = filter_facet, hwe = hwe, hwe_facets = hwe_facet, verbose = TRUE)
   
   cat("Basic stats.\n")
   f <- calc_pi(f, analysis_facet)
-  f <- calc_he(f, analysis_facet)
+  # f <- calc_he(f, analysis_facet)
   f <- calc_ho(f, analysis_facet)
   f <- calc_fis(f, analysis_facet)
-  f <- calc_prop_poly(f, analysis_facet)
+  # f <- calc_prop_poly(f, analysis_facet)
   
   cat("Fst and/or Tajima's D.\n")
   if(analysis_facet != ".base"){
     f <- calc_pairwise_fst(f, analysis_facet)
-    f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE)
+    f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
+    f <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
   }
   else{
-    f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par)
+    f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
+    f <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    
   }
   
   if(nrow(f) > 3000){
@@ -79,14 +88,16 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   if(analysis_facet != ".base"){
     r1 <- get.snpR.stats(f, analysis_facet, c("pi", "he", "ho", "fis", "fst", "prop_poly"))$weighted.means
     r2 <- get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means[
-      which(get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
+      which(get.snpR.stats(f, analysis_facet, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
+    ld <- get.snpR.stats(f, analysis_facet, "ld")$ld$prox
   }
   else{
     r1 <- get.snpR.stats(f, analysis_facet, c("pi", "he", "ho", "fis", "prop_poly"))$weighted.means
     r2 <- get.snpR.stats(f, chr, "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, chr, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
+    ld <- get.snpR.stats(f, stats = "ld")$ld$prox
   }
   
   
@@ -111,17 +122,20 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   
   return(list(stats = r,
               pca = pca$plots$pca,
-              sfs = sfs))
-}
+              sfs = sfs,
+              ld = ld))
+} 
 
 for(i in 1:length(mafs)){
   print(i)
-  results[[prog]] <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma)
+  results[[prog]] <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par)
+  gc();gc();
   prog <- prog + 1
 }
 
 for(i in 1:length(macs)){
-  results[[prog]] <- flt_func(d, maf = FALSE, mac = macs[i], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma)
+  results[[prog]] <- flt_func(d, maf = FALSE, mac = macs[i], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par)
+  gc();gc();
   prog <- prog + 1
 }
 
