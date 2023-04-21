@@ -2,7 +2,11 @@
 
 library(snpR); library(ggplot2);
 
-d <- readRDS("data/monarch_nomaf.RDS")
+args <- commandArgs(TRUE)
+i <- as.numeric(args[1])
+tdir <- as.character(args[2])
+
+d <- readRDS("../data/monarch_nomaf.RDS")
 d <- d[pop = c("NAM", "HAW", "GUA", "ROT")]
 
 filter_facet <- "pop"
@@ -31,10 +35,10 @@ if(length(ufs) != 0){
   d <- calc_maf(d, ufs)
 }
 
-par <- 6
+par <- FALSE
 
 flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NULL, 
-                     hwe, hwe_facet, chr, subset_seed, step, sigma, par = FALSE){
+                     hwe, hwe_facet, chr, subset_seed, step, sigma, par = FALSE, tdir){
   
   cat("Filtering.\n")
   f <- filter_snps(d, maf = maf, mac = mac, maf_facets = filter_facet, hwe = hwe, hwe_facets = hwe_facet, verbose = TRUE)
@@ -66,9 +70,14 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     sub.f <- f
   }
   
+  owd <- getwd()
+  setwd(tdir)
+
   cat("Ne.\n")
-  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0)
+  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/whemstro/bin/Ne2-1L")
   
+  setwd(owd)  
+
   cat("PCA.\n")
   if(analysis_facet != ".base"){
     pca <- plot_clusters(f, analysis_facet)
@@ -124,135 +133,16 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
               pca = pca$plots$pca,
               sfs = sfs,
               ld = ld))
-} 
+}
 
-for(i in 1:length(mafs)){
+if(i <= length(mafs)){
   print(i)
-  results[[prog]] <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par)
-  gc();gc();
-  prog <- prog + 1
+  results <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
-for(i in 1:length(macs)){
-  results[[prog]] <- flt_func(d, maf = FALSE, mac = macs[i], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par)
-  gc();gc();
-  prog <- prog + 1
+if(i > length(mafs)){
+ j <- i - length(mafs)
+ results <- flt_func(d, maf = FALSE, mac = macs[j], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
-
-
-maf_res <- results[1:length(mafs)]
-mac_res <- results[(length(mafs) + 1):length(results)]
-rm(results)
-
-bs <- purrr::map(maf_res, "stats")
-bs <- dplyr::bind_rows(bs)
-ggplot(bs, aes(x = maf, y = value)) +
-  geom_line() +
-  theme_bw() +
-  facet_wrap(~variable, scales = "free_y")
-
-
-theta_scew <- bs[grep("theta", bs$variable),]
-theta_scew <- as.data.table(theta_scew)
-theta_scew <- data.table::dcast(theta_scew, facet + subfacet + maf + mac ~ variable, value.var = "value")
-theta_scew[,scew := (weighted_mean_ts.theta - weighted_mean_ws.theta)/((weighted_mean_ts.theta + weighted_mean_ws.theta)/2)]
-theta_scew <- merge(theta_scew, bs[bs$variable == "weighted_mean_D",], by = c("facet", "subfacet", "maf", "mac"))
-theta_scew <- theta_scew[,-8]
-colnames(theta_scew)[8] <- "Tajima's D"
-
-theta_scew_labs <- theta_scew
-theta_scew_labs$weighted_mean_ts.theta <- theta_scew_labs$weighted_mean_ts.theta - 5
-theta_scew_labs$weighted_mean_ws.theta <- theta_scew_labs$weighted_mean_ws.theta - 5
-
-pad.x <- 2
-pad.y <- -5
-titles <- 16
-text <- 14
-ggplot(theta_scew, aes(x = weighted_mean_ts.theta, y = weighted_mean_ws.theta, color = maf)) +
-  geom_point(size = 10) + geom_abline(slope = 1, intercept = 0) +
-  geom_segment(aes(x = weighted_mean_ts.theta,
-                   y = weighted_mean_ws.theta,
-                   xend = weighted_mean_ts.theta + pad.x, 
-                   yend = weighted_mean_ws.theta + pad.y)) +
-  geom_label(aes(x = weighted_mean_ts.theta + pad.x, 
-                 y = weighted_mean_ws.theta + pad.y, 
-                 label = round(`Tajima's D`, 2)), size = 5.5) +
-  scale_color_viridis_c() +
-  theme_bw() +
-  xlab(expression("Tajima\'s" ~ theta)) +
-  ylab(expression("Watterson\'s" ~ theta)) +
-  scale_y_continuous(limits = c(15, 90)) +
-  scale_x_continuous(limits = c(50, 90)) +
-  theme(axis.text = element_text(size = text),
-        axis.title = element_text(size = titles),
-        legend.text = element_text(size = text),
-        legend.title = element_text(size = titles))
-
-
-tsm <- data.table::melt(theta_scew, id.vars = c("facet", "subfacet", "maf", "mac", "scew", "Tajima's D"))
-ggplot(tsm, aes(x = maf, y = value, shape = variable, color = `Tajima's D`)) +
-  geom_line(size = 2) +
-  geom_point(size = 8) +
-  scale_color_viridis_c() +
-  theme_bw() +
-  ylab(expression(theta)) +
-  theme(axis.text = element_text(size = text),
-        axis.title = element_text(size = titles),
-        legend.text = element_text(size = text),
-        legend.title = element_text(size = titles)) +
-  scale_shape_manual(labels = list(bquote(`Tajima's`~theta), bquote(`Watterson's`~theta)),
-                     values = c(16, 17)) +
-  xlab("MAF filter")
-
-
-pc <- purrr::map(maf_res, "sfs")
-pc <- dplyr::bind_rows(pc)
-ggplot(pc, aes(x = mac, y = log10(count), color = maf, group = maf)) +
-  geom_line() + theme_bw() +
-  ylim(c(2, 5))
-
-
-# bs <- purrr::map(maf_res, "stats")
-# bs <- purrr::map(bs, "single")
-# names(bs) <- mafs
-# bs <- dplyr::bind_rows(bs, .id = "maf")
-# bs$maf <- as.numeric(bs$maf)
-# bs <- reshape2::melt(bs[,-c(2, 4, 5, 6)], id = c("maf", "subfacet"))
-
-
-# bs <- purrr::map(maf_res, "stats")
-# bs <- purrr::map(bs, "weighted.means")
-# names(bs) <- mafs
-# bs <- dplyr::bind_rows(bs, .id = "maf")
-# bs$maf <- as.numeric(bs$maf)
-# bs <- reshape2::melt(bs[,-c(2, 4, 5)], id = c("maf", "subfacet"))
-# bs <- na.omit(bs)
-# bs2 <- purrr::map(maf_res, "tsd")
-# bs2 <- purrr::map(bs2, "weighted.means")
-# names(bs2) <- mafs
-# bs2 <- dplyr::bind_rows(bs2, .id = "maf")
-# bs2 <- bs2[which(bs2$snp.subfacet == ".OVERALL_MEAN"),]
-# bs2$maf <- as.numeric(bs2$maf)
-# bs2 <- reshape2::melt(bs2[,-c(2, 4, 5)], id.vars = c("maf", "subfacet"))
-# bs <- rbind(bs, bs2)
-# bs$variable <- gsub("weighted_mean_", "", bs$variable)
-# bs <- bs[-which(bs$variable == "pi"),]
-# bs3 <- purrr::map(maf_res, "ne")
-# bs3 <- purrr::map(bs3, "pop")
-# names(bs3) <- mafs
-# bs3 <- as.data.frame(dplyr::bind_rows(bs3, .id = "maf"))
-# bs3$maf <- as.numeric(bs3$maf)
-# bs3 <- bs3[,c(1,3:4)]
-# bs3$variable <- "Ne"
-# bs3 <- bs3[,c(1,2,4,3)]
-# colnames(bs3) <- c("maf", "subfacet", "variable", "value")
-# bs <- rbind(bs, bs3)
-# bs <- bs[-which(bs$variable == "num_seg"),]
-# bs$variable <- factor(bs$variable, levels = c("ho", "he", "fis", "prop_poly", "Ne", "fst", "D", "ts.theta", "ws.theta"))
-# 
-# library(ggplot2)
-# ggplot(bs, aes(x = as.factor(maf), y = value, color = as.factor(maf), shape = as.factor(maf))) +
-#   geom_point(size = 4) + theme_bw() +
-#   facet_wrap(~variable, scales = "free_y") +
-#   scale_color_viridis_d()
+saveRDS(results, paste0("../results/maf_res_r", i, ".RDS"))
