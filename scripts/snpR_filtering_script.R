@@ -30,11 +30,6 @@ if(length(grep("\\.base", ufs)) > 0){
   ufs <- ufs[-grep("\\.base", ufs)]
 }
 
-# pre-compute maf for efficiency at filter facets (doesn't need to re-run each time the filtering happens)
-if(length(ufs) != 0){
-  d <- calc_maf(d, ufs)
-}
-
 par <- FALSE
 
 flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NULL, 
@@ -54,11 +49,11 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   if(analysis_facet != ".base"){
     f <- calc_pairwise_fst(f, analysis_facet)
     f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
-    f <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
+    ld <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
   }
   else{
     f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
-    f <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
     
   }
   
@@ -95,18 +90,18 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   
  
   if(analysis_facet != ".base"){
-    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "he", "ho", "fis", "fst", "prop_poly"))$weighted.means
+    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
     r2 <- get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, analysis_facet, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
-    ld <- get.snpR.stats(f, analysis_facet, "ld")$ld$prox
+    ld <- get.snpR.stats(ld, analysis_facet, "ld")$ld$prox
   }
   else{
-    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "he", "ho", "fis", "prop_poly"))$weighted.means
+    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
     r2 <- get.snpR.stats(f, chr, "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, chr, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
-    ld <- get.snpR.stats(f, stats = "ld")$ld$prox
+    ld <- get.snpR.stats(ld, stats = "ld")$ld$prox
   }
   
   
