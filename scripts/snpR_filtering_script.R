@@ -49,12 +49,13 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   if(analysis_facet != ".base"){
     f <- calc_pairwise_fst(f, analysis_facet)
     f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
+    set.seed(subset_seed)
     ld <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
   }
   else{
     f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
+    set.seed(subset_seed)
     ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
-    
   }
   
   if(nrow(f) > 3000){
@@ -109,7 +110,7 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   if(analysis_facet != ".base"){
     r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
     r2 <- get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means[
-      which(get.snpR.stats(f, analysis_facet, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
+      which(get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
     ld <- get.snpR.stats(ld, analysis_facet, "ld")$LD$prox
     ld <- ld[,c("proximity", "sample.subfacet", "sample.facet", "CLD")]
