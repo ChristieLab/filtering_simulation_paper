@@ -82,8 +82,25 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   }
   
   cat("SFS.\n")
-  sfs <- calc_sfs(f, projection = nsamps(f), fold = TRUE)
-  sfs <- data.frame(mac = 1:length(sfs), count = sfs, maf = maf, mac = mac)
+  if(analysis_facet != ".base"){
+    options <- summarize_facets(f, analysis_facet)
+    options <- unlist(options)
+    sfs <- vector("list", length(options))
+    names(sfs) <- options
+    for(i in 1:length(options)){
+      keep.samps <- which(sample.meta(f)[[analysis_facet]] == options[i])
+      tf <- f[,keep.samps]
+      sfs[[i]] <- calc_sfs(tf, projection = nsamps(tf), fold = TRUE)
+      sfs[[i]] <- data.frame(mac = 1:length(sfs[[i]]), count = sfs[[i]], maf = maf, mac = mac)
+    }
+    
+    sfs <- data.table::rbindlist(sfs, idcol = "pop")
+  }
+  else{
+    sfs <- calc_sfs(f, projection = nsamps(f), fold = TRUE)
+    sfs <- data.frame(mac = 1:length(sfs), count = sfs, maf = maf, mac = mac)
+  }
+  
   
   cat("Done. Returning.\n")
   
@@ -94,14 +111,17 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     r2 <- get.snpR.stats(f, paste0(analysis_facet, ".", chr), "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, analysis_facet, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
-    ld <- get.snpR.stats(ld, analysis_facet, "ld")$ld$prox
+    ld <- get.snpR.stats(ld, analysis_facet, "ld")$LD$prox
+    ld <- ld[,c("proximity", "sample.subfacet", "sample.facet", "CLD")]
+    ld$maf <- maf
+    ld$mac <- mac
   }
   else{
     r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
     r2 <- get.snpR.stats(f, chr, "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, chr, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
-    ld <- get.snpR.stats(ld, stats = "ld")$ld$prox
+    ld <- get.snpR.stats(ld, stats = "ld")$LD$prox
   }
   
   
