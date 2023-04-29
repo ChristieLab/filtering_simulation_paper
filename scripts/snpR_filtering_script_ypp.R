@@ -6,8 +6,7 @@ args <- commandArgs(TRUE)
 i <- as.numeric(args[1])
 tdir <- as.character(args[2])
 
-d <- read_vcf("../data/yp_ggvcfs.vcf.gz", sample.meta = "../data/yp_sample_meta.txt")
-d <- d[pop = "NUB"]
+d <- read_vcf("../data/NUB_ypp.vcf.gz")
 snp.meta(d)$CHROM <- gsub("\\.", "_", snp.meta(d)$CHROM)
 
 filter_facet <- ".base"
@@ -56,7 +55,12 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   else{
     f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
     set.seed(subset_seed)
-    ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    if(nrow(f) > 10000){
+      ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    }
+    else{
+      ld <- calc_pairwise_ld(f, par = par, verbose = TRUE)
+    }
   }
   
   if(nrow(f) > 30000){
@@ -71,7 +75,7 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   setwd(tdir)
   
   cat("Ne.\n")
-  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/whemstro/bin/Ne2-1L")
+  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/hemstrow/bin/Ne2-1L")
   
   setwd(owd)  
   
@@ -119,11 +123,11 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     ld$mac <- mac
   }
   else{
-    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
+    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis"))$weighted.means
     r2 <- get.snpR.stats(f, chr, "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, chr, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]
-    ld <- get.snpR.stats(ld, stats = "ld")$LD$prox
+    ld <- ld@pairwise.LD$prox
   }
   
   

@@ -58,9 +58,9 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
   }
   
-  if(nrow(f) > 3000){
+  if(nrow(f) > 30000){
     set.seed(subset_seed)
-    sub.f <- f[sample(nrow(f), 3000, replace = FALSE),]
+    sub.f <- f[sample(nrow(f), 30000, replace = FALSE),]
   }
   else{
     sub.f <- f
@@ -70,7 +70,7 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   setwd(tdir)
 
   cat("Ne.\n")
-  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/whemstro/bin/Ne2-1L")
+  sub.f <- calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/hemstrow/bin/Ne2-1L")
   
   setwd(owd)  
 
