@@ -13,12 +13,18 @@ filter_facet <- "pop"
 analysis_facet <- "pop"
 chr <- "group"
 
+# from emdbook
+lseq <- function(from, to, length.out ) exp(seq(log(from), log(to), length.out = length.out))
+
 mafs <- seq(0, .1, by = .01)
 macs <- c(1, 3, 5)
-hwe <- 1e-6
+hwes <- lseq(1e-6, .05, 10)
 hwe_facet <- "pop"
-step <- 50
-sigma <- 100
+stable_hwe <- 1e-6
+stable_maf <- 0
+stable_mac <- 1
+step <- 100
+sigma <- 50
 subset_seed <- 1234
 
 results <- vector("list", length = length(c(mafs, macs)))
@@ -50,12 +56,23 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     f <- calc_pairwise_fst(f, analysis_facet)
     f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
     set.seed(subset_seed)
-    ld <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
+    if(nrow(f) > 10000){
+      ld <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
+    }
+    else{
+      ld <- calc_pairwise_ld(f, analysis_facet, par = par, verbose = TRUE)
+    }
+    
   }
   else{
     f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
     set.seed(subset_seed)
-    ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    if(nrow(f) > 10000){
+      ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    }
+    else{
+      ld <- calc_pairwise_ld(f, par = par, verbose = TRUE)
+    }
   }
   
   if(nrow(f) > 30000){
@@ -153,12 +170,20 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
 
 if(i <= length(mafs)){
   print(i)
-  results <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+  results <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, stable_hwe, 
+                      hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
-if(i > length(mafs)){
+if(i > length(mafs) & i <= length(mafs) + length(macs)){
  j <- i - length(mafs)
- results <- flt_func(d, maf = FALSE, mac = macs[j], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+ results <- flt_func(d, maf = FALSE, mac = macs[j], analysis_facet, filter_facet, stable_hwe, 
+                     hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+}
+
+if(i > length(mafs) + length(macs)){
+  j <- i - length(mafs) + length(macs)
+  results <- flt_func(d, maf = stable_maf, mac = stable_mac, analysis_facet, filter_facet, hwes[j], 
+                      hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
 saveRDS(results, paste0("../results/maf_res_r", i, ".RDS"))

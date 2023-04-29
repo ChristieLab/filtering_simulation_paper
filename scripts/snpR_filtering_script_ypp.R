@@ -13,10 +13,16 @@ filter_facet <- ".base"
 analysis_facet <- ".base"
 chr <- "CHROM"
 
+# from emdbook
+lseq <- function(from, to, length.out ) exp(seq(log(from), log(to), length.out = length.out))
+
 mafs <- seq(0, .1, by = .01)
 macs <- c(1, 3, 5)
-hwe <- 1e-6
-hwe_facet <- ".base"
+hwes <- lseq(1e-6, .05, 10)
+hwe_facet <- "pop"
+stable_hwe <- 1e-6
+stable_maf <- 0
+stable_mac <- 1
 step <- 50
 sigma <- 100
 subset_seed <- 1234
@@ -158,12 +164,20 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
 
 if(i <= length(mafs)){
   print(i)
-  results <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+  results <- flt_func(d, mafs[i], mac = 0, analysis_facet, filter_facet, stable_hwe, 
+                      hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
-if(i > length(mafs)){
+if(i > length(mafs) & i <= length(mafs) + length(macs)){
   j <- i - length(mafs)
-  results <- flt_func(d, maf = FALSE, mac = macs[j], analysis_facet, filter_facet, hwe, hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+  results <- flt_func(d, maf = FALSE, mac = macs[j], analysis_facet, filter_facet, stable_hwe, 
+                      hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
+}
+
+if(i > length(mafs) + length(macs)){
+  j <- i - length(mafs) + length(macs)
+  results <- flt_func(d, maf = stable_maf, mac = stable_mac, analysis_facet, filter_facet, hwes[j], 
+                      hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
 
 saveRDS(results, paste0("../results/ypp_maf_res_r", i, ".RDS"))
