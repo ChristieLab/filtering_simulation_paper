@@ -181,7 +181,7 @@ if(i > length(mafs) & i <= length(mafs) + length(macs)){
 }
 
 if(i > length(mafs) + length(macs)){
-  j <- i - length(mafs) + length(macs)
+  j <- i - (length(mafs) + length(macs))
   results <- flt_func(d, maf = stable_maf, mac = stable_mac, analysis_facet, filter_facet, hwes[j], 
                       hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }

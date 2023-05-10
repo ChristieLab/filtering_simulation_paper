@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --mem=100G
-#SBATCH --array=1-14
+#SBATCH --array=15-24
 #SBATCH -t 6-12:00:00
 #SBATCH -p bigmemm
 

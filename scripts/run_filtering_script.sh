@@ -1,8 +1,8 @@
 #!/bin/bash -l
-#SBATCH --mem=50G
-#SBATCH --array=1-14
+#SBATCH --mem=80G
+#SBATCH --array=6-9
 #SBATCH -t 6-12:00:00
-#SBATCH -p med
+#SBATCH -p bigmemm
 
 module load R/4.2
 

@@ -1,0 +1,3124 @@
+==========================================
+SLURM_JOB_ID = 63848483
+SLURM_NODELIST = bigmem8
+==========================================
+Unloading openmpi/4.1.5
+Unloading slurm/22.05.8
+Loading slurm/22.05.8
+Loading openmpi/4.1.5
+Loading conda/base/latest <aL>
+
+Loading R/4.2.2
+  Loading requirement: conda/base/latest
+Loading required package: data.table
+Loading required package: foreach
+snpR version: 1.2.6.9000 loaded.
+================================================================================
+
+This is a development build of snpR.
+While this version is (probably) passing all tests, there may still be bugs present.
+Please report any issues to the github issues page (https://github.com/hemstrow/snpR/issues)!
+
+
+
+Check out the NEWS page on github for update notes (https://github.com/hemstrow/snpR/blob/dev/NEWS.md)
+================================================================================
+
+Support for non-bialleic markers is currently under development.
+
+To allow for non-biallilic markers, the internal structure of snpRdata objects has been changed slightly. While this version has been written to be backwards compatable, some issues may persist.
+
+If you encounter any issues relating to a 'bi-allelic' or 'ploidy' slot, please report these and remake the snpRdata object using, for example:
+	 x <- import.snpR.data(genotypes(x), snp.meta(x), sample.meta(x), mDat = 'NN')
+
+Warning message:
+In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+[1] 9
+Filtering.
+Adding missing facets...
+Initializing...
+Filtering loci. Starting loci: 541899 
+Filtering non-biallelic loci...
+	0 bad loci
+Filtering non_polymorphic loci...
+	122809 bad loci
+Filtering low minor allele frequencies by facet.
+	455521 bad loci
+Filtering loci out of hwe...
+	 1602  bad loci
+	Ending loci: 84527 
+Basic stats.
+Fst and/or Tajima's D.
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300332 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300167 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300378 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300456 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300118 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300275 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300253 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300104 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300496 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300522 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300703 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300107 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300767 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300195 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300467 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300203 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300216 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300221 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300257 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300394 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300109 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300664 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300135 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300254 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300334 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300137 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300199 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300715 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300376 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300348 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300190 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300134 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300009 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300312 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300615 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300804 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300141 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300097 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300593 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300106 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300250 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300290 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300319 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300454 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300518 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300307 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300699 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300243 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300406 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300555 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300371 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300127 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300164 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300657 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300272 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300007 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300154 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300114 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300212 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300799 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300206 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300102 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300516 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300305 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300398 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300178 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300182 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300502 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300186 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300215 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300390 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300172 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300316 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300535 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300269 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300071 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300168 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300544 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300509 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300367 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300132 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300087 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300364 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300094 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300236 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300417 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300590 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300297 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300210 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300487 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300308 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300209 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300363 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300357 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300201 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300391 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300047 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300512 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300494 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300435 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300392 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300198 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300280 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300342 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300129 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300012 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300414 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300451 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300291 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300379 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300234 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300081 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300449 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300077 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300403 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300138 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300350 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300252 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300361 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300260 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300554 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300366 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300383 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300549 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300645 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300505 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300060 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300441 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300076 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300345 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300181 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300528 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300498 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300163 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300183 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300304 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300040 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300191 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300562 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300358 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300179 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300548 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300628 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300482 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300054 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300229 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300393 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300471 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300153 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300665 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300233 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300341 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300166 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300360 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300523 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300152 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300576 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300295 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300213 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300437 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300561 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300044 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300434 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300246 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300486 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300277 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300099 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300478 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300409 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300381 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300385 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300248 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300325 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300609 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300169 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300192 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300223 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300225 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300315 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300536 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300245 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300170 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300208 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300466 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300086 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300533 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300395 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300187 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300264 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300491 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300527 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300231 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300217 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300337 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300230 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300175 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300359 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300368 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300293 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300323 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300125 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300479 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300103 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300273 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300196 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300174 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300515 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300120 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300321 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300416 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300037 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300282 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300255 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300128 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300089 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300546 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300159 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300202 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300139 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300333 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300024 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300034 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300419 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300578 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300188 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300400 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300362 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300521 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300380 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300018 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300149 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300415 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300177 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300574 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300241 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300045 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300566 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300346 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300155 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300227 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300500 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300556 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300354 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300326 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300110 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300499 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300162 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300113 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300445 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300351 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300276 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300356 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300112 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300130 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300111 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300119 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300545 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300270 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300439 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300185 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300157 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300092 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300065 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300259 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300184 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300266 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300038 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300343 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300258 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300222 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300224 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300165 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300324 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300263 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300455 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300468 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300105 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300249 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300413 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300046 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300173 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300008 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300115 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300313 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300283 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300070 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300267 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300369 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300432 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300289 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300386 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300355 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300235 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300136 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300262 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300692 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300219 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300423 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300300 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300490 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300375 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300340 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300281 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300161 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300377 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300256 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300591 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300226 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300180 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300384 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300426 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300265 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300090 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300220 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300433 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300336 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300091 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300147 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300338 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300131 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300019 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300484 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300144 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300387 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300095 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300068 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300078 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300274 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300402 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300148 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300538 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300492 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300100 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300101 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300532 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300405 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300122 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300475 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300083 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300032 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300459 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300063 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300150 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300424 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300430 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300457 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300001 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300238 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300286 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300327 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300511 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300353 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300330 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300373 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300382 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300339 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300026 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300247 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300156 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300401 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300228 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300006 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300124 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300411 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300474 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300429 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300232 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300176 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300396 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300298 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300158 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300302 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300239 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300143 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300205 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300079 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300389 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300145 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300488 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300431 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300503 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300151 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300268 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300303 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300142 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300261 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300214 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300067 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300140 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300470 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300462 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300160 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300472 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300292 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300481 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300525 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300407 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300237 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300005 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300133 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300200 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300123 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300489 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300014 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300204 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300306 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300027 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300020 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300025 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300501 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300317 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300310 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300121 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300427 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300365 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300146 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300421 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300410 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300318 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300055 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300294 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300428 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300288 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300448 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300485 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300244 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300271 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300397 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300463 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300440 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300189 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300284 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300465 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300279 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300093 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300311 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300296 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300309 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300035 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300344 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300477 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300080 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300480 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300461 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300021 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300301 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300372 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300117 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300028 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300015 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300048 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300211 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300453 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300194 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300126 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300322 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300299 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300352 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300108 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300242 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300438 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300314 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300320 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300442 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300412 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300436 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300030 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300452 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300287 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300420 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300450 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300370 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300075 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300051 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300197 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300073 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300066 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300033 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300460 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300329 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300064 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300088 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300388 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300399 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300010 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300017 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300207 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300041 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300444 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300328 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300347 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300082 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300004 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300171 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300349 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300240 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300016 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300331 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300096 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300446 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300116 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300049 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300031 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300098 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300029 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300023 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300072 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300074 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300039 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300003 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300085 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300062 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300218 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300061 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300251 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300193 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300013 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300374 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300052 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300042 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300053 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300278 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300011 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300022 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300059 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300058 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300084 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300056 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300002 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300043 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300069 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300057 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300036 
+Sample Subfacet:	 GUA 	SNP Subfacet:	 DPSCF300050 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300332 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300167 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300378 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300456 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300118 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300275 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300253 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300104 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300496 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300522 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300703 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300107 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300767 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300195 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300467 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300203 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300216 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300221 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300257 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300394 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300109 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300664 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300135 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300254 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300334 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300137 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300199 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300715 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300376 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300348 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300190 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300134 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300009 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300312 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300615 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300804 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300141 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300097 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300593 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300106 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300250 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300290 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300319 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300454 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300518 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300307 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300699 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300243 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300406 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300555 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300371 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300127 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300164 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300657 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300272 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300007 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300154 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300114 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300212 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300799 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300206 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300102 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300516 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300305 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300398 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300178 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300182 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300502 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300186 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300215 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300390 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300172 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300316 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300535 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300269 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300071 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300168 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300544 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300509 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300367 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300132 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300087 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300364 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300094 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300236 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300417 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300590 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300297 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300210 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300487 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300308 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300209 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300363 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300357 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300201 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300391 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300047 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300512 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300494 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300435 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300392 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300198 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300280 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300342 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300129 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300012 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300414 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300451 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300291 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300379 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300234 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300081 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300449 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300077 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300403 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300138 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300350 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300252 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300361 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300260 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300554 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300366 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300383 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300549 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300645 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300505 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300060 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300441 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300076 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300345 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300181 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300528 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300498 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300163 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300183 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300304 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300040 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300191 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300562 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300358 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300179 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300548 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300628 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300482 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300054 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300229 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300393 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300471 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300153 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300665 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300233 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300341 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300166 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300360 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300523 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300152 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300576 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300295 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300213 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300437 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300561 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300044 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300434 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300246 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300486 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300277 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300099 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300478 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300409 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300381 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300385 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300248 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300325 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300609 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300169 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300192 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300223 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300225 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300315 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300536 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300245 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300170 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300208 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300466 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300086 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300533 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300395 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300187 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300264 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300491 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300527 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300231 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300217 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300337 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300230 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300175 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300359 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300368 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300293 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300323 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300125 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300479 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300103 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300273 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300196 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300174 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300515 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300120 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300321 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300416 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300037 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300282 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300255 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300128 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300089 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300546 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300159 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300202 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300139 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300333 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300024 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300034 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300419 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300578 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300188 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300400 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300362 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300521 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300380 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300018 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300149 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300415 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300177 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300574 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300241 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300045 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300566 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300346 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300155 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300227 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300500 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300556 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300354 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300326 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300110 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300499 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300162 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300113 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300445 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300351 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300276 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300356 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300112 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300130 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300111 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300119 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300545 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300270 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300439 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300185 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300157 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300092 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300065 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300259 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300184 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300266 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300038 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300343 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300258 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300222 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300224 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300165 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300324 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300263 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300455 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300468 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300105 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300249 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300413 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300046 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300173 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300008 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300115 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300313 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300283 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300070 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300267 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300369 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300432 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300289 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300386 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300355 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300235 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300136 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300262 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300692 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300219 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300423 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300300 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300490 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300375 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300340 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300281 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300161 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300377 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300256 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300591 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300226 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300180 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300384 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300426 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300265 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300090 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300220 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300433 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300336 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300091 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300147 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300338 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300131 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300019 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300484 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300144 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300387 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300095 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300068 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300078 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300274 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300402 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300148 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300538 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300492 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300100 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300101 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300532 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300405 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300122 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300475 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300083 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300032 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300459 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300063 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300150 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300424 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300430 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300457 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300001 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300238 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300286 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300327 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300511 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300353 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300330 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300373 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300382 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300339 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300026 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300247 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300156 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300401 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300228 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300006 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300124 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300411 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300474 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300429 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300232 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300176 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300396 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300298 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300158 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300302 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300239 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300143 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300205 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300079 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300389 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300145 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300488 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300431 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300503 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300151 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300268 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300303 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300142 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300261 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300214 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300067 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300140 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300470 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300462 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300160 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300472 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300292 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300481 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300525 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300407 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300237 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300005 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300133 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300200 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300123 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300489 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300014 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300204 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300306 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300027 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300020 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300025 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300501 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300317 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300310 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300121 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300427 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300365 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300146 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300421 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300410 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300318 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300055 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300294 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300428 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300288 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300448 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300485 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300244 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300271 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300397 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300463 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300440 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300189 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300284 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300465 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300279 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300093 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300311 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300296 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300309 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300035 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300344 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300477 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300080 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300480 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300461 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300021 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300301 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300372 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300117 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300028 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300015 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300048 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300211 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300453 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300194 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300126 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300322 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300299 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300352 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300108 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300242 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300438 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300314 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300320 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300442 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300412 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300436 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300030 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300452 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300287 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300420 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300450 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300370 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300075 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300051 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300197 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300073 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300066 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300033 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300460 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300329 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300064 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300088 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300388 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300399 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300010 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300017 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300207 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300041 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300444 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300328 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300347 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300082 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300004 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300171 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300349 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300240 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300016 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300331 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300096 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300446 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300116 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300049 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300031 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300098 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300029 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300023 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300072 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300074 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300039 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300003 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300085 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300062 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300218 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300061 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300251 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300193 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300013 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300374 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300052 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300042 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300053 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300278 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300011 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300022 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300059 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300058 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300084 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300056 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300002 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300043 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300069 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300057 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300036 
+Sample Subfacet:	 HAW 	SNP Subfacet:	 DPSCF300050 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300332 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300167 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300378 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300456 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300118 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300275 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300253 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300104 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300496 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300522 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300703 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300107 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300767 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300195 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300467 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300203 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300216 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300221 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300257 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300394 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300109 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300664 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300135 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300254 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300334 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300137 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300199 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300715 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300376 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300348 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300190 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300134 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300009 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300312 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300615 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300804 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300141 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300097 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300593 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300106 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300250 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300290 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300319 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300454 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300518 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300307 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300699 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300243 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300406 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300555 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300371 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300127 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300164 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300657 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300272 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300007 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300154 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300114 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300212 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300799 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300206 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300102 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300516 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300305 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300398 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300178 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300182 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300502 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300186 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300215 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300390 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300172 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300316 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300535 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300269 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300071 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300168 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300544 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300509 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300367 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300132 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300087 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300364 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300094 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300236 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300417 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300590 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300297 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300210 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300487 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300308 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300209 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300363 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300357 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300201 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300391 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300047 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300512 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300494 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300435 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300392 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300198 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300280 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300342 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300129 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300012 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300414 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300451 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300291 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300379 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300234 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300081 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300449 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300077 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300403 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300138 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300350 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300252 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300361 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300260 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300554 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300366 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300383 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300549 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300645 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300505 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300060 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300441 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300076 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300345 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300181 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300528 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300498 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300163 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300183 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300304 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300040 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300191 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300562 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300358 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300179 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300548 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300628 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300482 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300054 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300229 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300393 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300471 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300153 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300665 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300233 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300341 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300166 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300360 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300523 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300152 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300576 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300295 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300213 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300437 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300561 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300044 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300434 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300246 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300486 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300277 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300099 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300478 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300409 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300381 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300385 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300248 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300325 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300609 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300169 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300192 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300223 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300225 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300315 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300536 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300245 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300170 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300208 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300466 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300086 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300533 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300395 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300187 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300264 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300491 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300527 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300231 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300217 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300337 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300230 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300175 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300359 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300368 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300293 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300323 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300125 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300479 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300103 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300273 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300196 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300174 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300515 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300120 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300321 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300416 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300037 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300282 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300255 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300128 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300089 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300546 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300159 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300202 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300139 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300333 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300024 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300034 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300419 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300578 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300188 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300400 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300362 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300521 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300380 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300018 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300149 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300415 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300177 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300574 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300241 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300045 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300566 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300346 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300155 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300227 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300500 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300556 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300354 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300326 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300110 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300499 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300162 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300113 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300445 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300351 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300276 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300356 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300112 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300130 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300111 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300119 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300545 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300270 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300439 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300185 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300157 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300092 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300065 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300259 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300184 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300266 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300038 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300343 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300258 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300222 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300224 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300165 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300324 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300263 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300455 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300468 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300105 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300249 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300413 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300046 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300173 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300008 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300115 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300313 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300283 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300070 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300267 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300369 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300432 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300289 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300386 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300355 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300235 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300136 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300262 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300692 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300219 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300423 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300300 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300490 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300375 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300340 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300281 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300161 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300377 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300256 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300591 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300226 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300180 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300384 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300426 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300265 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300090 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300220 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300433 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300336 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300091 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300147 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300338 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300131 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300019 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300484 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300144 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300387 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300095 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300068 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300078 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300274 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300402 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300148 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300538 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300492 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300100 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300101 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300532 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300405 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300122 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300475 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300083 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300032 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300459 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300063 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300150 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300424 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300430 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300457 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300001 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300238 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300286 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300327 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300511 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300353 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300330 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300373 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300382 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300339 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300026 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300247 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300156 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300401 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300228 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300006 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300124 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300411 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300474 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300429 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300232 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300176 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300396 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300298 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300158 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300302 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300239 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300143 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300205 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300079 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300389 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300145 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300488 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300431 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300503 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300151 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300268 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300303 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300142 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300261 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300214 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300067 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300140 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300470 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300462 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300160 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300472 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300292 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300481 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300525 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300407 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300237 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300005 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300133 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300200 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300123 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300489 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300014 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300204 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300306 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300027 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300020 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300025 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300501 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300317 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300310 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300121 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300427 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300365 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300146 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300421 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300410 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300318 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300055 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300294 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300428 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300288 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300448 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300485 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300244 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300271 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300397 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300463 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300440 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300189 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300284 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300465 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300279 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300093 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300311 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300296 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300309 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300035 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300344 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300477 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300080 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300480 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300461 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300021 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300301 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300372 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300117 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300028 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300015 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300048 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300211 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300453 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300194 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300126 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300322 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300299 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300352 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300108 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300242 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300438 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300314 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300320 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300442 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300412 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300436 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300030 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300452 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300287 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300420 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300450 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300370 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300075 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300051 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300197 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300073 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300066 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300033 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300460 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300329 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300064 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300088 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300388 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300399 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300010 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300017 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300207 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300041 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300444 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300328 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300347 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300082 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300004 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300171 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300349 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300240 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300016 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300331 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300096 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300446 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300116 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300049 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300031 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300098 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300029 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300023 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300072 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300074 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300039 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300003 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300085 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300062 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300218 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300061 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300251 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300193 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300013 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300374 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300052 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300042 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300053 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300278 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300011 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300022 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300059 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300058 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300084 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300056 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300002 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300043 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300069 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300057 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300036 
+Sample Subfacet:	 NAM 	SNP Subfacet:	 DPSCF300050 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300332 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300167 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300378 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300456 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300118 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300275 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300253 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300104 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300496 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300522 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300703 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300107 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300767 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300195 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300467 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300203 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300216 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300221 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300257 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300394 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300109 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300664 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300135 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300254 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300334 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300137 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300199 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300715 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300376 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300348 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300190 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300134 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300009 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300312 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300615 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300804 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300141 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300097 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300593 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300106 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300250 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300290 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300319 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300454 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300518 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300307 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300699 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300243 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300406 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300555 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300371 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300127 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300164 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300657 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300272 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300007 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300154 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300114 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300212 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300799 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300206 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300102 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300516 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300305 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300398 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300178 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300182 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300502 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300186 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300215 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300390 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300172 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300316 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300535 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300269 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300071 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300168 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300544 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300509 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300367 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300132 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300087 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300364 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300094 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300236 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300417 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300590 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300297 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300210 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300487 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300308 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300209 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300363 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300357 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300201 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300391 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300047 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300512 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300494 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300435 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300392 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300198 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300280 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300342 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300129 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300012 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300414 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300451 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300291 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300379 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300234 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300081 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300449 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300077 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300403 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300138 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300350 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300252 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300361 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300260 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300554 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300366 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300383 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300549 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300645 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300505 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300060 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300441 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300076 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300345 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300181 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300528 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300498 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300163 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300183 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300304 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300040 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300191 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300562 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300358 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300179 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300548 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300628 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300482 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300054 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300229 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300393 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300471 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300153 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300665 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300233 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300341 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300166 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300360 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300523 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300152 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300576 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300295 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300213 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300437 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300561 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300044 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300434 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300246 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300486 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300277 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300099 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300478 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300409 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300381 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300385 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300248 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300325 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300609 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300169 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300192 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300223 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300225 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300315 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300536 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300245 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300170 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300208 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300466 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300086 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300533 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300395 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300187 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300264 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300491 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300527 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300231 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300217 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300337 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300230 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300175 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300359 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300368 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300293 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300323 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300125 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300479 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300103 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300273 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300196 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300174 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300515 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300120 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300321 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300416 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300037 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300282 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300255 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300128 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300089 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300546 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300159 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300202 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300139 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300333 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300024 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300034 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300419 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300578 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300188 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300400 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300362 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300521 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300380 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300018 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300149 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300415 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300177 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300574 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300241 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300045 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300566 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300346 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300155 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300227 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300500 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300556 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300354 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300326 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300110 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300499 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300162 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300113 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300445 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300351 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300276 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300356 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300112 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300130 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300111 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300119 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300545 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300270 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300439 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300185 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300157 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300092 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300065 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300259 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300184 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300266 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300038 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300343 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300258 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300222 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300224 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300165 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300324 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300263 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300455 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300468 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300105 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300249 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300413 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300046 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300173 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300008 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300115 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300313 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300283 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300070 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300267 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300369 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300432 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300289 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300386 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300355 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300235 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300136 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300262 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300692 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300219 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300423 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300300 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300490 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300375 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300340 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300281 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300161 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300377 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300256 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300591 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300226 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300180 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300384 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300426 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300265 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300090 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300220 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300433 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300336 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300091 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300147 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300338 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300131 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300019 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300484 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300144 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300387 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300095 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300068 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300078 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300274 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300402 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300148 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300538 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300492 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300100 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300101 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300532 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300405 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300122 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300475 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300083 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300032 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300459 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300063 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300150 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300424 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300430 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300457 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300001 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300238 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300286 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300327 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300511 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300353 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300330 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300373 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300382 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300339 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300026 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300247 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300156 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300401 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300228 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300006 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300124 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300411 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300474 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300429 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300232 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300176 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300396 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300298 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300158 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300302 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300239 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300143 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300205 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300079 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300389 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300145 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300488 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300431 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300503 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300151 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300268 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300303 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300142 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300261 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300214 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300067 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300140 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300470 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300462 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300160 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300472 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300292 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300481 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300525 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300407 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300237 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300005 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300133 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300200 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300123 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300489 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300014 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300204 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300306 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300027 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300020 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300025 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300501 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300317 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300310 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300121 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300427 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300365 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300146 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300421 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300410 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300318 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300055 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300294 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300428 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300288 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300448 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300485 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300244 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300271 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300397 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300463 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300440 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300189 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300284 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300465 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300279 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300093 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300311 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300296 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300309 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300035 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300344 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300477 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300080 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300480 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300461 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300021 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300301 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300372 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300117 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300028 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300015 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300048 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300211 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300453 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300194 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300126 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300322 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300299 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300352 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300108 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300242 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300438 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300314 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300320 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300442 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300412 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300436 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300030 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300452 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300287 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300420 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300450 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300370 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300075 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300051 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300197 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300073 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300066 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300033 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300460 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300329 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300064 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300088 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300388 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300399 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300010 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300017 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300207 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300041 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300444 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300328 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300347 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300082 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300004 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300171 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300349 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300240 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300016 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300331 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300096 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300446 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300116 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300049 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300031 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300098 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300029 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300023 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300072 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300074 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300039 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300003 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300085 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300062 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300218 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300061 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300251 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300193 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300013 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300374 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300052 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300042 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300053 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300278 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300011 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300022 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300059 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300058 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300084 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300056 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300002 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300043 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300069 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300057 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300036 
+Sample Subfacet:	 ROT 	SNP Subfacet:	 DPSCF300050 
+Preparing data...
+Beginning LD calculation...
+Task #: 1 of 4  Sample Facet: pop	GUA  SNP Facet: .base	.base 
+Task #: 2 of 4  Sample Facet: pop	HAW  SNP Facet: .base	.base 
+Task #: 3 of 4  Sample Facet: pop	NAM  SNP Facet: .base	.base 
+Task #: 4 of 4  Sample Facet: pop	ROT  SNP Facet: .base	.base 
+Ne.
+Large numbers of loci don't usually improve Ne estimates by a substantial margin and can massively increase run times and memory requirements. Loci counts of ~3,000 are usually sufficient to generate accurate Ne esitmates, but estimates are improved substantially by selecting loci with little missing data. See https://doi.org/10.1002/ece3.6016
+
+Number of loci = 30000, 2-digit alleles
+Input file: snps.gen - GENEPOP format
+Number of loci = 30000, 2-digit alleles
+Method(s): LD
+Locus names - last 6 characters: (only the last 100 are listed)
+_29901 _29902 _29903 _29904 _29905 _29906 _29907 _29908 _29909 _29910 
+_29911 _29912 _29913 _29914 _29915 _29916 _29917 _29918 _29919 _29920 
+_29921 _29922 _29923 _29924 _29925 _29926 _29927 _29928 _29929 _29930 
+_29931 _29932 _29933 _29934 _29935 _29936 _29937 _29938 _29939 _29940 
+_29941 _29942 _29943 _29944 _29945 _29946 _29947 _29948 _29949 _29950 
+_29951 _29952 _29953 _29954 _29955 _29956 _29957 _29958 _29959 _29960 
+_29961 _29962 _29963 _29964 _29965 _29966 _29967 _29968 _29969 _29970 
+_29971 _29972 _29973 _29974 _29975 _29976 _29977 _29978 _29979 _29980 
+_29981 _29982 _29983 _29984 _29985 _29986 _29987 _29988 _29989 _29990 
+_29991 _29992 _29993 _29994 _29995 _29996 _29997 _29998 _29999 _30000 
+Outputs are written to file ne_out.txt
+Tabular-format LD Output File Name: ne_outxLD.txt
+Starting time: Wed May  3 18:29:07 2023
+Each pair of loci are taken in distinct chromosomes.
+Maximum number of locus pairs = 448359485
+
+
+Population     1 [GUA_41]
+-> Total samples = 24, with data missing
+   * For lowest freq:    0+
+     Calculating r^2:
+       Loci are paired across chromosomes
+           1000000 done, at loc. pair (24099, 22358)
+           2000000 done, at loc. pair (405, 27672)
+           3000000 done, at loc. pair (10315, 9525)
+           4000000 done, at loc. pair (12609, 17858)
+           5000000 done, at loc. pair (22504, 18665)
+           6000000 done, at loc. pair (15484, 119)
+           7000000 done, at loc. pair (23934, 2718)
+           8000000 done, at loc. pair (116, 9550)
+           9000000 done, at loc. pair (19829, 6351)
+          10000000 done, at loc. pair (14361, 13059)
+          11000000 done, at loc. pair (4260, 29193)
+          12000000 done, at loc. pair (4069, 9222)
+          13000000 done, at loc. pair (8964, 4801)
+          14000000 done, at loc. pair (24711, 24940)
+          15000000 done, at loc. pair (20349, 1685)
+          16000000 done, at loc. pair (291, 25570)
+          17000000 done, at loc. pair (1492, 9322)
+          18000000 done, at loc. pair (5731, 1820)
+          19000000 done, at loc. pair (10725, 8947)
+          20000000 done, at loc. pair (22478, 18101)
+          21000000 done, at loc. pair (19176, 3989)
+          22000000 done, at loc. pair (18534, 22552)
+          23000000 done, at loc. pair (5085, 23346)
+          24000000 done, at loc. pair (471, 12839)
+          25000000 done, at loc. pair (18659, 27779)
+          26000000 done, at loc. pair (20064, 7504)
+          27000000 done, at loc. pair (588, 19915)
+          28000000 done, at loc. pair (19216, 26802)
+          29000000 done, at loc. pair (18726, 21158)
+          30000000 done, at loc. pair (22892, 9069)
+          31000000 done, at loc. pair (19544, 23665)
+          32000000 done, at loc. pair (2773, 17553)
+          33000000 done, at loc. pair (9948, 3051)
+          34000000 done, at loc. pair (13290, 2829)
+          35000000 done, at loc. pair (7248, 17830)
+          36000000 done, at loc. pair (16903, 8730)
+          37000000 done, at loc. pair (12772, 29823)
+          38000000 done, at loc. pair (25571, 11189)
+          39000000 done, at loc. pair (9232, 9787)
+          40000000 done, at loc. pair (10464, 22962)
+          41000000 done, at loc. pair (21393, 16268)
+          42000000 done, at loc. pair (9521, 23314)
+          43000000 done, at loc. pair (18768, 15369)
+          44000000 done, at loc. pair (21881, 1907)
+          45000000 done, at loc. pair (23390, 5969)
+          46000000 done, at loc. pair (6864, 10608)
+          47000000 done, at loc. pair (10604, 9028)
+          48000000 done, at loc. pair (15358, 16754)
+          49000000 done, at loc. pair (27905, 20208)
+          50000000 done, at loc. pair (16393, 21849)
+          51000000 done, at loc. pair (1575, 28210)
+          52000000 done, at loc. pair (21958, 20309)
+          53000000 done, at loc. pair (12764, 12187)
+          54000000 done, at loc. pair (19382, 29513)
+          55000000 done, at loc. pair (26474, 10016)
+          56000000 done, at loc. pair (1906, 2302)
+          57000000 done, at loc. pair (16519, 28247)
+          58000000 done, at loc. pair (17538, 27244)
+          59000000 done, at loc. pair (22518, 29883)
+          60000000 done, at loc. pair (27864, 7112)
+          61000000 done, at loc. pair (12204, 2153)
+          62000000 done, at loc. pair (6983, 18448)
+          63000000 done, at loc. pair (19611, 22782)
+          64000000 done, at loc. pair (25156, 9210)
+          65000000 done, at loc. pair (25172, 27049)
+          66000000 done, at loc. pair (24633, 8018)
+          67000000 done, at loc. pair (14974, 8829)
+          68000000 done, at loc. pair (18145, 16534)
+          69000000 done, at loc. pair (5275, 23522)
+          70000000 done, at loc. pair (14970, 10908)
+          71000000 done, at loc. pair (23752, 18597)
+          72000000 done, at loc. pair (12903, 25556)
+          73000000 done, at loc. pair (7352, 15755)
+          74000000 done, at loc. pair (21291, 12151)
+          75000000 done, at loc. pair (3852, 6951)
+          76000000 done, at loc. pair (19318, 16752)
+          77000000 done, at loc. pair (25377, 26653)
+          78000000 done, at loc. pair (15765, 7641)
+          79000000 done, at loc. pair (22322, 15344)
+     Actual number of r^2-values evaluated = 79355426
+     Initial estimate of Ne:       1533.4
+     Final estimate of Ne:         1538.2
+     Parameter CI:          1393.5          1716.1
+     Jackknife CI:            54.0        infinite
+
+Population     2 [HAW_10]
+-> Total samples = 12, with data missing
+   * For lowest freq:    0+
+     Calculating r^2:
+       Loci are paired across chromosomes
+           1000000 done, at loc. pair (12507, 11046)
+           2000000 done, at loc. pair (12510, 6862)
+           3000000 done, at loc. pair (18548, 19072)
+           4000000 done, at loc. pair (16249, 24061)
+           5000000 done, at loc. pair (11602, 13221)
+           6000000 done, at loc. pair (7477, 10936)
+           7000000 done, at loc. pair (15167, 19653)
+           8000000 done, at loc. pair (5913, 806)
+           9000000 done, at loc. pair (25499, 17602)
+          10000000 done, at loc. pair (14962, 10998)
+          11000000 done, at loc. pair (3187, 15006)
+          12000000 done, at loc. pair (2655, 2719)
+          13000000 done, at loc. pair (12582, 10177)
+          14000000 done, at loc. pair (159, 5573)
+          15000000 done, at loc. pair (5508, 9654)
+          16000000 done, at loc. pair (19161, 16555)
+          17000000 done, at loc. pair (25057, 10567)
+          18000000 done, at loc. pair (10610, 4622)
+          19000000 done, at loc. pair (192, 17058)
+          20000000 done, at loc. pair (15492, 9180)
+          21000000 done, at loc. pair (15445, 8297)
+          22000000 done, at loc. pair (14688, 1810)
+          23000000 done, at loc. pair (22534, 758)
+          24000000 done, at loc. pair (20966, 17522)
+          25000000 done, at loc. pair (19455, 26771)
+          26000000 done, at loc. pair (14221, 20431)
+          27000000 done, at loc. pair (126, 10915)
+          28000000 done, at loc. pair (133, 16823)
+          29000000 done, at loc. pair (8603, 5420)
+          30000000 done, at loc. pair (9975, 22857)
+          31000000 done, at loc. pair (15053, 21639)
+          32000000 done, at loc. pair (8607, 25639)
+          33000000 done, at loc. pair (19210, 10985)
+          34000000 done, at loc. pair (7819, 28401)
+          35000000 done, at loc. pair (21924, 8244)
+          36000000 done, at loc. pair (1881, 1672)
+          37000000 done, at loc. pair (20859, 1347)
+          38000000 done, at loc. pair (178, 16179)
+          39000000 done, at loc. pair (204, 26032)
+          40000000 done, at loc. pair (213, 13174)
+          41000000 done, at loc. pair (222, 12944)
+          42000000 done, at loc. pair (29222, 8199)
+          43000000 done, at loc. pair (19706, 3734)
+          44000000 done, at loc. pair (10188, 10998)
+          45000000 done, at loc. pair (7931, 1919)
+          46000000 done, at loc. pair (1126, 12953)
+          47000000 done, at loc. pair (297, 1457)
+          48000000 done, at loc. pair (27966, 2739)
+          49000000 done, at loc. pair (20577, 25451)
+          50000000 done, at loc. pair (8453, 6723)
+          51000000 done, at loc. pair (19028, 18490)
+          52000000 done, at loc. pair (20181, 14061)
+          53000000 done, at loc. pair (20344, 19110)
+          54000000 done, at loc. pair (5490, 10051)
+          55000000 done, at loc. pair (10373, 21345)
+          56000000 done, at loc. pair (10625, 12775)
+          57000000 done, at loc. pair (313, 17640)
+          58000000 done, at loc. pair (16064, 15633)
+          59000000 done, at loc. pair (13191, 28011)
+          60000000 done, at loc. pair (358, 14815)
+          61000000 done, at loc. pair (11044, 19571)
+          62000000 done, at loc. pair (8171, 24765)
+          63000000 done, at loc. pair (27014, 10645)
+          64000000 done, at loc. pair (26060, 19828)
+          65000000 done, at loc. pair (3028, 13839)
+          66000000 done, at loc. pair (18211, 23952)
+          67000000 done, at loc. pair (8141, 13243)
+          68000000 done, at loc. pair (21675, 14511)
+          69000000 done, at loc. pair (13490, 26648)
+          70000000 done, at loc. pair (5565, 13071)
+          71000000 done, at loc. pair (21605, 19090)
+          72000000 done, at loc. pair (17995, 24841)
+          73000000 done, at loc. pair (3309, 12417)
+          74000000 done, at loc. pair (9078, 26351)
+          75000000 done, at loc. pair (10272, 8936)
+          76000000 done, at loc. pair (8809, 21180)
+          77000000 done, at loc. pair (14866, 27407)
+          78000000 done, at loc. pair (9694, 11139)
+          79000000 done, at loc. pair (10991, 16782)
+          80000000 done, at loc. pair (7122, 25926)
+          81000000 done, at loc. pair (3026, 28968)
+          82000000 done, at loc. pair (5571, 4783)
+          83000000 done, at loc. pair (27317, 29328)
+          84000000 done, at loc. pair (24395, 11867)
+          85000000 done, at loc. pair (559, 29701)
+          86000000 done, at loc. pair (5307, 28874)
+          87000000 done, at loc. pair (1363, 27218)
+          88000000 done, at loc. pair (27281, 695)
+          89000000 done, at loc. pair (5031, 15547)
+          90000000 done, at loc. pair (3156, 25404)
+          91000000 done, at loc. pair (18463, 27593)
+          92000000 done, at loc. pair (16261, 7204)
+          93000000 done, at loc. pair (3772, 16200)
+          94000000 done, at loc. pair (1161, 7187)
+          95000000 done, at loc. pair (12240, 23845)
+          96000000 done, at loc. pair (26964, 4419)
+          97000000 done, at loc. pair (25874, 27030)
+          98000000 done, at loc. pair (27803, 29159)
+          99000000 done, at loc. pair (4008, 10384)
+         100000000 done, at loc. pair (13955, 18739)
+         101000000 done, at loc. pair (766, 7258)
+         102000000 done, at loc. pair (19793, 21441)
+         103000000 done, at loc. pair (2076, 4982)
+         104000000 done, at loc. pair (6074, 17258)
+         105000000 done, at loc. pair (815, 4194)
+         106000000 done, at loc. pair (856, 25098)
+         107000000 done, at loc. pair (12860, 28764)
+         108000000 done, at loc. pair (8761, 12968)
+         109000000 done, at loc. pair (13514, 14481)
+         110000000 done, at loc. pair (945, 9568)
+         111000000 done, at loc. pair (21658, 14067)
+         112000000 done, at loc. pair (2248, 23702)
+         113000000 done, at loc. pair (971, 24044)
+         114000000 done, at loc. pair (12101, 27680)
+         115000000 done, at loc. pair (5852, 27559)
+         116000000 done, at loc. pair (23258, 2137)
+         117000000 done, at loc. pair (16897, 29428)
+         118000000 done, at loc. pair (12772, 13612)
+         119000000 done, at loc. pair (1046, 27797)
+         120000000 done, at loc. pair (12118, 18800)
+         121000000 done, at loc. pair (6517, 4442)
+         122000000 done, at loc. pair (23733, 9563)
+         123000000 done, at loc. pair (13670, 3603)
+         124000000 done, at loc. pair (1095, 26097)
+         125000000 done, at loc. pair (5415, 13948)
+         126000000 done, at loc. pair (10802, 12281)
+         127000000 done, at loc. pair (14176, 10635)
+         128000000 done, at loc. pair (19151, 3260)
+         129000000 done, at loc. pair (5289, 14316)
+         130000000 done, at loc. pair (2510, 2019)
+         131000000 done, at loc. pair (21405, 3865)
+         132000000 done, at loc. pair (1587, 26972)
+         133000000 done, at loc. pair (9529, 3174)
+         134000000 done, at loc. pair (2847, 16499)
+         135000000 done, at loc. pair (4721, 27254)
+         136000000 done, at loc. pair (12740, 16917)
+         137000000 done, at loc. pair (15044, 25923)
+         138000000 done, at loc. pair (4981, 18084)
+         139000000 done, at loc. pair (14427, 28655)
+         140000000 done, at loc. pair (21862, 23662)
+         141000000 done, at loc. pair (3343, 29441)
+         142000000 done, at loc. pair (19811, 26857)
+         143000000 done, at loc. pair (23199, 18789)
+         144000000 done, at loc. pair (27953, 2796)
+         145000000 done, at loc. pair (2379, 22837)
+         146000000 done, at loc. pair (14167, 2735)
+         147000000 done, at loc. pair (16436, 17470)
+         148000000 done, at loc. pair (14826, 13047)
+         149000000 done, at loc. pair (16266, 22012)
+         150000000 done, at loc. pair (22415, 18062)
+         151000000 done, at loc. pair (28311, 29391)
+         152000000 done, at loc. pair (8743, 26771)
+         153000000 done, at loc. pair (1433, 19947)
+         154000000 done, at loc. pair (24849, 27502)
+         155000000 done, at loc. pair (28251, 27852)
+         156000000 done, at loc. pair (8902, 7581)
+         157000000 done, at loc. pair (1546, 14397)
+         158000000 done, at loc. pair (21180, 26304)
+         159000000 done, at loc. pair (12090, 14458)
+         160000000 done, at loc. pair (18911, 29569)
+         161000000 done, at loc. pair (1648, 8168)
+         162000000 done, at loc. pair (3091, 7082)
+         163000000 done, at loc. pair (10237, 15313)
+         164000000 done, at loc. pair (1672, 28711)
+         165000000 done, at loc. pair (18839, 8378)
+         166000000 done, at loc. pair (5146, 4606)
+         167000000 done, at loc. pair (19479, 29116)
+         168000000 done, at loc. pair (20996, 28930)
+         169000000 done, at loc. pair (2576, 11085)
+         170000000 done, at loc. pair (4859, 29816)
+         171000000 done, at loc. pair (20874, 11662)
+         172000000 done, at loc. pair (3420, 19350)
+         173000000 done, at loc. pair (15819, 2701)
+         174000000 done, at loc. pair (17184, 24982)
+         175000000 done, at loc. pair (1870, 29348)
+         176000000 done, at loc. pair (10170, 17344)
+         177000000 done, at loc. pair (12443, 9823)
+         178000000 done, at loc. pair (9429, 28913)
+         179000000 done, at loc. pair (7350, 26657)
+         180000000 done, at loc. pair (6922, 7986)
+         181000000 done, at loc. pair (3277, 27331)
+         182000000 done, at loc. pair (15256, 5225)
+         183000000 done, at loc. pair (1953, 5318)
+         184000000 done, at loc. pair (1956, 29839)
+         185000000 done, at loc. pair (26228, 19088)
+         186000000 done, at loc. pair (13990, 9152)
+         187000000 done, at loc. pair (25476, 28499)
+         188000000 done, at loc. pair (18167, 7440)
+         189000000 done, at loc. pair (7782, 29227)
+         190000000 done, at loc. pair (9159, 24817)
+         191000000 done, at loc. pair (6741, 15707)
+         192000000 done, at loc. pair (2745, 8299)
+         193000000 done, at loc. pair (9176, 24423)
+         194000000 done, at loc. pair (25378, 28850)
+         195000000 done, at loc. pair (9034, 4114)
+         196000000 done, at loc. pair (17767, 3377)
+         197000000 done, at loc. pair (16483, 26611)
+         198000000 done, at loc. pair (2302, 29595)
+         199000000 done, at loc. pair (17142, 11831)
+         200000000 done, at loc. pair (21825, 9957)
+         201000000 done, at loc. pair (16553, 27483)
+         202000000 done, at loc. pair (22747, 18019)
+         203000000 done, at loc. pair (22250, 18049)
+         204000000 done, at loc. pair (25612, 21686)
+         205000000 done, at loc. pair (3868, 26484)
+         206000000 done, at loc. pair (2584, 15109)
+         207000000 done, at loc. pair (15315, 19450)
+         208000000 done, at loc. pair (23339, 25080)
+         209000000 done, at loc. pair (8466, 23375)
+         210000000 done, at loc. pair (22681, 5605)
+         211000000 done, at loc. pair (2732, 26294)
+         212000000 done, at loc. pair (7476, 29116)
+         213000000 done, at loc. pair (19180, 7729)
+         214000000 done, at loc. pair (4888, 16576)
+         215000000 done, at loc. pair (27195, 25307)
+         216000000 done, at loc. pair (29820, 13238)
+         217000000 done, at loc. pair (10342, 4118)
+         218000000 done, at loc. pair (17241, 23073)
+         219000000 done, at loc. pair (28148, 19122)
+         220000000 done, at loc. pair (15186, 28896)
+         221000000 done, at loc. pair (5882, 16028)
+         222000000 done, at loc. pair (22369, 29833)
+         223000000 done, at loc. pair (5778, 15921)
+         224000000 done, at loc. pair (13739, 29083)
+         225000000 done, at loc. pair (19828, 23298)
+         226000000 done, at loc. pair (22380, 21209)
+         227000000 done, at loc. pair (22496, 26314)
+         228000000 done, at loc. pair (4921, 25341)
+         229000000 done, at loc. pair (8620, 11427)
+         230000000 done, at loc. pair (8597, 28916)
+         231000000 done, at loc. pair (3771, 21495)
+         232000000 done, at loc. pair (22605, 12940)
+         233000000 done, at loc. pair (20456, 28281)
+         234000000 done, at loc. pair (13033, 29299)
+         235000000 done, at loc. pair (29643, 16612)
+         236000000 done, at loc. pair (15969, 25077)
+         237000000 done, at loc. pair (9341, 6198)
+         238000000 done, at loc. pair (23528, 17281)
+         239000000 done, at loc. pair (4655, 19781)
+         240000000 done, at loc. pair (29248, 24808)
+         241000000 done, at loc. pair (28807, 20940)
+         242000000 done, at loc. pair (20042, 14897)
+         243000000 done, at loc. pair (26917, 29710)
+         244000000 done, at loc. pair (23105, 13219)
+         245000000 done, at loc. pair (24891, 29225)
+         246000000 done, at loc. pair (26966, 12515)
+         247000000 done, at loc. pair (23615, 23664)
+     Actual number of r^2-values evaluated = 247248778
+       Estimate of Ne:               -506.0
+     Parameter CI:        infinite        infinite
+     Jackknife CI:             9.1        infinite
+
+Population     3 [NAM_Goleta63]
+-> Total samples = 91, with data missing
+   * For lowest freq:    0+
+     Calculating r^2:
+       Loci are paired across chromosomes
+           1000000 done, at loc. pair (24096, 2794)
+           2000000 done, at loc. pair (16141, 8321)
+           3000000 done, at loc. pair (14386, 14111)
+           4000000 done, at loc. pair (13420, 27675)
+           5000000 done, at loc. pair (24264, 8533)
+           6000000 done, at loc. pair (11906, 18710)
+           7000000 done, at loc. pair (15392, 7250)
+           8000000 done, at loc. pair (15382, 8672)
+           9000000 done, at loc. pair (11412, 14066)
+          10000000 done, at loc. pair (7506, 21315)
+          11000000 done, at loc. pair (11173, 12964)
+          12000000 done, at loc. pair (10314, 19477)
+          13000000 done, at loc. pair (6015, 11673)
+          14000000 done, at loc. pair (36, 23763)
+          15000000 done, at loc. pair (21517, 10091)
+          16000000 done, at loc. pair (45, 17499)
+          17000000 done, at loc. pair (6853, 4975)
+          18000000 done, at loc. pair (2022, 22106)
+          19000000 done, at loc. pair (21640, 5590)
+          20000000 done, at loc. pair (15207, 25711)
+          21000000 done, at loc. pair (11566, 21633)
+          22000000 done, at loc. pair (2769, 6202)
+          23000000 done, at loc. pair (20904, 10862)
+          24000000 done, at loc. pair (20706, 7593)
+          25000000 done, at loc. pair (2803, 25509)
+          26000000 done, at loc. pair (22397, 25112)
+          27000000 done, at loc. pair (3881, 29269)
+          28000000 done, at loc. pair (21242, 20910)
+          29000000 done, at loc. pair (10554, 21036)
+          30000000 done, at loc. pair (12751, 18168)
+          31000000 done, at loc. pair (15483, 8733)
+          32000000 done, at loc. pair (17125, 3199)
+          33000000 done, at loc. pair (22534, 493)
+          34000000 done, at loc. pair (19469, 18816)
+          35000000 done, at loc. pair (23168, 3241)
+          36000000 done, at loc. pair (23162, 16722)
+          37000000 done, at loc. pair (14221, 14448)
+          38000000 done, at loc. pair (4873, 19895)
+          39000000 done, at loc. pair (4744, 5574)
+          40000000 done, at loc. pair (29615, 998)
+          41000000 done, at loc. pair (27380, 10506)
+          42000000 done, at loc. pair (2251, 259)
+          43000000 done, at loc. pair (1728, 2831)
+          44000000 done, at loc. pair (11424, 25804)
+          45000000 done, at loc. pair (9962, 24117)
+          46000000 done, at loc. pair (5620, 26292)
+          47000000 done, at loc. pair (7184, 9270)
+          48000000 done, at loc. pair (19458, 6778)
+          49000000 done, at loc. pair (16465, 21235)
+          50000000 done, at loc. pair (21965, 29119)
+          51000000 done, at loc. pair (964, 3277)
+          52000000 done, at loc. pair (935, 9672)
+          53000000 done, at loc. pair (19788, 22581)
+          54000000 done, at loc. pair (2249, 25170)
+          55000000 done, at loc. pair (1669, 28797)
+          56000000 done, at loc. pair (3621, 17989)
+          57000000 done, at loc. pair (6901, 11618)
+          58000000 done, at loc. pair (436, 1382)
+          59000000 done, at loc. pair (5847, 14942)
+          60000000 done, at loc. pair (29223, 9249)
+          61000000 done, at loc. pair (21201, 9187)
+          62000000 done, at loc. pair (7055, 17633)
+          63000000 done, at loc. pair (19402, 7543)
+          64000000 done, at loc. pair (1397, 6583)
+          65000000 done, at loc. pair (3981, 10682)
+          66000000 done, at loc. pair (5801, 17162)
+          67000000 done, at loc. pair (26933, 15072)
+          68000000 done, at loc. pair (12245, 18162)
+          69000000 done, at loc. pair (26927, 29048)
+          70000000 done, at loc. pair (11954, 8043)
+          71000000 done, at loc. pair (23265, 4418)
+          72000000 done, at loc. pair (7348, 19568)
+          73000000 done, at loc. pair (22020, 5152)
+          74000000 done, at loc. pair (20099, 24652)
+          75000000 done, at loc. pair (280, 14232)
+          76000000 done, at loc. pair (7265, 1823)
+          77000000 done, at loc. pair (15545, 17462)
+          78000000 done, at loc. pair (10339, 26915)
+          79000000 done, at loc. pair (11359, 13422)
+          80000000 done, at loc. pair (13511, 22955)
+          81000000 done, at loc. pair (14368, 13098)
+          82000000 done, at loc. pair (19247, 501)
+          83000000 done, at loc. pair (6279, 4255)
+          84000000 done, at loc. pair (19237, 27556)
+          85000000 done, at loc. pair (7104, 20383)
+          86000000 done, at loc. pair (10719, 828)
+          87000000 done, at loc. pair (4125, 5276)
+          88000000 done, at loc. pair (27196, 464)
+          89000000 done, at loc. pair (23824, 22562)
+          90000000 done, at loc. pair (25837, 23083)
+          91000000 done, at loc. pair (26060, 29606)
+          92000000 done, at loc. pair (25894, 28928)
+          93000000 done, at loc. pair (22438, 994)
+          94000000 done, at loc. pair (21153, 23311)
+          95000000 done, at loc. pair (22435, 16296)
+          96000000 done, at loc. pair (21062, 28551)
+          97000000 done, at loc. pair (22914, 11219)
+          98000000 done, at loc. pair (21047, 29439)
+          99000000 done, at loc. pair (24991, 7548)
+         100000000 done, at loc. pair (24247, 12057)
+         101000000 done, at loc. pair (22262, 25858)
+         102000000 done, at loc. pair (25726, 10876)
+         103000000 done, at loc. pair (25649, 27250)
+         104000000 done, at loc. pair (398, 12355)
+         105000000 done, at loc. pair (22189, 21154)
+         106000000 done, at loc. pair (3548, 19972)
+         107000000 done, at loc. pair (3891, 12871)
+         108000000 done, at loc. pair (7865, 4681)
+         109000000 done, at loc. pair (2260, 22315)
+         110000000 done, at loc. pair (2346, 15533)
+         111000000 done, at loc. pair (8433, 25179)
+         112000000 done, at loc. pair (14147, 4823)
+         113000000 done, at loc. pair (10991, 27681)
+         114000000 done, at loc. pair (20913, 28311)
+         115000000 done, at loc. pair (7549, 15140)
+         116000000 done, at loc. pair (8504, 27555)
+         117000000 done, at loc. pair (10740, 27337)
+         118000000 done, at loc. pair (8554, 8533)
+         119000000 done, at loc. pair (928, 19243)
+         120000000 done, at loc. pair (22034, 16587)
+         121000000 done, at loc. pair (18512, 16877)
+         122000000 done, at loc. pair (2670, 1591)
+         123000000 done, at loc. pair (3470, 17607)
+         124000000 done, at loc. pair (8079, 10469)
+         125000000 done, at loc. pair (602, 20471)
+         126000000 done, at loc. pair (7884, 11847)
+         127000000 done, at loc. pair (19260, 699)
+         128000000 done, at loc. pair (4343, 28704)
+         129000000 done, at loc. pair (7075, 3799)
+         130000000 done, at loc. pair (1009, 15811)
+         131000000 done, at loc. pair (18466, 16429)
+         132000000 done, at loc. pair (20616, 24251)
+         133000000 done, at loc. pair (4833, 10391)
+         134000000 done, at loc. pair (16579, 27472)
+         135000000 done, at loc. pair (13388, 27613)
+         136000000 done, at loc. pair (23109, 10928)
+         137000000 done, at loc. pair (22148, 23727)
+         138000000 done, at loc. pair (25879, 10518)
+         139000000 done, at loc. pair (26365, 19906)
+         140000000 done, at loc. pair (19963, 19724)
+         141000000 done, at loc. pair (28057, 9734)
+         142000000 done, at loc. pair (28422, 21813)
+         143000000 done, at loc. pair (7995, 29869)
+         144000000 done, at loc. pair (2363, 21344)
+         145000000 done, at loc. pair (3624, 20892)
+         146000000 done, at loc. pair (11628, 22316)
+         147000000 done, at loc. pair (10271, 18003)
+         148000000 done, at loc. pair (1277, 13396)
+         149000000 done, at loc. pair (3388, 26426)
+         150000000 done, at loc. pair (6104, 12026)
+         151000000 done, at loc. pair (15534, 19138)
+         152000000 done, at loc. pair (2183, 29034)
+         153000000 done, at loc. pair (22216, 10855)
+         154000000 done, at loc. pair (20020, 14597)
+         155000000 done, at loc. pair (11129, 18458)
+         156000000 done, at loc. pair (14108, 10448)
+         157000000 done, at loc. pair (13826, 3959)
+         158000000 done, at loc. pair (15892, 29675)
+         159000000 done, at loc. pair (9426, 24703)
+         160000000 done, at loc. pair (5945, 4857)
+         161000000 done, at loc. pair (14201, 24577)
+         162000000 done, at loc. pair (15311, 12597)
+         163000000 done, at loc. pair (15781, 1007)
+         164000000 done, at loc. pair (976, 27328)
+         165000000 done, at loc. pair (16285, 12930)
+         166000000 done, at loc. pair (16107, 25389)
+         167000000 done, at loc. pair (1056, 8085)
+         168000000 done, at loc. pair (9337, 3600)
+         169000000 done, at loc. pair (26100, 3255)
+         170000000 done, at loc. pair (16875, 12366)
+         171000000 done, at loc. pair (8321, 10503)
+         172000000 done, at loc. pair (8312, 13331)
+         173000000 done, at loc. pair (1200, 14192)
+         174000000 done, at loc. pair (20141, 21811)
+         175000000 done, at loc. pair (21289, 29796)
+         176000000 done, at loc. pair (21298, 10525)
+         177000000 done, at loc. pair (18991, 12465)
+         178000000 done, at loc. pair (15634, 11494)
+         179000000 done, at loc. pair (20518, 25070)
+         180000000 done, at loc. pair (27113, 18986)
+         181000000 done, at loc. pair (5409, 2431)
+         182000000 done, at loc. pair (17370, 8335)
+         183000000 done, at loc. pair (9689, 5827)
+         184000000 done, at loc. pair (10295, 1518)
+         185000000 done, at loc. pair (22857, 10496)
+         186000000 done, at loc. pair (23427, 23157)
+         187000000 done, at loc. pair (5296, 23616)
+         188000000 done, at loc. pair (13382, 22339)
+         189000000 done, at loc. pair (26465, 18981)
+         190000000 done, at loc. pair (21403, 26072)
+         191000000 done, at loc. pair (12810, 27698)
+         192000000 done, at loc. pair (1152, 1837)
+         193000000 done, at loc. pair (13553, 17411)
+         194000000 done, at loc. pair (12581, 19284)
+         195000000 done, at loc. pair (2859, 15185)
+         196000000 done, at loc. pair (5245, 28663)
+         197000000 done, at loc. pair (13393, 19634)
+         198000000 done, at loc. pair (11976, 25619)
+         199000000 done, at loc. pair (21186, 16296)
+         200000000 done, at loc. pair (13625, 23028)
+         201000000 done, at loc. pair (21993, 5989)
+         202000000 done, at loc. pair (24313, 5216)
+         203000000 done, at loc. pair (14934, 28372)
+         204000000 done, at loc. pair (18415, 15029)
+         205000000 done, at loc. pair (1545, 9123)
+         206000000 done, at loc. pair (20280, 26408)
+         207000000 done, at loc. pair (6659, 16858)
+         208000000 done, at loc. pair (10906, 12384)
+         209000000 done, at loc. pair (15215, 22107)
+         210000000 done, at loc. pair (7873, 13790)
+         211000000 done, at loc. pair (8186, 7577)
+         212000000 done, at loc. pair (20282, 2047)
+         213000000 done, at loc. pair (20278, 27088)
+         214000000 done, at loc. pair (25275, 29291)
+         215000000 done, at loc. pair (3942, 16469)
+         216000000 done, at loc. pair (3947, 28165)
+         217000000 done, at loc. pair (21718, 19558)
+         218000000 done, at loc. pair (1417, 5941)
+         219000000 done, at loc. pair (1440, 16479)
+         220000000 done, at loc. pair (13077, 17142)
+         221000000 done, at loc. pair (20762, 27577)
+         222000000 done, at loc. pair (28724, 22515)
+         223000000 done, at loc. pair (20936, 26029)
+         224000000 done, at loc. pair (7597, 22210)
+         225000000 done, at loc. pair (18934, 16744)
+         226000000 done, at loc. pair (17428, 13538)
+         227000000 done, at loc. pair (25737, 7344)
+         228000000 done, at loc. pair (8956, 1931)
+         229000000 done, at loc. pair (16221, 24296)
+         230000000 done, at loc. pair (18598, 9242)
+         231000000 done, at loc. pair (5332, 12568)
+         232000000 done, at loc. pair (18811, 5465)
+         233000000 done, at loc. pair (1629, 10975)
+         234000000 done, at loc. pair (1646, 26828)
+         235000000 done, at loc. pair (22529, 3563)
+         236000000 done, at loc. pair (16128, 8348)
+         237000000 done, at loc. pair (10235, 18966)
+         238000000 done, at loc. pair (10975, 27642)
+         239000000 done, at loc. pair (16747, 13075)
+         240000000 done, at loc. pair (1688, 7482)
+         241000000 done, at loc. pair (17297, 26778)
+         242000000 done, at loc. pair (19477, 6506)
+         243000000 done, at loc. pair (22355, 27269)
+         244000000 done, at loc. pair (25710, 25714)
+         245000000 done, at loc. pair (21786, 10328)
+         246000000 done, at loc. pair (15943, 14105)
+         247000000 done, at loc. pair (1810, 10530)
+         248000000 done, at loc. pair (1854, 6332)
+         249000000 done, at loc. pair (18828, 14669)
+         250000000 done, at loc. pair (9800, 17501)
+         251000000 done, at loc. pair (21436, 12979)
+         252000000 done, at loc. pair (14522, 14330)
+         253000000 done, at loc. pair (12408, 9202)
+         254000000 done, at loc. pair (17169, 22106)
+         255000000 done, at loc. pair (17213, 26790)
+         256000000 done, at loc. pair (24061, 25421)
+         257000000 done, at loc. pair (8236, 20250)
+         258000000 done, at loc. pair (9395, 7206)
+         259000000 done, at loc. pair (13545, 29193)
+         260000000 done, at loc. pair (5488, 23735)
+         261000000 done, at loc. pair (16950, 21573)
+         262000000 done, at loc. pair (15295, 20867)
+         263000000 done, at loc. pair (3644, 29120)
+         264000000 done, at loc. pair (23229, 26347)
+         265000000 done, at loc. pair (18090, 10685)
+         266000000 done, at loc. pair (23490, 8509)
+         267000000 done, at loc. pair (11069, 9414)
+         268000000 done, at loc. pair (23176, 27295)
+         269000000 done, at loc. pair (27856, 22076)
+         270000000 done, at loc. pair (20528, 9819)
+         271000000 done, at loc. pair (11283, 21838)
+         272000000 done, at loc. pair (25462, 21551)
+         273000000 done, at loc. pair (26586, 13487)
+         274000000 done, at loc. pair (28051, 28336)
+         275000000 done, at loc. pair (6820, 10147)
+         276000000 done, at loc. pair (5325, 28035)
+         277000000 done, at loc. pair (18008, 9709)
+         278000000 done, at loc. pair (22874, 2279)
+         279000000 done, at loc. pair (22981, 27406)
+         280000000 done, at loc. pair (21601, 26820)
+         281000000 done, at loc. pair (25099, 8362)
+         282000000 done, at loc. pair (9598, 25440)
+         283000000 done, at loc. pair (24582, 26861)
+         284000000 done, at loc. pair (5319, 24028)
+         285000000 done, at loc. pair (20718, 6951)
+         286000000 done, at loc. pair (19982, 7733)
+         287000000 done, at loc. pair (9531, 4584)
+         288000000 done, at loc. pair (14587, 9764)
+         289000000 done, at loc. pair (16481, 26513)
+         290000000 done, at loc. pair (17151, 3885)
+         291000000 done, at loc. pair (2389, 15333)
+         292000000 done, at loc. pair (17227, 6582)
+         293000000 done, at loc. pair (6713, 27409)
+         294000000 done, at loc. pair (18165, 3087)
+         295000000 done, at loc. pair (18981, 27814)
+         296000000 done, at loc. pair (24162, 28275)
+         297000000 done, at loc. pair (23538, 22359)
+         298000000 done, at loc. pair (2497, 14235)
+         299000000 done, at loc. pair (3142, 23674)
+         300000000 done, at loc. pair (21423, 26691)
+         301000000 done, at loc. pair (22072, 8053)
+         302000000 done, at loc. pair (2620, 18106)
+         303000000 done, at loc. pair (23340, 28353)
+         304000000 done, at loc. pair (5499, 6615)
+         305000000 done, at loc. pair (24212, 14824)
+         306000000 done, at loc. pair (24193, 20957)
+         307000000 done, at loc. pair (11169, 22720)
+         308000000 done, at loc. pair (20894, 29309)
+         309000000 done, at loc. pair (26118, 25957)
+         310000000 done, at loc. pair (22744, 21464)
+         311000000 done, at loc. pair (22711, 7747)
+         312000000 done, at loc. pair (29878, 24359)
+         313000000 done, at loc. pair (29886, 21492)
+         314000000 done, at loc. pair (26139, 18575)
+         315000000 done, at loc. pair (14283, 11341)
+         316000000 done, at loc. pair (20389, 15185)
+         317000000 done, at loc. pair (17925, 4680)
+         318000000 done, at loc. pair (12905, 4504)
+         319000000 done, at loc. pair (8393, 14551)
+         320000000 done, at loc. pair (9629, 29375)
+         321000000 done, at loc. pair (7572, 14966)
+         322000000 done, at loc. pair (4068, 25815)
+         323000000 done, at loc. pair (4832, 15935)
+         324000000 done, at loc. pair (17651, 20249)
+         325000000 done, at loc. pair (23803, 28166)
+         326000000 done, at loc. pair (14422, 8781)
+         327000000 done, at loc. pair (4403, 3546)
+         328000000 done, at loc. pair (13948, 11958)
+         329000000 done, at loc. pair (23343, 15987)
+         330000000 done, at loc. pair (22313, 28628)
+         331000000 done, at loc. pair (16498, 6591)
+         332000000 done, at loc. pair (3520, 15834)
+         333000000 done, at loc. pair (5806, 21930)
+         334000000 done, at loc. pair (21956, 20888)
+         335000000 done, at loc. pair (16689, 29734)
+         336000000 done, at loc. pair (19517, 28954)
+         337000000 done, at loc. pair (23896, 26835)
+         338000000 done, at loc. pair (27063, 28718)
+         339000000 done, at loc. pair (14390, 20216)
+         340000000 done, at loc. pair (15199, 23381)
+         341000000 done, at loc. pair (12786, 14946)
+         342000000 done, at loc. pair (29722, 29087)
+         343000000 done, at loc. pair (15967, 25831)
+         344000000 done, at loc. pair (11451, 29155)
+         345000000 done, at loc. pair (27877, 24341)
+         346000000 done, at loc. pair (9483, 29399)
+         347000000 done, at loc. pair (14623, 22655)
+         348000000 done, at loc. pair (22235, 26969)
+         349000000 done, at loc. pair (5057, 28674)
+         350000000 done, at loc. pair (28580, 27547)
+         351000000 done, at loc. pair (20884, 28916)
+         352000000 done, at loc. pair (19373, 18551)
+         353000000 done, at loc. pair (20193, 23675)
+         354000000 done, at loc. pair (6068, 29620)
+         355000000 done, at loc. pair (21154, 18950)
+         356000000 done, at loc. pair (24411, 19451)
+         357000000 done, at loc. pair (28858, 14093)
+         358000000 done, at loc. pair (9133, 24446)
+     Actual number of r^2-values evaluated = 358868910
+     Initial estimate of Ne:     149946.1
+     Final estimate of Ne:       149949.8
+     Parameter CI:         78333.2       1754478.1
+     Jackknife CI:           437.9        infinite
+
+Population     4 [ROT_46]
+-> Total samples = 20, with data missing
+   * For lowest freq:    0+
+     Calculating r^2:
+       Loci are paired across chromosomes
+           1000000 done, at loc. pair (18432, 6558)
+           2000000 done, at loc. pair (16225, 20651)
+           3000000 done, at loc. pair (405, 12832)
+           4000000 done, at loc. pair (11172, 23422)
+           5000000 done, at loc. pair (2022, 5520)
+           6000000 done, at loc. pair (15000, 15735)
+           7000000 done, at loc. pair (17580, 11391)
+           8000000 done, at loc. pair (21260, 22082)
+           9000000 done, at loc. pair (7842, 8580)
+          10000000 done, at loc. pair (16973, 4645)
+          11000000 done, at loc. pair (8737, 1108)
+          12000000 done, at loc. pair (1493, 366)
+          13000000 done, at loc. pair (9956, 28451)
+          14000000 done, at loc. pair (6405, 9887)
+          15000000 done, at loc. pair (953, 8803)
+          16000000 done, at loc. pair (11326, 10784)
+          17000000 done, at loc. pair (14003, 3470)
+          18000000 done, at loc. pair (25149, 14745)
+          19000000 done, at loc. pair (15105, 11540)
+          20000000 done, at loc. pair (297, 22372)
+          21000000 done, at loc. pair (11972, 27535)
+          22000000 done, at loc. pair (7404, 27241)
+          23000000 done, at loc. pair (13318, 24480)
+          24000000 done, at loc. pair (25940, 23679)
+          25000000 done, at loc. pair (11358, 27074)
+          26000000 done, at loc. pair (11242, 8869)
+          27000000 done, at loc. pair (5767, 15678)
+          28000000 done, at loc. pair (19529, 11919)
+          29000000 done, at loc. pair (22438, 16026)
+          30000000 done, at loc. pair (24242, 16860)
+          31000000 done, at loc. pair (23081, 4663)
+          32000000 done, at loc. pair (3558, 2762)
+          33000000 done, at loc. pair (3900, 26045)
+          34000000 done, at loc. pair (3533, 25880)
+          35000000 done, at loc. pair (5720, 21696)
+          36000000 done, at loc. pair (20359, 23003)
+          37000000 done, at loc. pair (5297, 2665)
+          38000000 done, at loc. pair (684, 20673)
+          39000000 done, at loc. pair (5537, 2868)
+          40000000 done, at loc. pair (20979, 17266)
+          41000000 done, at loc. pair (19944, 19439)
+          42000000 done, at loc. pair (27118, 4947)
+          43000000 done, at loc. pair (7995, 18021)
+          44000000 done, at loc. pair (8489, 27513)
+          45000000 done, at loc. pair (15547, 7449)
+          46000000 done, at loc. pair (8275, 5366)
+          47000000 done, at loc. pair (27601, 25804)
+          48000000 done, at loc. pair (2885, 10447)
+          49000000 done, at loc. pair (1000, 29065)
+          50000000 done, at loc. pair (7263, 4228)
+          51000000 done, at loc. pair (16879, 5375)
+          52000000 done, at loc. pair (2170, 2821)
+          53000000 done, at loc. pair (16039, 10802)
+          54000000 done, at loc. pair (21421, 29464)
+          55000000 done, at loc. pair (10816, 1446)
+          56000000 done, at loc. pair (14176, 16822)
+          57000000 done, at loc. pair (23724, 15699)
+          58000000 done, at loc. pair (7722, 23389)
+          59000000 done, at loc. pair (5244, 10693)
+          60000000 done, at loc. pair (21769, 26611)
+          61000000 done, at loc. pair (13623, 15619)
+          62000000 done, at loc. pair (19146, 22465)
+          63000000 done, at loc. pair (3905, 17861)
+          64000000 done, at loc. pair (10783, 18090)
+          65000000 done, at loc. pair (26458, 24975)
+          66000000 done, at loc. pair (1417, 14075)
+          67000000 done, at loc. pair (5685, 5150)
+          68000000 done, at loc. pair (17180, 19931)
+          69000000 done, at loc. pair (8908, 12056)
+          70000000 done, at loc. pair (19325, 16451)
+          71000000 done, at loc. pair (12281, 10603)
+          72000000 done, at loc. pair (21127, 14308)
+          73000000 done, at loc. pair (4421, 17615)
+          74000000 done, at loc. pair (16861, 13186)
+          75000000 done, at loc. pair (12723, 26553)
+          76000000 done, at loc. pair (3406, 24170)
+          77000000 done, at loc. pair (18734, 23046)
+          78000000 done, at loc. pair (1907, 4130)
+          79000000 done, at loc. pair (17087, 16506)
+          80000000 done, at loc. pair (3247, 27331)
+          81000000 done, at loc. pair (10090, 15016)
+          82000000 done, at loc. pair (20001, 6436)
+          83000000 done, at loc. pair (2028, 29562)
+          84000000 done, at loc. pair (22366, 27065)
+          85000000 done, at loc. pair (2367, 15941)
+          86000000 done, at loc. pair (18673, 14739)
+          87000000 done, at loc. pair (9531, 27926)
+          88000000 done, at loc. pair (6691, 3576)
+          89000000 done, at loc. pair (17230, 26328)
+          90000000 done, at loc. pair (3873, 29413)
+          91000000 done, at loc. pair (21847, 26996)
+          92000000 done, at loc. pair (16475, 23480)
+          93000000 done, at loc. pair (5823, 28142)
+          94000000 done, at loc. pair (26165, 17406)
+          95000000 done, at loc. pair (29863, 26951)
+          96000000 done, at loc. pair (3044, 18788)
+          97000000 done, at loc. pair (12617, 16510)
+          98000000 done, at loc. pair (20537, 25377)
+          99000000 done, at loc. pair (17300, 28656)
+         100000000 done, at loc. pair (22628, 27718)
+         101000000 done, at loc. pair (13201, 8893)
+         102000000 done, at loc. pair (15672, 24299)
+         103000000 done, at loc. pair (12914, 5837)
+         104000000 done, at loc. pair (29045, 11931)
+         105000000 done, at loc. pair (6230, 12830)
+         106000000 done, at loc. pair (9913, 17618)
+         107000000 done, at loc. pair (7711, 18070)
+         108000000 done, at loc. pair (29475, 12213)
+         109000000 done, at loc. pair (28460, 29317)
+     Actual number of r^2-values evaluated = 109132617
+     Initial estimate of Ne:       2189.5
+     Final estimate of Ne:         2194.5
+     Parameter CI:          1886.0          2623.2
+     Jackknife CI:            22.6        infinite
+PCA.
+Formatting data...
+SFS.
+SFS completed with 32101.2 segrgating sites.
+Citations for methods used thus far: 
+==============================================
+Statistic:  SFS 
+Citation:  Gutenkunst RN, Hernandez RD, Williamson SH, Bustamante CD (2009).“Inferring the {Joint} {Demographic} {History} of {Multiple}{Populations} from {Multidimensional} {SNP} {Frequency} {Data}.” _PLOSGenetics_, *5*(10), 1-11. doi:10.1371/journal.pgen.1000695<https://doi.org/10.1371/journal.pgen.1000695>, Publisher: PublicLibrary of Science, <https://doi.org/10.1371/journal.pgen.1000695>. 
+Bibtex key:  Gutenkunst2009 
+Details:  Used to project and possibly fold SFS data. Code is a direct R re-implementation. 
+==============================================
+
+SFS completed with 54653.71 segrgating sites.
+Citations for methods used thus far: 
+==============================================
+Statistic:  SFS 
+Citation:  Gutenkunst RN, Hernandez RD, Williamson SH, Bustamante CD (2009).“Inferring the {Joint} {Demographic} {History} of {Multiple}{Populations} from {Multidimensional} {SNP} {Frequency} {Data}.” _PLOSGenetics_, *5*(10), 1-11. doi:10.1371/journal.pgen.1000695<https://doi.org/10.1371/journal.pgen.1000695>, Publisher: PublicLibrary of Science, <https://doi.org/10.1371/journal.pgen.1000695>. 
+Bibtex key:  Gutenkunst2009 
+Details:  Used to project and possibly fold SFS data. Code is a direct R re-implementation. 
+==============================================
+
+SFS completed with 72335.84 segrgating sites.
+Citations for methods used thus far: 
+==============================================
+Statistic:  SFS 
+Citation:  Gutenkunst RN, Hernandez RD, Williamson SH, Bustamante CD (2009).“Inferring the {Joint} {Demographic} {History} of {Multiple}{Populations} from {Multidimensional} {SNP} {Frequency} {Data}.” _PLOSGenetics_, *5*(10), 1-11. doi:10.1371/journal.pgen.1000695<https://doi.org/10.1371/journal.pgen.1000695>, Publisher: PublicLibrary of Science, <https://doi.org/10.1371/journal.pgen.1000695>. 
+Bibtex key:  Gutenkunst2009 
+Details:  Used to project and possibly fold SFS data. Code is a direct R re-implementation. 
+==============================================
+
+SFS completed with 37557.4 segrgating sites.
+Citations for methods used thus far: 
+==============================================
+Statistic:  SFS 
+Citation:  Gutenkunst RN, Hernandez RD, Williamson SH, Bustamante CD (2009).“Inferring the {Joint} {Demographic} {History} of {Multiple}{Populations} from {Multidimensional} {SNP} {Frequency} {Data}.” _PLOSGenetics_, *5*(10), 1-11. doi:10.1371/journal.pgen.1000695<https://doi.org/10.1371/journal.pgen.1000695>, Publisher: PublicLibrary of Science, <https://doi.org/10.1371/journal.pgen.1000695>. 
+Bibtex key:  Gutenkunst2009 
+Details:  Used to project and possibly fold SFS data. Code is a direct R re-implementation. 
+==============================================
+
+Done. Returning.
+Warning messages:
+1: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+2: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+3: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+4: In calc_ne(sub.f, analysis_facet, chr = chr, pcrit = 0, NeEstimator_path = "/home/hemstrow/bin/Ne2-1L") :
+  Large numbers of loci don't usually improve Ne estimates by a substantial margin and can massively increase run times and memory requirements. Loci counts of ~3,000 are usually sufficient to generate accurate Ne esitmates, but estimates are improved substantially by selecting loci with little missing data. See https://doi.org/10.1002/ece3.6016
+
+5: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+6: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+
+7: In validityMethod(object) :
+  Some sample metadata columns contain unacceptable special characters. Unaccepted characters: '.', '~', or any whitespace.
+These can cause unexpected behaviour if the subect columns are used as facets.
+

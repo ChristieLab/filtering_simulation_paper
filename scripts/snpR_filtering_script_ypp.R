@@ -19,7 +19,7 @@ lseq <- function(from, to, length.out ) exp(seq(log(from), log(to), length.out =
 mafs <- seq(0, .1, by = .01)
 macs <- c(1, 3, 5)
 hwes <- lseq(1e-6, .05, 10)
-hwe_facet <- "pop"
+hwe_facet <- ".base"
 stable_hwe <- 1e-6
 stable_maf <- 0
 stable_mac <- 1
@@ -175,7 +175,7 @@ if(i > length(mafs) & i <= length(mafs) + length(macs)){
 }
 
 if(i > length(mafs) + length(macs)){
-  j <- i - length(mafs) + length(macs)
+  j <- i - (length(mafs) + length(macs))
   results <- flt_func(d, maf = stable_maf, mac = stable_mac, analysis_facet, filter_facet, hwes[j], 
                       hwe_facet, chr, subset_seed, step, sigma, par = par, tdir = tdir)
 }
