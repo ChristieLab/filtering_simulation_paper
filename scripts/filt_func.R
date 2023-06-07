@@ -30,8 +30,8 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     f <- calc_pairwise_fst(f, analysis_facet)
     f <- calc_tajimas_d(f, paste0(analysis_facet, ".", chr), sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
     set.seed(subset_seed)
-    if(nrow(f) > 10000){
-      ld <- calc_pairwise_ld(f, analysis_facet, ss = 10000, par = par, verbose = TRUE)
+    if(nrow(f) > 1000){
+      ld <- calc_pairwise_ld(f, analysis_facet, ss = 1000, par = par, verbose = TRUE)
     }
     else{
       ld <- calc_pairwise_ld(f, analysis_facet, par = par, verbose = TRUE)
@@ -41,8 +41,8 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
   else{
     f <- calc_tajimas_d(f, chr, sigma, step, triple_sigma = FALSE, par = par, verbose = TRUE)
     set.seed(subset_seed)
-    if(nrow(f) > 10000){
-      ld <- calc_pairwise_ld(f, ss = 10000, par = par, verbose = TRUE)
+    if(nrow(f) > 1000){
+      ld <- calc_pairwise_ld(f, ss = 1000, par = par, verbose = TRUE)
     }
     else{
       ld <- calc_pairwise_ld(f, par = par, verbose = TRUE)
@@ -82,8 +82,14 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     for(i in 1:length(options)){
       keep.samps <- which(sample.meta(f)[[analysis_facet]] == options[i])
       tf <- f[,keep.samps]
-      sfs[[i]] <- calc_sfs(tf, projection = nsamps(tf), fold = TRUE)
-      sfs[[i]] <- data.frame(mac = 1:length(sfs[[i]]), count = sfs[[i]], maf = maf, mac = mac)
+      tf <- filter_snps(f, non_poly = TRUE)
+      if(nrow(tf) > 5 & ncol(tf) > 100){
+        sfs[[i]] <- calc_sfs(tf, projection = nsamps(tf), fold = TRUE)
+        sfs[[i]] <- data.frame(mac = 1:length(sfs[[i]]), count = sfs[[i]], maf = maf, mac = mac)
+      }
+      else{
+        sfs[i] <- list(NULL)
+      }
     }
     
     sfs <- data.table::rbindlist(sfs, idcol = "pop")
@@ -109,7 +115,7 @@ flt_func <- function(d, maf = FALSE, mac = 0, analysis_facet, filter_facet = NUL
     ld$mac <- mac
   }
   else{
-    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis", "fst"))$weighted.means
+    r1 <- get.snpR.stats(f, analysis_facet, c("pi", "ho", "fis"))$weighted.means
     r2 <- get.snpR.stats(f, chr, "tajimas_d")$weighted.means[
       which(get.snpR.stats(f, chr, "tajimas_d")$weighted.means$snp.subfacet == ".OVERALL_MEAN"),
     ]

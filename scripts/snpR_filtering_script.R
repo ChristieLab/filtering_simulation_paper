@@ -1,5 +1,5 @@
 # run this also for the perfect data for the proposal
-library(snpR); library(ggplot2); source("filt_func.R")
+library(snpR); library(ggplot2); source("/home/hemstrow/filtering_simulation_paper/scripts/filt_func.R")
 
 args <- commandArgs(TRUE)
 i <- as.numeric(args[1])
@@ -9,7 +9,7 @@ outfile <- as.character(args[4])
 ne_estimator_path <- as.character(args[5])
 
 d <- readRDS("../data/monarch_nomaf.RDS")
-d <- d[pop = c("NAM", "HAW", "GUA", "ROT")]
+d <- d[pop = c("NAM", "HAW", "GUA", "ROT", "SAM", "NOR")]
 
 # read in the parameter file:
 ## 1: filter facet
@@ -32,14 +32,9 @@ analysis_facet <-  as.character(parmfile[2])
 chr <-  as.character(parmfile[3])
 subset_seed <- as.numeric(parmfile[10])
 
-ufs <- unique(c(filter_facet, analysis_facet, hwe_facet))
-if(length(grep("\\.base", ufs)) > 0){
-  ufs <- ufs[-grep("\\.base", ufs)]
-}
-
 par <- parmfile[11]
 
-results <- filt_func(d = d,
+results <- flt_func(d = d,
                      maf = as.numeric(parmfile[4]),
                      mac = as.numeric(parmfile[5]),
                      analysis_facet = analysis_facet,
