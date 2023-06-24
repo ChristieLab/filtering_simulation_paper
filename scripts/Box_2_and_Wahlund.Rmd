@@ -15,7 +15,7 @@ library(data.table); library(ggplot2); library(mgcv); library(tidygam); library(
 To generate the results processed here, run:
 1. `make_parmfile.R`: This will prepare parameter files with the filters. If you wish to change parameters, do so here, then make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in the following three scripts.
 2. `run_filtering_script.sh`, `run_filtering_script_ypp.sh`, and `run_filtering_script_LCT.sh`: This will run the filtering pipeline with the monarch, perch, and cutthroat data, respectively. If you changed the parameter files, make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in each script.
-3. `structure_for_box_2.R`: Will run STRUCTURE on the monarch data for $k = 3$ with MAC filters of 2-11. Note it does so on a subset of 3819 SNPs to be equivalent to [Linck and Battey 2019](https://doi.org/10.1111/1755-0998.12995).
+3. `structure_for_box_2.R`: Will run STRUCTURE on the monarch data for $k = 3$ with MAC filters of 0-11. Note it does so on a subset of 3819 SNPs to be equivalent to [Linck and Battey 2019](https://doi.org/10.1111/1755-0998.12995).
 
 These scripts are seperate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization. Note that each `.sh` script runs a corresponding `.R` file that are very similar but set up slightly differently to process the different datasets.
 
