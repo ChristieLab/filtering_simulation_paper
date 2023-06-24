@@ -271,3 +271,7 @@ ggsave("data/processed/whalund_plot.pdf", wp, "pdf", width = 15, height = 11)
 ```
 
 
+# Data sources:
+Monarchs: [Hemstrom et al. 2022](https://doi.org/10.1111/mec.16592)
+Cutthroat: [Hemstrom et al. 2022](https://doi.org/10.1111/eva.13473)
+Yellow Perch: Euclide et al. 2022 *in review*
