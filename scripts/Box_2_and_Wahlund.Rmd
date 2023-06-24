@@ -1,0 +1,273 @@
+---
+title: "Box 2 and Wahlund from Box 1"
+output: html_document
+date: "2023-06-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table); library(ggplot2); library(mgcv); library(tidygam); library(gridExtra)
+
+```
+
+# Run the simulations
+
+To generate the results processed here, run:
+1. `make_parmfile.R`: This will prepare parameter files with the filters. If you wish to change parameters, do so here, then make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in the following three scripts.
+2. `run_filtering_script.sh`, `run_filtering_script_ypp.sh`, and `run_filtering_script_LCT.sh`: This will run the filtering pipeline with the monarch, perch, and cutthroat data, respectively. If you changed the parameter files, make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in each script.
+3. `structure_for_box_2.R`: Will run STRUCTURE on the monarch data for $k = 3$ with MAC filters of 2-11. Note it does so on a subset of 3819 SNPs to be equivalent to [Linik and Battey 2019](https://doi.org/10.1111/1755-0998.12995).
+
+These scripts are seperate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization. Note that each `.sh` script runs a corresponding `.R` file that are very similar but set up slightly differently to process the different datasets.
+
+# Process the simulations
+
+This will run the R code. This can be time and memory intensive, but saves the proccessed results once finished and so doesn't need to be run multiple times. It is therefore taged with `include=FALSE` to avoid running it unless needed.
+
+```{r,include=F}
+
+fl <- list.files("results/", "\\.RDS", full.names = TRUE)
+r <- vector("list", length(fl))
+
+bind_parms <- function(y, parms, i){
+  y$maf <- parms[1,4]
+  y$mac <- ifelse(parms[1,5] == 0, FALSE, parms[1,5])
+  y$hwe <- parms[1,6]
+  y$miss <- parms[1,8]
+  y$i <- i
+  return(y)
+}
+
+for(i in 1:length(fl)){
+  print(i)
+  
+  y <- readRDS(fl[i])
+  
+  uf <- unique(y$res$ld$sample.subfacet)
+  nd <- vector("list", length(uf))
+  for(j in 1:length(uf)){
+    if(nrow(y$res$ld[y$res$ld$sample.subfacet == uf[j],]) > 2){
+      try(ldm <- gam(formula = CLD ~ s(proximity, bs = "cs"), data = y$res$ld[y$res$ld$sample.subfacet == uf[j],]), silent = TRUE)
+      try(nd[[j]] <- tidygam::predict_gam(ldm, 100), silent = TRUE)
+      nd[[j]]$sample.subfacet <- uf[j]
+    }
+  }
+  nd <- rbindlist(nd)
+  
+  r[[i]]$ld <- bind_parms(nd, y$parms, i)
+  r[[i]]$stats <- bind_parms(y$res$stats, y$parms, i)
+  y$res$sfs$mac.1 <- NULL
+  colnames(y$res$sfs)[which(colnames(y$res$sfs) == "mac")] <- "min_allele_count"
+  r[[i]]$sfs <- bind_parms(y$res$sfs, y$parms, i)
+  if(!is.null(y$res$pca)){
+    r[[i]]$pca <- bind_parms(as.data.frame(y$res$pca$data[,1:5]), y$parms, i)
+  }
+  
+  names(r)[i] <- fl[i]
+  gc();gc()
+}
+
+saveRDS(r, "data/processed/filt_results.RDS")
+```
+
+# Clean the results for plotting
+This code will transform the data for ease of plotting. We also ran PCAs, SFSs, and LD distributions (and HWE p-value as a filtering parameter), but decided not to include them for space reasons. Processing them is commented out below.
+```{r}
+# read back in, map, and bind.
+r <- readRDS("data/processed/filt_results.RDS")
+stats <- purrr::map(r, "stats")
+# pca <- purrr::map(r, "pca")
+# sfs <- purrr::map(r, "sfs")
+# ld <- purrr::map(r, "ld")
+
+stats <- data.table::rbindlist(stats)
+# pca <- data.table::rbindlist(pca, fill = TRUE)
+# sfs <- data.table::rbindlist(sfs, fill = TRUE)
+# ld <- data.table::rbindlist(ld)
+
+# clean up and note dataset
+stats$variable <- gsub("weighted_mean_", "", stats$variable)
+
+multigrepl <- function(pattern, x){
+  return(Reduce(f = "|", lapply(c(pattern), function(y) grepl(y, x))))
+}
+
+stats$dataset <- ifelse(multigrepl(c("IMC", "GBT", "NUB"), stats$subfacet), "Yellow Perch", 
+                        ifelse(multigrepl(c("WAL", "QUI", "ROC"), stats$subfacet),
+                               "Cutthroat",
+                               "Monarchs"))
+
+# get the number of seg sites, since we didn't run that directly (but did get prop poly and total N snps)
+num_seg <- stats[stats$variable == "prop_poly",]
+num_seg <- merge(num_seg, unique(stats[stats$variable == "nsnps",c("value", "i")]),
+                 by = "i")
+num_seg[, value := value.x * value.y]
+num_seg[,variable := "num_seg"]
+num_seg <- num_seg[,c("facet", "subfacet", "variable", "value", "maf", "mac", "hwe", "miss", "i", "dataset")]
+
+stats <- stats[-which(stats$variable == "num_seg"),]
+stats <- rbind(stats, num_seg)
+stats <- stats[-which(stats$variable == "prop_poly"),]
+
+# turn num_seg into a proportion of the max across all filtering sets for ease of comparison
+stats$mnseg <- 0
+stats[,mnseg := max(as.numeric(value), na.rm = TRUE), by = .(dataset, subfacet, variable)]
+stats$mnseg[stats$variable != "num_seg"] <- NA
+stats$value[stats$variable == "num_seg"] <- stats$value[stats$variable == "num_seg"]/stats$mnseg[stats$variable == "num_seg"]
+stats$mnseg <- NULL
+
+# make pretty, parseable variable names for the plots
+var_tab <- data.frame(ref = unique(stats$variable),
+                      var_p = c("pi", "H[O]", "F[IS]", "F[ST]", "Tajima*'\\''*'s'*' D'", "Tajima*'\\''*'s'*' 'theta",
+                                "Watterson*'\\''*'s'*' 'theta", "N[e]", "N[snp]", "P[seg]"))
+
+stats$variable <- var_tab$var_p[match(stats$variable, var_tab$ref)]
+
+# specify the stats we want to show
+plot_stats <- c("Tajima*'\\''*'s'*' D'", "H[O]", "P[seg]", "F[ST]")
+
+```
+
+# Plot the simulation results
+
+This will generate plots for all of our variables and arrange them, including pulling in the structure data. The final plot is saved to:
+`data/processed/box2.pdf`, [here](data/processed/box2.pdf).
+
+```{r}
+pa <- ggplot(stats[stats$mac == FALSE  & stats$variable %in% plot_stats &
+                     stats$hwe == 1e-6 & stats$miss == .5,], 
+             aes(x = maf, y = value, color = dataset, group = subfacet)) +
+  geom_line(size = 1) +
+  geom_point(size = 3) +
+  facet_wrap(~variable, scales = "free_y", strip.position = "left", labeller = label_parsed, ncol = 1) +
+  theme_bw() +
+  khroma::scale_color_highcontrast() +
+  theme(axis.title.y = element_blank(),
+        strip.background = element_blank(), 
+        strip.placement = "outside",
+        strip.text = element_text(size = 18),
+        axis.title.x = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 18)) +
+  xlab("MAF filter")
+
+# miss
+pb <- ggplot(stats[stats$mac == 1 & stats$variable %in% plot_stats &
+               stats$hwe == 1e-6,], 
+       aes(x = (1-miss)*100, y = value, color = dataset, group = subfacet)) +
+  geom_line(size = 1) +
+  geom_point(size = 3) +
+  facet_wrap(~variable, scales = "free_y", strip.position = "left", labeller = label_parsed, ncol = 1) +
+  scale_x_reverse() +
+  theme_bw() +
+  khroma::scale_color_highcontrast() +
+  theme(axis.title.y = element_blank(),
+        strip.background = element_blank(), 
+        strip.placement = "outside",
+        strip.text = element_text(size = 18),
+        axis.title.x = element_text(size = 18),
+        axis.text = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 18)) +
+  xlab("% Missing Data")
+
+
+
+
+
+pl1 <- ggpubr::get_legend(pa)
+
+
+str <- readRDS("data/processed/monarch_structure/plot.RDS")
+
+# plot everything
+g1 <- arrangeGrob(pa + guides(color = "none") + ggtitle("A") + 
+                    theme(plot.title = element_text(size = 18, hjust = -.16)), 
+                  pb + guides(color = "none") + ggtitle("B")+ 
+                    theme(plot.title = element_text(size = 18, hjust = -.16)),
+                  pl1, 
+                  layout_matrix = matrix(c(1,2,3), nrow = 1), 
+                  widths = c(1, 1, .3))
+
+gb <- arrangeGrob(g1, str$p + guides(color = "none", fill = "none") +
+                    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+                          strip.text = element_text(angle = 0),
+                          plot.title = element_text(size = 18, hjust = -.02)) +
+                    ylab("Cluster")  +
+                    ggtitle("C"),
+                  heights = c(1, .6))
+
+ggsave("data/processed/box2.pdf", gb, "pdf", height = 11, width = 15)
+```
+
+# Plot the Wahlund effect data for box 1
+
+We'll also prepare the Wahlund effect demo for box 1 here, also with the monarch data. First, pull in the data, calculate $F_{IS}$ and a $p$-value for HWE both globally and within groups, and clean:
+```{r}
+# pull in and calculate stats
+alpha <- .35
+mon <- readRDS("data/monarch_nomaf.RDS")
+mon <- mon[pop = c("GUA", "ROT")]
+mon <- filter_snps(mon, non_poly = TRUE)
+
+mon <- calc_fis(mon)
+mon <- calc_fis(mon, "pop")
+mon <- calc_pairwise_fst(mon, "pop")
+mon <- calc_hwe(mon)
+mon <- calc_hwe(mon, "pop")
+
+# fetch and clean, merging the global and within-group statistics
+rp <- get.snpR.stats(mon, "pop", c("fst"))
+rs <- get.snpR.stats(mon, stats = c("ho", "he", "fis", "hwe"))
+
+pd <- merge(rp$pairwise, rs$single, by = c("group", "position"))
+pd$fst[pd$fst < 0] <- 0
+
+rsp <- get.snpR.stats(mon, "pop", c("fis", "hwe"))$single
+rsp <- merge(rsp[which(rsp$subfacet == "GUA"),], rsp[which(rsp$subfacet == "ROT"),], by = c("group", "position"), 
+             suffixes = c("_GUA", "_ROT"))
+rsp <- as.data.table(rsp)
+rsp[,mfis := rowMeans(cbind(fis_GUA, fis_ROT), na.rm = TRUE)]
+rsp[,mHWE := rowMeans(cbind(pHWE_ROT, pHWE_GUA), na.rm = TRUE)]
+
+pd2 <- merge(pd, rsp, by = c("group", "position"))
+pd2 <- as.data.table(pd2)
+
+
+pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT")], id.vars = c("group", "position"))
+pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "Split", "Combined")
+colnames(pd3_1) <- c("group", "position", "variable", "fis", "level")
+pd3_1$variable <- NULL
+
+pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT")], id.vars = c("group", "position"))
+pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "Split", "Combined")
+colnames(pd3_2) <- c("group", "position", "variable", "pHWE", "level")
+pd3_2$variable <- NULL
+
+pd3_3 <- pd2[,c("group", "position", "fst")]
+
+pd3 <- merge(pd3_1, pd3_2, by = c("group", "position", "level"))
+pd3 <- merge(pd3, pd3_3, by = c("group", "position"))
+```
+
+Then, plot the result and save to `data/processed/whalund_plot.pdf`, [here](data/processed/whalund_plot.pdf).
+
+```{r}
+wp <- ggplot(pd3[pd3$pHWE > 0.05,], aes(x = fst, y = fis)) +
+  geom_point(alpha = alpha*2, color = "lightgray") +
+  geom_point(data = pd3[pd3$pHWE <= 0.05,], aes(color = -log10(pHWE)), alpha = alpha) +
+  geom_smooth(data = pd3, color = "red") +
+  khroma::scale_color_batlow(range = c(.2, 1)) +
+  theme_bw() +
+  facet_wrap(~level) +
+  ylab(bquote(F[IS])) +
+  xlab(bquote(F[ST])) +
+  theme(axis.text = element_text(size = 16),
+        axis.title = element_text(size = 18),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 20))
+
+ggsave("data/processed/whalund_plot.pdf", wp, "pdf", width = 15, height = 11)
+```
+
+
