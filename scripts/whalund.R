@@ -79,13 +79,13 @@ pd2[,bad_reject := ((pHWE_ROT >= 1e-6 & pHWE_ROT >= 1e-6) & pHWE <= 1e-6)]
 #         axis.title = element_text(size = 18))
 
 
-pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT")], id.vars = c("group", "position"))
-pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "Split", "Combined")
+pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT", "fis_GUA")], id.vars = c("group", "position"))
+pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "ROT", ifelse(grepl("GUA", pd3_1$variable), "GUA", "Combined"))
 colnames(pd3_1) <- c("group", "position", "variable", "fis", "level")
 pd3_1$variable <- NULL
 
-pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT")], id.vars = c("group", "position"))
-pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "Split", "Combined")
+pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT", "pHWE_GUA")], id.vars = c("group", "position"))
+pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "ROT", ifelse(grepl("GUA", pd3_2$variable), "GUA", "Combined"))
 colnames(pd3_2) <- c("group", "position", "variable", "pHWE", "level")
 pd3_2$variable <- NULL
 
@@ -93,6 +93,35 @@ pd3_3 <- pd2[,c("group", "position", "fst")]
 
 pd3 <- merge(pd3_1, pd3_2, by = c("group", "position", "level"))
 pd3 <- merge(pd3, pd3_3, by = c("group", "position"))
+
+pd3[, fst_rank := rank(fst, ties.method = "last"), by = level]
+pd3[, fis_rank := rank(fis, ties.method = "last"), by = level]
+
+pd3$level <- as.factor(pd3$level)
+
+ldm <- mgcv::gam(formula = fis ~ s(fst, bs = "cs") + 
+                   # s(level, bs = "re", k = 3) +
+                   s(level, fst, bs = "re"),  data = pd3, silent = TRUE)
+nd <- tidygam::predict_gam(ldm, 1000)
+
+pal <- khroma::color("batlow")
+
+ggplot(nd, aes(x = fst, y = fis, color = level)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = level), alpha = .5, color = NA) +
+  scale_color_manual(values = pal(4)[1:3]) +
+  scale_fill_manual(values = pal(4)[1:3]) +
+  theme_bw() +
+  ylab(bquote(F[IS])) +
+  xlab(bquote("Pairwise " ~ F[ST])) +
+  theme(axis.text = element_text(size = 16),
+        axis.title = element_text(size = 18),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 20),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18)) +
+  guides(color = "none", fill = guide_legend(title = "Population"))
+
 
 p <- ggplot(pd3[pd3$pHWE > 0.05,], aes(x = fst, y = fis)) +
   geom_point(alpha = alpha*2, color = "lightgray") +

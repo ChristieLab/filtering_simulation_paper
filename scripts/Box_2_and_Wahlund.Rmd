@@ -73,7 +73,7 @@ saveRDS(r, "data/processed/filt_results.RDS")
 This code will transform the data for ease of plotting. We also ran PCAs, SFSs, and LD distributions (and HWE p-value as a filtering parameter), but decided not to include them for space reasons. Processing them is commented out below.
 ```{r}
 # read back in, map, and bind.
-r <- readRDS("data/processed/filt_results.RDS")
+r <- readRDS("../data/processed/filt_results.RDS")
 stats <- purrr::map(r, "stats")
 # pca <- purrr::map(r, "pca")
 # sfs <- purrr::map(r, "sfs")
@@ -178,15 +178,17 @@ pb <- ggplot(stats[stats$mac == 1 & stats$variable %in% plot_stats &
 pl1 <- ggpubr::get_legend(pa)
 
 
-str <- readRDS("data/processed/monarch_structure/plot.RDS")
+str <- readRDS("../data/processed/monarch_structure/plot.RDS")
 
 # plot everything
 g1 <- arrangeGrob(pa + guides(color = "none") + ggtitle("A") + 
-                    theme(plot.title = element_text(size = 18, hjust = -.16)), 
+                    theme(plot.title = element_text(size = 18, hjust = -.16)
+                          , panel.spacing.y = unit(.7, "lines")), 
                   pb + guides(color = "none") + ggtitle("B")+ 
-                    theme(plot.title = element_text(size = 18, hjust = -.16)),
-                  pl1, 
-                  layout_matrix = matrix(c(1,2,3), nrow = 1), 
+                    theme(plot.title = element_text(size = 18, hjust = -.16), 
+                          panel.spacing.y = unit(.7, "lines")),
+                  pl1,
+                  nrow = 1,
                   widths = c(1, 1, .3))
 
 gb <- arrangeGrob(g1, str$p + guides(color = "none", fill = "none") +
@@ -195,9 +197,9 @@ gb <- arrangeGrob(g1, str$p + guides(color = "none", fill = "none") +
                           plot.title = element_text(size = 18, hjust = -.02)) +
                     ylab("Cluster")  +
                     ggtitle("C"),
-                  heights = c(1, .6))
+                  heights = c(1.5, .3))
 
-ggsave("data/processed/box2.pdf", gb, "pdf", height = 11, width = 15)
+ggsave("../data/processed/box2.jpg", gb, "jpg", height = 20, width = 12, dpi = 1000)
 ```
 
 # Plot the Wahlund effect data for box 1
@@ -234,13 +236,13 @@ pd2 <- merge(pd, rsp, by = c("group", "position"))
 pd2 <- as.data.table(pd2)
 
 
-pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT")], id.vars = c("group", "position"))
-pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "Split", "Combined")
+pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT", "fis_GUA")], id.vars = c("group", "position"))
+pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "ROT", ifelse(grepl("GUA", pd3_1$variable), "GUA", "Combined"))
 colnames(pd3_1) <- c("group", "position", "variable", "fis", "level")
 pd3_1$variable <- NULL
 
-pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT")], id.vars = c("group", "position"))
-pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "Split", "Combined")
+pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT", "pHWE_GUA")], id.vars = c("group", "position"))
+pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "ROT", ifelse(grepl("GUA", pd3_2$variable), "GUA", "Combined"))
 colnames(pd3_2) <- c("group", "position", "variable", "pHWE", "level")
 pd3_2$variable <- NULL
 
@@ -253,21 +255,30 @@ pd3 <- merge(pd3, pd3_3, by = c("group", "position"))
 Then, plot the result and save to `data/processed/whalund_plot.pdf`, [here](data/processed/whalund_plot.pdf).
 
 ```{r}
-wp <- ggplot(pd3[pd3$pHWE > 0.05,], aes(x = fst, y = fis)) +
-  geom_point(alpha = alpha*2, color = "lightgray") +
-  geom_point(data = pd3[pd3$pHWE <= 0.05,], aes(color = -log10(pHWE)), alpha = alpha) +
-  geom_smooth(data = pd3, color = "red") +
-  khroma::scale_color_batlow(range = c(.2, 1)) +
+ldm <- gam(formula = fis ~ s(fst, bs = "cs") + 
+             # s(level, bs = "re", k = 3) +
+             s(level, fst, bs = "re"),  data = pd3, silent = TRUE)
+nd <- predict_gam(ldm, 1000)
+
+pal <- khroma::color("batlow")
+
+wp <- ggplot(nd, aes(x = fst, y = fis, color = level)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = level), alpha = .5, color = NA) +
+  scale_color_manual(values = pal(4)[1:3]) +
+  scale_fill_manual(values = pal(4)[1:3]) +
   theme_bw() +
-  facet_wrap(~level) +
   ylab(bquote(F[IS])) +
-  xlab(bquote(F[ST])) +
+  xlab(bquote("Pairwise " ~ F[ST])) +
   theme(axis.text = element_text(size = 16),
         axis.title = element_text(size = 18),
         strip.background = element_blank(),
-        strip.text = element_text(size = 20))
+        strip.text = element_text(size = 20),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18)) +
+  guides(color = "none", fill = guide_legend(title = "Population"))
 
-ggsave("data/processed/whalund_plot.pdf", wp, "pdf", width = 15, height = 11)
+ggsave("../data/processed/whalund_plot.pdf", wp, "pdf", width = 15, height = 11)
 ```
 
 
