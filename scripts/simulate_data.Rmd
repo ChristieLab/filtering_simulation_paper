@@ -6,8 +6,8 @@ date: "2023-10-17"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(snpR); library(data.table); library(coala); # library(GeneArchEst)
-# remotes::install_github("hemstrow/GeneArchEst")
+library(snpR); library(data.table); library(coala);
+# remotes::install_github("hemstrow/snpR")
 ```
 
 # Define parameters
@@ -31,7 +31,7 @@ nloci <- 10
 do_size_change <- TRUE
 do_selection <- FALSE
 
-output_file_name <- "path/to/output.RDS"
+output_file_name <- "path/to/output" # no file extension
 ```
 
 # Define models
@@ -151,11 +151,14 @@ if(do_selection){
 meta <- rbindlist(meta)
 genos <- rbindlist(genos)
 
-saveRDS(list(genos = genos, meta = meta), output_file_name)
+saveRDS(list(genos = genos, meta = meta), paste0(output_file_name, ".RDS"))
 
+# send to vcf
+srd <- import.snpR.data(genos, sample.meta = data.frame(pop = rep(c("A", "B", "C"), each = 50)),
+                        snp.meta = meta)
 
-# srd <- import.snpR.data(genos, sample.meta = data.frame(pop = rep(c("A", "B", "C"), each = 50)),
-#                         snp.meta = meta)
+format_snps(srd, output = "vcf", outfile = paste0(output_file_name, ".vcf"))
+
 # 
 # plot_clusters(srd, "pop")
 # srd <- calc_tajimas_d(srd, "pop", global = TRUE)
