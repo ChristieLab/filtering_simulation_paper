@@ -1,0 +1,89 @@
+---
+title: "coala_sims"
+output: html_document
+date: "2023-10-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(snpR); library(data.table); library(coala)
+```
+
+# Define parameters
+
+```{r}
+N0 <- 1000 # starting population size (at present)
+mu <- 1e-8 # per-base mutation rate
+len <- 100000 # chromosome length
+r <- 1 # average number of recombination events per chr
+g <- 1 # years per gen
+t1 <- 500 # time of ingroup split
+t2 <- 1000 # time of outgroup split
+tb <- 50 # time of bottleneck/growth for size change models
+m_ni <- 2/N0 # number of migrants per gen, near isolation (Fst ~ .1)
+m_mod <- 15/N0 # number of migrants per gen, moderate gene flow (Fst ~ .02)
+m_high <- 18/N0 # number of migrants per gen, high gene flow (Fst ~ .01)
+bottle_size <- .10 # proportion left after bottleneck
+expansion_size <- 1.9 # proportion increase during growth
+samples <- 50 # sample size
+```
+
+# Define models
+## Basic model
+```{r}
+model_basic <- coal_model(sample_size = c(50, 50, 50), loci_number = 10, ploidy = 2) +
+  feat_mutation(rate = par_expr(4*N0*mu*len)) + # 4*N*mu, where mu is mut. rate per locus
+  feat_recombination(rate = par_expr(4*N0*r)) + # 4*N*r, where r is the probability that a recombination event within the locus occurs in one generation.
+  feat_pop_merge(par_expr(t1/(4*N0*g)), 3, 2) + #pop. 3 merges into pop. 2, 0.5 coal. units in the past
+  feat_pop_merge(par_expr(t2/(4*N0*g)), 2, 1) + #pops. 2+3 merge into pop. 1, 0.3 coal. units before 2+3 divergence
+  feat_migration(rate = par_expr(4 * N0 * m), pop_from = 2, pop_to = 3) + 
+  sumstat_seg_sites() +
+  par_named("N0") +
+  par_named("mu") +
+  par_named("r") +
+  par_named("g") +
+  par_named("t1") +
+  par_named("t2") +
+  par_named("m")
+```
+
+## bottleneck/expansion
+```{r}
+model_size_change <- model_basic +
+  feat_size_change(new_size = par_named("b_size"), 3, time = 0) +
+  feat_size_change(new_size = 1, 3, time = par_expr(tb/(4*N0*g))) +
+  par_named("tb")
+```
+
+# run model and parse
+```{r}
+genos <- simulate(model_mig, seed = 123, pars = c(N0 = N0, len = len,
+                                                  r = r, g = g, t1 = t1, t2 = t2, 
+                                                  tb = tb, mu = mu, m = m))
+
+
+genos <- genos$seg_sites
+meta <- vector("list", length(genos))
+for(i in 1:length(genos)){
+  meta[[i]] <- data.table(chr = i, position = floor(as.numeric(genos[[i]]$position)*len))
+  genos[[i]] <- genos[[i]]$snps[seq(1, nrow(genos[[i]]), 2),] +
+    genos[[i]]$snps[seq(2, nrow(genos[[i]]), 2),]
+  genos[[i]] <- t(genos[[i]])
+  genos[[i]] <- as.data.table(genos[[i]])
+}
+
+meta <- rbindlist(meta)
+genos <- rbindlist(genos)
+
+
+srd <- import.snpR.data(genos, sample.meta = data.frame(pop = rep(c("A", "B", "C"), each = 50)),
+                        snp.meta = meta)
+
+plot_clusters(srd, "pop")
+srd <- calc_tajimas_d(srd, "pop", global = TRUE)
+get.snpR.stats(srd, "pop", "tajimas_d")
+srd <- calc_pairwise_fst(srd, "pop")
+get.snpR.stats(srd, "pop", "fst")$weighted.means
+
+```
+
