@@ -20,20 +20,15 @@ r <- 1 # average number of recombination events per chr
 g <- 1 # years per gen
 t1 <- 500 # time of ingroup split
 t2 <- 1000 # time of outgroup split
-tb <- 60 # time of bottleneck/growth for size change models
-m <- 10/N0 # number of migrants per gen, near isolation (Fst ~ .1); 10/N0, 50/N0, 100/N0 for low geneflow, mod geneflow, high geneflow
-change_size <- 20 # proportion change, .05 for bottle, 1.95 for expansion
+tb <- 50 # time of bottleneck/growth for size change models -- for the slection model this is 50
+m <- .1/N0 # number of migrants per gen, near isolation (Fst ~ .1); 10/N0, 50/N0, 100/N0 for low geneflow, mod geneflow, high geneflow
+change_size <- 10 # proportion change, .05 for bottle, 10 for expansion
 samples <- 50 # sample size
-time_selection <- tb # time where selection starts
-length_growth <- 20 # number of generations where population size is ramping up or down
-starting_selection_freq <- .05 # starting frequency of allele under selection; hard 1/(2N), soft .05
-selection_strength <- 2*N0*(.2) # need to adjust after author feedback
+length_growth <- 5 # number of generations where population size is ramping up or down
 nloci <- 10
-do_size_change <- TRUE
-do_selection <- FALSE
-rec_vec <- seq(.2, 2, length.out = 10) # recombination rates for selection on each chr
+do_size_change <- FALSE
 
-output_file_name <- "../data/simulated/expansion" # no file extension
+output_file_name <- "../data/simulated/soft_sweeps" # no file extension
 ```
 
 # Define models
@@ -45,83 +40,31 @@ model_basic <- coal_model(sample_size = c(samples, samples, samples), loci_numbe
   feat_recombination(rate = par_expr(4*N0*r)) + # 4*N*r, where r is the probability that a recombination event within the locus occurs in one generation.
   feat_pop_merge(par_expr(t1/(4*N0*g)), 3, 2) + #pop. 3 merges into pop. 2, 0.5 coal. units in the past
   feat_pop_merge(par_expr(t2/(4*N0*g)), 2, 1) + #pops. 2+3 merge into pop. 1, 0.3 coal. units before 2+3 divergence
-  feat_migration(rate = par_expr(4 * N0 * m), pop_from = 2, pop_to = 3) + 
-  feat_migration(rate = par_expr(4 * N0 * m), pop_from = 3, pop_to = 2) + 
   sumstat_seg_sites() + # generate segregating snps
   par_named("N0") +
   par_named("mu") +
   par_named("r") +
   par_named("g") +
   par_named("t1") +
-  par_named("t2") +
-  par_named("m")
+  par_named("t2")
+  
 
-```
 
-To model selection, we perform selection on ten chromosomes, added sequentially, each with a different recombination strength to change peak widths. Selection starts *time_selection / (4 x N0 x g)* coalescent units in the past (or *time_selection* generations ago), only within population 3. Note that selection only occurs on a single base/position on the additional chromosome. We must also specify the starting frequency of this allele ( = *starting_selection_freq*), which is either 1/2N (hard sweep), or 0.05 (soft sweep). The model otherwise uses the same parameters as the basic model.
-
-```{r}
-# for the one chr under selection
-model_basic_sel <- coal_model(sample_size = c(samples, samples, samples), loci_number = 1, ploidy = 2, loci_length = len) +
-  feat_mutation(rate = par_expr(4*N0*mu*len), locus_group = 1) + # 4*N*mu, where mu is mut. rate per locus
-  feat_recombination(rate = par_expr(4*N0*rec_vec[1]), locus_group = 1) + # 4*N*r, where r is the probability that a recombination event within the locus occurs in one generation.
-  feat_pop_merge(par_expr(t1/(4*N0*g)), 3, 2) + #pop. 3 merges into pop. 2, 0.5 coal. units in the past
-  feat_pop_merge(par_expr(t2/(4*N0*g)), 2, 1) + #pops. 2+3 merge into pop. 1, 0.3 coal. units before 2+3 divergence
-  feat_migration(rate = par_expr(4 * N0 * m), pop_from = 2, pop_to = 3) + 
-  feat_migration(rate = par_expr(4 * N0 * m), pop_from = 3, pop_to = 2) + 
-  sumstat_seg_sites() + # generate segregating snps
-  feat_selection(strength_A = selection_strength, 
-                 time = par_expr(time_selection/(4*N0*g)), 
-                 population = 3, 
-                 start = TRUE,
-                 start_frequency = starting_selection_freq,
-                 Ne = N0,
-                 position = 0.25,
-                 force_keep = TRUE,
-                 locus_group = 1) +
-  par_named("N0") +
-  par_named("mu") +
-  par_named("r") +
-  par_named("g") +
-  par_named("t1") +
-  par_named("t2") +
-  par_named("m") +
-  par_named("time_selection")
-
-## add the selection chrs
-for(i in 2:length(rec_vec)){
-  model_basic_sel <- model_basic_sel + 
-    locus_single(len) +
-    feat_recombination(rate = par_expr(4*N0*rec_vec[i]), locus_group = i)+ # 4*N*r, where r is the probability that a recombination event within 
-    feat_selection(strength_A = selection_strength, 
-                 time = par_expr(time_selection/(4*N0*g)), 
-                 population = 3, 
-                 start = TRUE,
-                 start_frequency = starting_selection_freq,
-                 Ne = N0,
-                 position = 0.25,
-                 force_keep = TRUE,
-                 locus_group = 1)
+if(!do_size_change){
+  model_basic <- model_basic + 
+    feat_migration(rate = par_expr(4 * N0 * m), pop_from = 2, pop_to = 3) + 
+    feat_migration(rate = par_expr(4 * N0 * m), pop_from = 3, pop_to = 2) + 
+    par_named("m")
 }
+
 ```
 
 ## bottleneck/expansion
-To the basic model, we add a exponential rate change (either population expansion or contraction) that begins *tb / (4 x N0 x g)* coalescent units ago, or *tb* generations ago, in population 3 and contiunes for *length_growth/(4 x N0 x g)* coalescent units (or *length_growth* generations). A bottleneck is represented as the population shrinking to a population size that is 5% of the original. A population expansion represents a growth to a final size of 1.9x the ancestral population size. The population size change occurs over 20 generations, and then stays at that size until the present. We set migration to low (10/g) to reduce the impact of geneflow on the expansion/bottleneck signatures.
+To the basic model, we add a exponential rate change (either population expansion or contraction) that begins *tb / (4 x N0 x g)* coalescent units ago, or *tb* generations ago, in population 3 and contiunes for *length_growth/(4 x N0 x g)* coalescent units (or *length_growth* generations). A bottleneck is represented as the population shrinking to a population size that is 5% of the original. A population expansion represents a growth to a final size of 10x the ancestral population size. The population size change occurs over 5 generations, and then stays at that size until the present. We set migration to very, very low (.1/g) to reduce the impact of geneflow on the expansion/bottleneck signatures.
 ```{r}
 # alpha (rate values) are from the equation Nt = N0e^(-a*t)
 # rearranged to alpha = -ln(N1/N0)/t
 model_size_change <- model_basic +
-  feat_size_change(new_size = par_named("b_size"), 3, time = 0) +
-  feat_growth(rate = 0, time = 0, population = 3) + 
-  feat_growth(rate = par_expr(-(log(1/b_size))/(length_growth/(4*N0*g))), 
-              time = par_expr((tb - length_growth)/(4*N0*g)),
-              population = 3) +
-  feat_growth(rate = 0, time = par_expr(tb/(4*N0*g)), population = 3) +
-  # feat_size_change(new_size = 1, 3, time = par_expr(tb/(4*N0*g))) +
-  par_named("tb") +
-  par_named("length_growth")
-
-model_size_change_sel <- model_basic_sel +
   feat_size_change(new_size = par_named("b_size"), 3, time = 0) +
   feat_growth(rate = 0, time = 0, population = 3) + 
   feat_growth(rate = par_expr(-(log(1/b_size))/(length_growth/(4*N0*g))), 
@@ -138,39 +81,17 @@ model_size_change_sel <- model_basic_sel +
 We run the the basic/size_change/selection models according to the settings above. Note that we need to use msms for the selection models and need to set the paths for both msms and java.
 ```{r}
 if(!do_size_change){
-  if(!do_selection){
-    sim <- simulate(model_basic, seed = 123, pars = c(N0 = N0, len = len,
-                                                      r = r, g = g, t1 = t1, t2 = t2, 
-                                                      tb = tb, mu = mu, m = m))
-  }
-  
-  if(do_selection){
-    activate_msms("/usr/bin/msms3.2rc-b163.jar", "C://Program Files (x86)/Java/jre1.8.0_361/bin/java.exe")
-    sim <- simulate(model_basic_sel, seed = 123, pars = c(N0 = N0, len = len,
-                                                          r = r, g = g, t1 = t1, t2 = t2, 
-                                                          tb = tb, mu = mu, m = m,
-                                                          time_selection = time_selection))
-  }
+  sim <- simulate(model_basic, seed = 123, pars = c(N0 = N0, len = len,
+                                                    r = r, g = g, t1 = t1, t2 = t2, 
+                                                    tb = tb, mu = mu, m = m))
 }
 
 if(do_size_change){
-  if(!do_selection){
-    sim <- simulate(model_size_change, seed = 123, pars = c(N0 = N0, len = len,
-                                                            r = r, g = g, t1 = t1, t2 = t2, 
-                                                            tb = tb, mu = mu, m = m, 
-                                                            b_size = change_size,
-                                                            length_growth = length_growth))
-  }
-  
-  if(do_selection){
-    activate_msms("/usr/bin/msms3.2rc-b163.jar", "C://Program Files (x86)/Java/jre1.8.0_361/bin/java.exe")
-    sim<- simulate(model_size_change_sel, seed = 123, pars = c(N0 = N0, len = len,
-                                                               r = r, g = g, t1 = t1, t2 = t2, 
-                                                               tb = tb, mu = mu, m = m,
-                                                               time_selection = time_selection, 
-                                                               b_size = change_size,
-                                                               length_growth = length_growth))
-  }
+  sim <- simulate(model_size_change, seed = 123, pars = c(N0 = N0, len = len,
+                                                          r = r, g = g, t1 = t1, t2 = t2, 
+                                                          tb = tb, mu = mu, 
+                                                          b_size = change_size,
+                                                          length_growth = length_growth))
 }
 
 
@@ -178,6 +99,7 @@ if(do_size_change){
 
 # parse
 ```{r}
+
 genos <- sim$seg_sites
 meta <- vector("list", length(genos))
 for(i in 1:length(genos)){
@@ -188,39 +110,29 @@ for(i in 1:length(genos)){
   genos[[i]] <- as.data.table(genos[[i]])
 }
 
-# if(do_selection){
-#   # add on chr 11
-#   meta[[i + 1]] <- data.table(chr = i + 1, position = floor(as.numeric(genos_chr11$seg_sites[[1]]$position)*len))
-#   genos[[i + 1]] <- genos_chr11$seg_sites[[1]]$snps[seq(1, nrow(genos_chr11$seg_sites[[1]]), 2),] +
-#     genos_chr11$seg_sites[[1]]$snps[seq(2, nrow(genos_chr11$seg_sites[[1]]), 2),]
-#   genos[[i + 1]] <- t(genos[[i + 1]])
-#   genos[[i + 1]] <- as.data.table(genos[[i + 1]])
-# }
-
-
-
 meta <- rbindlist(meta)
 genos <- rbindlist(genos)
 
-saveRDS(list(genos = genos, meta = meta), paste0(output_file_name, ".RDS"))
+# saveRDS(list(genos = genos, meta = meta), paste0(output_file_name, ".RDS"))
 
 # send to vcf
 srd <- import.snpR.data(genos, sample.meta = data.frame(pop = rep(c("A", "B", "C"), each = 50)),
                         snp.meta = meta)
 
-format_snps(srd, output = "vcf", outfile = paste0(output_file_name, ".vcf"))
+# format_snps(srd, output = "vcf", outfile = paste0(output_file_name, ".vcf"))
 
 # 
 plot_clusters(srd, "pop")$plot
-srd <- calc_tajimas_d(srd, "pop", global = TRUE)
-get.snpR.stats(srd, "pop", "tajimas_d")$weighted.means
+# srd <- calc_tajimas_d(srd, "pop", global = TRUE)
+# get.snpR.stats(srd, "pop", "tajimas_d")$weighted.means
+
+# plot_sfs(srd, facet = "pop", pops = c("C", "B"), projection = c(90, 90), log = TRUE)
 srd <- calc_pairwise_fst(srd, "pop")
 get.snpR.stats(srd, "pop", "fst")$weighted.means
-
-# selection detection
-srd <- calc_pairwise_fst(srd, "pop")
-# srd <- calc_pi(srd, "pop")
-# srd <- calc_fis(srd, "pop")
+# 
+# # selection detection
+# # srd <- calc_pi(srd, "pop")
+# # srd <- calc_fis(srd, "pop")
 plot_manhattan(srd, "fst", facets = "pop")
 
 ```
