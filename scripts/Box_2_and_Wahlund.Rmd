@@ -6,68 +6,313 @@ date: "2023-06-24"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(data.table); library(ggplot2); library(mgcv); library(tidygam); library(gridExtra)
+library(data.table); library(ggplot2); library(cowplot)
 
 ```
 
 # Run the simulations
 
 To generate the results processed here, run:
-1. `make_parmfile.R`: This will prepare parameter files with the filters. If you wish to change parameters, do so here, then make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in the following three scripts.
-2. `run_filtering_script.sh`, `run_filtering_script_ypp.sh`, and `run_filtering_script_LCT.sh`: This will run the filtering pipeline with the monarch, perch, and cutthroat data, respectively. If you changed the parameter files, make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in each script.
+
+1. `gen_filter_parms.R`: This will prepare parameter file with the filters, named `filt_parms.txt`. Another
+text file, named `filt_jobs.txt` contains information on the jobs to run, with the first column noting the processed, `snpRdata` files, the outfile names, the memory requested (in G), a logical indicating if $F_{ST}$ values for each individual SNP are requested in addition to means, and a logical indicating if site frequency spectra should be calculated. If you wish to change parameters, do so here, then make sure you update the array count `#SBATCH --array=1-x` to set `x` to the number of parameter sets in the `filt.sh` script.
+  - `snpRdata` input files should have no periods or other special characters in the chromosome column of the snp metadata, which should be named `chr`, or in the population column of the sample metadata, which should be named `pop`. The `format.R` and `format.sh` scripts provide formatting tools for this, assuming `.vcf` files and another `sample_meta.txt` file which contains two columns: population ID and sample ID (matching the `vcf` header sample IDs).
+2. `multirun_filt.sh`: This will run the filtering pipeline with the given jobs and filtering sets, queuing an `SBATCH` array job after adjusting the requested memory for each listed job. This runs `filt.sh`, which runs `filt.R` for each job and filter set.
 3. `structure_for_box_2.R`: Will run STRUCTURE on the monarch data for $k = 3$ with MAC filters of 0-11. Note it does so on a subset of 3819 SNPs to be equivalent to [Linck and Battey 2019](https://doi.org/10.1111/1755-0998.12995).
 
-These scripts are seperate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization. Note that each `.sh` script runs a corresponding `.R` file that are very similar but set up slightly differently to process the different datasets.
+These scripts are separate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization.
 
 # Process the simulations
 
-This will run the R code. This can be time and memory intensive, but saves the proccessed results once finished and so doesn't need to be run multiple times. It is therefore taged with `include=FALSE` to avoid running it unless needed.
+This chunk prepares some information for plotting the figure for Box 1. Specifically, it reads in the filtering parameters in case such are requested, then sets up aliases for statistics and lists the populations to analyze.
 
-```{r,include=F}
+```{r setup}
+filter_parms <- fread("filt_parms.txt")
+filter_parms[,filter_ID := 1:nrow(filter_parms)]
 
-fl <- list.files("results/", "\\.RDS", full.names = TRUE)
-r <- vector("list", length(fl))
+stat_key <- data.frame(stat = c("weighted_mean_he",
+                                "weighted_mean_ho",
+                                "weighted_mean_pi",
+                                "weighted_mean_fis",
+                                "global_ws.theta",
+                                "global_ts.theta",
+                                "global_D",
+                                "seg_sites",
+                                "total_pa_corrected",
+                                "LDNe_0",
+                                "weighted_mean_fst"),
+                       fix = c("H[e]",
+                               "H[o]",
+                               "pi",
+                               "F[IS]", 
+                               "Watterson*'\\''*'s'*' '*theta",
+                               "Tajima*'\\''*'s'*' '*theta",
+                               "Tajima*'\\''*'s'*' D'",
+                               "P[seg]",
+                               "P[private]",
+                               "log[10](N[e])",
+                               "F[ST]"))
 
-bind_parms <- function(y, parms, i){
-  y$maf <- parms[1,4]
-  y$mac <- ifelse(parms[1,5] == 0, FALSE, parms[1,5])
-  y$hwe <- parms[1,6]
-  y$miss <- parms[1,8]
-  y$i <- i
-  return(y)
-}
+keep_data <- c("humans", "monarchs", "goats_WGS", "goats_RAD",
+               "orcas", "stoneflies", "yellowperch", "mice", "deer",
+               "expansion", "bottleneck", "neutral")
 
-for(i in 1:length(fl)){
-  print(i)
-  
-  y <- readRDS(fl[i])
-  
-  uf <- unique(y$res$ld$sample.subfacet)
-  nd <- vector("list", length(uf))
-  for(j in 1:length(uf)){
-    if(nrow(y$res$ld[y$res$ld$sample.subfacet == uf[j],]) > 2){
-      try(ldm <- gam(formula = CLD ~ s(proximity, bs = "cs"), data = y$res$ld[y$res$ld$sample.subfacet == uf[j],]), silent = TRUE)
-      try(nd[[j]] <- tidygam::predict_gam(ldm, 100), silent = TRUE)
-      nd[[j]]$sample.subfacet <- uf[j]
-    }
-  }
-  nd <- rbindlist(nd)
-  
-  r[[i]]$ld <- bind_parms(nd, y$parms, i)
-  r[[i]]$stats <- bind_parms(y$res$stats, y$parms, i)
-  y$res$sfs$mac.1 <- NULL
-  colnames(y$res$sfs)[which(colnames(y$res$sfs) == "mac")] <- "min_allele_count"
-  r[[i]]$sfs <- bind_parms(y$res$sfs, y$parms, i)
-  if(!is.null(y$res$pca)){
-    r[[i]]$pca <- bind_parms(as.data.frame(y$res$pca$data[,1:5]), y$parms, i)
-  }
-  
-  names(r)[i] <- fl[i]
-  gc();gc()
-}
+plot_stats <- c("weighted_mean_fst",
+                "weighted_mean_ho",
+                "weighted_mean_fis",
+                "global_D")
+plot_stats <- stat_key$fix[match(plot_stats, stat_key$stat)]
 
-saveRDS(r, "data/processed/filt_results.RDS")
+colors <- as.character(khroma::color("muted")(9))
+colors <- c(as.character(khroma::color("bright")(3)), colors)
 ```
+
+## Panel A
+
+### Read in the filtering results
+
+This chunk reads in the averages for the different genetic variance statistics. Variance for most statistics will be in the object `stats` and for $F_{ST}$ in `fst`.
+
+```{r}
+# read in single-pop stats
+stats_files <- list.files("../data/emperical/outfiles/", "stats\\.txt", full.names = TRUE)
+stats_files <- c(stats_files, list.files("../data/simulated/outfiles/", "^[a-z].+stats\\.txt", full.names = TRUE))
+
+stats <- lapply(stats_files, fread)
+names(stats) <- stats_files
+
+stats <- rbindlist(stats, idcol = "run_ID")
+stats[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
+stats[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
+stats[,LDNe_0 := log10(LDNe_0)]
+
+stats <- stats[dataset %in% keep_data,]
+stats[,dataset := gsub("_", " ", dataset)]
+
+# dplyr::arrange(unique(stats[,c("maf", "mgc", "hwe", "min_ind", "min_loci", "LD", "filter_ID")]), maf)
+
+
+ # read in fst
+fst_files <- list.files("../data/emperical/outfiles/", "fst\\.txt", full.names = TRUE)
+fst_files <- c(fst_files, list.files("../data/simulated/outfiles/", "^[a-z].+fst\\.txt", full.names = TRUE))
+
+
+fst <- lapply(fst_files, fread)
+names(fst) <- fst_files
+
+fst <- rbindlist(fst, idcol = "run_ID")
+fst[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
+fst[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
+
+fst <- fst[dataset %in% keep_data,]
+fst[,dataset := gsub("_", " ", dataset)]
+fst$mean_fst <- NULL
+```
+
+### Function to prepare one filter
+This is a function to prepare both the stats and fst data a set of filter indices (for one filter).
+```{r prepare_filt_func}
+prepare_one_filter <- function(stats, fst, tfilt_indices, tfilt_ref){
+
+  ## stats
+  tfilt_stats <- stats[filter_ID %in% c(tfilt_indices),]
+  
+  tfilt_stats[,seg_sites := seg_sites/max(seg_sites), by = .(subfacet, dataset)]
+  tfilt_stats[,total_pa_corrected := total_pa_corrected/max(total_pa_corrected), by = .(subfacet, dataset)]
+  
+  mtfilt_stats <- melt(tfilt_stats, id.vars = c("run_ID", "subfacet", "maf", "mgc", 
+                                            "hwe", "min_ind", "min_loci", "LD", 
+                                            "filter_ID", "dataset"), 
+                     variable.name = "statistic")
+  
+  mtfilt_stats <- mtfilt_stats[-which(is.infinite(value)),]
+  starting_points <- mtfilt_stats[filter_ID == tfilt_ref,]
+  mtfilt_stats[,val_at_zero := starting_points$value[match(paste0(dataset, "&", subfacet, "&", statistic),
+                                                         paste0(starting_points$dataset, "&", starting_points$subfacet, "&", starting_points$statistic))]]
+  mtfilt_stats[,zero_normed := value - val_at_zero]
+  
+  mtfilt_stats[,statistic := stat_key$fix[match(statistic, stat_key$stat)]]
+  
+  ## fst
+  #dplyr::arrange(unique(fst[,c("maf", "mgc", "hwe", "min_ind", "min_loci", "LD", "filter_ID")]), maf)
+  tfilt_fst <- fst[filter_ID %in% tfilt_indices,]
+  
+  mtfilt_fst <- melt(tfilt_fst, id.vars = c("run_ID", "subfacet", "maf", "mgc", 
+                                        "hwe", "min_ind", "min_loci", "LD", 
+                                        "filter_ID", "dataset"), 
+                   variable.name = "statistic")
+  
+  starting_points <- mtfilt_fst[filter_ID == tfilt_ref,]
+  mtfilt_fst[,val_at_zero := starting_points$value[match(paste0(dataset, "&", subfacet, "&", statistic),
+                                                       paste0(starting_points$dataset, "&", starting_points$subfacet, "&", starting_points$statistic))]]
+  mtfilt_fst[,zero_normed := value - val_at_zero]
+  
+  mtfilt_fst[,statistic := stat_key$fix[match(statistic, stat_key$stat)]]
+  
+  
+  ## bind
+  pstats <- rbind(mtfilt_stats, mtfilt_fst)
+  # pstats <- pstats[which(statistic %in% plot_stats),]
+  pstats[,type := ifelse(dataset %in% c("neutral", "expansion", "bottleneck"), "Simulated", "Emperical")]
+  pstats[,dataset := R.utils::capitalize(dataset)]
+  pstats[,dataset := factor(dataset, unique(c("Neutral", "Bottleneck", "Expansion", unique(dataset), sort = F)))]
+  pstats[,statistic := factor(statistic, unique(c(plot_stats, unique(statistic)), sort = F))]
+  
+  # set zero-normed back to the raw values for Tajima's D alone
+  pstats[statistic == "Tajima*'\\''*'s'*' D'", zero_normed := value]
+  
+  return(pstats)
+}
+
+```
+
+
+### Prepare the plot for maf vs all of the stats of interest. Prepare a plot for *all* statistics vs maf for the supplementary material.
+
+This will plot the maf filter results (if run with the provided `filt_parms.txt`, filter indices 3:12). A `ggplot2` object will be generated named `PA_maf` for panel A, an object name `maf_SI` for the supplementary material, and an interactive figure generated and saved that are not directly part of the paper.
+
+Notes: 
+
+1) Tajima's D alone is not normalized to show the change rather than the raw value, since the flip from negative to positive is biologically important and everything is similar in scale (due to how Tajima's D works).
+2) The monarch data are excluded from $F_{ST}$ since they change notably more and thus make everything else difficult to see. They start far more differentiated ($F_{ST} > 0.3$) at maf = 0 as well.
+
+```{r maf_vs_variance}
+maf_indices <- 3:12
+maf_ref <- 3
+
+pstats <- prepare_one_filter(stats, fst, maf_indices, maf_ref)
+
+
+## plot
+PA_maf <- ggplot(pstats[statistic %in% plot_stats &
+                !(statistic == "F[ST]" & dataset == "Monarchs"),], 
+       aes(x = maf, y = zero_normed, 
+           group = interaction(dataset, subfacet), 
+           color = dataset, linetype = type)) + 
+  geom_line(size = 1.5) +
+  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 1) +
+  scale_color_manual(values = colors) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 90),
+        strip.text = element_text(size = 20),
+        strip.background = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  ylab(expression(Delta ~ 'Statistic')) +
+  xlab("MAF filter") +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title = "Data Type"))
+
+maf_SI <- ggplot(pstats, 
+       aes(x = maf, y = zero_normed, 
+           group = interaction(dataset, subfacet), 
+           color = dataset, linetype = type)) + 
+  geom_line(size = 1.5) +
+  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
+  scale_color_manual(values = colors) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 90),
+        strip.text = element_text(size = 20),
+        strip.background = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  ylab(expression(Delta ~ 'Statistic')) +
+  xlab("MAF filter") +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title = "Data Type"))
+
+maf_interactive <- plotly::ggplotly(ggplot(pstats, aes(x = maf, y = zero_normed, group = interaction(dataset, subfacet), color = dataset, linetype = type)) +
+                                      geom_line() +
+                                      facet_wrap(~statistic, scales = "free_y", labeller = label_parsed) +
+                                      khroma::scale_color_batlow(discrete = TRUE) +
+                                      ylab(expression(Delta ~ 'Statistic')))
+
+maf_interactive
+htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
+
+```
+
+### Prepare the plot for filters vs seg sites.
+Creates a plot named "PA_ss" for seg-sites vs every filter. This will also prepare and plot the remaining SI figures for every other stat vs each summary statistic, named hwe_SI, min_ind_SI, min_loci_SI, missing_SI.
+
+```{r seg_sites_vs_filters}
+#=======================HWE=======================
+hwe_indices <- c(2, 13, 14)
+hwe_ref <- 13
+
+hwe_pstats <- prepare_one_filter(stats, fst, hwe_indices, hwe_ref)
+hwe_pstats$focus_stat <- "log10(HWE)"
+hwe_pstats$focus_value <- hwe_pstats$hwe
+hwe_pstats[,focus_value := log10(focus_value)]
+#=======================missing data--both=======================
+miss_indices <- 15:23
+miss_ref <- 15
+
+miss_pstats <- prepare_one_filter(stats, fst, miss_indices, miss_ref)
+miss_pstats$focus_stat <- "Missing Data"
+miss_pstats$focus_value <- miss_pstats$min_ind
+
+#=======================missing data--inds=======================
+imiss_indices <- 25:33
+imiss_ref <- 25
+
+imiss_pstats <- prepare_one_filter(stats, fst, imiss_indices, imiss_ref)
+imiss_pstats$focus_stat <- "Bad Loci"
+imiss_pstats$focus_value <- imiss_pstats$min_ind
+
+#=======================missing data--loci=======================
+lmiss_indices <- 34:42
+lmiss_ref <- 34
+
+lmiss_pstats <- prepare_one_filter(stats, fst, lmiss_indices, lmiss_ref)
+lmiss_pstats$focus_stat <- "Bad Individuals"
+lmiss_pstats$focus_value <- lmiss_pstats$min_loci
+
+#=======================combine data and plot, pseg====================
+pstats$focus_stat <- "MAF"
+pstats$focus_value <- pstats$maf
+
+all_pstats <- rbind(pstats, hwe_pstats, miss_pstats, lmiss_pstats)
+all_pstats[,focus_stat := factor(focus_stat, c("MAF", "log10(HWE)", "Missing Data", "Bad Individuals"))]
+ss_pstats <- all_pstats[statistic == "P[seg]",]
+
+PA_ss <- ggplot(ss_pstats, 
+       aes(x = focus_value, y = value, 
+           group = interaction(dataset, subfacet), 
+           color = dataset, linetype = type)) + 
+  geom_line(size = 1.5) +
+  facet_wrap(~focus_stat, scales = "free", nrow = 1) +
+  scale_color_manual(values = colors) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 90),
+        strip.text = element_text(size = 20),
+        strip.background = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  ylab(expression(Delta ~ P[seg])) +
+  xlab("Filter Threshold") +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title= "Data Type"))
+
+```
+
+# Combine Panel A
+
+Create the final Panel A
+
+```{r panel_A}
+PA <- plot_grid(PA_maf, PA_ss, nrow = 2)
+
+save_plot("../manuscript/final_figures/Figure_Box1.pdf", PA, base_height = 11, base_width = 15)
+
+```
+
 
 # Clean the results for plotting
 This code will transform the data for ease of plotting. We also ran PCAs, SFSs, and LD distributions (and HWE p-value as a filtering parameter), but decided not to include them for space reasons. Processing them is commented out below.
