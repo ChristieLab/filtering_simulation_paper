@@ -6,11 +6,12 @@ date: "2023-06-24"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(data.table); library(ggplot2); library(cowplot)
-
+library(data.table); library(ggplot2); library(cowplot); library(snpR)
 ```
 
-# Run the simulations
+
+# Prepare the data:
+## Run the simulations
 
 To generate the results processed here, run:
 
@@ -22,7 +23,10 @@ text file, named `filt_jobs.txt` contains information on the jobs to run, with t
 
 These scripts are separate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization.
 
-# Process the simulations
+
+# Panel A
+
+## Set-up parameters
 
 This chunk prepares some information for plotting the figure for Box 1. Specifically, it reads in the filtering parameters in case such are requested, then sets up aliases for statistics and lists the populations to analyze.
 
@@ -55,7 +59,7 @@ stat_key <- data.frame(stat = c("weighted_mean_he",
 
 keep_data <- c("humans", "monarchs", "goats_WGS", "goats_RAD",
                "orcas", "stoneflies", "yellowperch", "mice", "deer",
-               "expansion", "bottleneck", "neutral")
+               "expansion", "bottleneck", "neutral", "arabidopsis")
 
 plot_stats <- c("weighted_mean_fst",
                 "weighted_mean_ho",
@@ -64,12 +68,11 @@ plot_stats <- c("weighted_mean_fst",
 plot_stats <- stat_key$fix[match(plot_stats, stat_key$stat)]
 
 colors <- as.character(khroma::color("muted")(9))
-colors <- c(as.character(khroma::color("bright")(3)), colors)
+colors <- c(as.character(khroma::color("bright")(3)),
+            as.character(khroma::color("vibrant")(1)), colors)
 ```
 
-## Panel A
-
-### Read in the filtering results
+## Read in the filtering results
 
 This chunk reads in the averages for the different genetic variance statistics. Variance for most statistics will be in the object `stats` and for $F_{ST}$ in `fst`.
 
@@ -82,12 +85,21 @@ stats <- lapply(stats_files, fread)
 names(stats) <- stats_files
 
 stats <- rbindlist(stats, idcol = "run_ID")
+stats[,contour := grepl("contour", run_ID)]
 stats[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
 stats[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
+stats[,dataset := gsub("_contour", "", dataset)]
 stats[,LDNe_0 := log10(LDNe_0)]
 
 stats <- stats[dataset %in% keep_data,]
 stats[,dataset := gsub("_", " ", dataset)]
+stats[,dataset := gsub("goats", "Mountain Goats", dataset)]
+stats[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
+
+
+
+contour_stats <- stats[which(contour),]
+stats <- stats[-which(contour),]
 
 # dplyr::arrange(unique(stats[,c("maf", "mgc", "hwe", "min_ind", "min_loci", "LD", "filter_ID")]), maf)
 
@@ -103,16 +115,26 @@ names(fst) <- fst_files
 fst <- rbindlist(fst, idcol = "run_ID")
 fst[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
 fst[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
+fst[,contour := grepl("contour", run_ID)]
+fst[,dataset := gsub("_contour", "", dataset)]
 
 fst <- fst[dataset %in% keep_data,]
 fst[,dataset := gsub("_", " ", dataset)]
+fst[,dataset := gsub("goats", "Mountain Goats", dataset)]
+fst[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
 fst$mean_fst <- NULL
+
+fst_contour <- fst[which(contour),]
+fst <- fst[-which(contour),]
 ```
 
-### Function to prepare one filter
+## Function to prepare one filter
 This is a function to prepare both the stats and fst data a set of filter indices (for one filter).
 ```{r prepare_filt_func}
 prepare_one_filter <- function(stats, fst, tfilt_indices, tfilt_ref){
+  
+  stats <- stats[,-c("contour")]
+  fst <- fst[,-c("contour")]
 
   ## stats
   tfilt_stats <- stats[filter_ID %in% c(tfilt_indices),]
@@ -155,19 +177,55 @@ prepare_one_filter <- function(stats, fst, tfilt_indices, tfilt_ref){
   # pstats <- pstats[which(statistic %in% plot_stats),]
   pstats[,type := ifelse(dataset %in% c("neutral", "expansion", "bottleneck"), "Simulated", "Emperical")]
   pstats[,dataset := R.utils::capitalize(dataset)]
+  if(any(pstats$type == "Simulated" & pstats$subfacet == "B")){
+    pstats <- pstats[-which(type == "Simulated" & subfacet == "B"),]
+  }
   pstats[,dataset := factor(dataset, unique(c("Neutral", "Bottleneck", "Expansion", unique(dataset), sort = F)))]
   pstats[,statistic := factor(statistic, unique(c(plot_stats, unique(statistic)), sort = F))]
   
   # set zero-normed back to the raw values for Tajima's D alone
-  pstats[statistic == "Tajima*'\\''*'s'*' D'", zero_normed := value]
+  # pstats[statistic == "Tajima*'\\''*'s'*' D'", zero_normed := value]
+  
+  
+  pstats[,adj_stat_names := paste0("Delta ~ ", statistic)]
   
   return(pstats)
+}
+
+exclude_dataset <- function(d, dataset = "arabidopsis", exlusion = list(arabidopsis = c("weighted_mean_ho", "weighted_mean_fis"))){
+  for(i in 1:length(dataset)){
+    texcl <- exlusion[[dataset[i]]]
+    texcl <- stat_key$fix[match(texcl, stat_key$stat)]
+    d <- d[-which(dataset == dataset[i] & statistic %in% texcl),]
+  }
+  
+  return(d)
+}
+
+inset_plots <- function(pstats, target_statistic){
+  target_statistic <- stat_key$fix[match(target_statistic, stat_key$stat)]
+  pstats <- pstats[statistic == target_statistic,]
+  fis_range <- pstats[,.(min = min(value), max = max(value)), by = .(dataset, subfacet, type)]
+  p <- ggplot(fis_range, aes(ymin = min, ymax = max, x = dataset, group =
+                               interaction(dataset, subfacet), color = dataset)) +
+    geom_linerange(linewidth = 8, position = position_dodge(width = .7)) +
+    geom_point(aes(y = min), position = position_dodge(width = .7), size = 7) +
+    geom_point(aes(y = max), position = position_dodge(width = .7), size = 7) +
+    scale_color_manual(values = colors) +
+    guides(color = "none") +
+    theme_bw() +
+    theme(axis.text.x = element_blank(),
+          axis.title = element_blank(),
+          axis.text.y = element_text(size = 60),
+          axis.ticks.x = element_blank())
+  
+  return(p)
 }
 
 ```
 
 
-### Prepare the plot for maf vs all of the stats of interest. Prepare a plot for *all* statistics vs maf for the supplementary material.
+## Prepare the plot for maf vs all of the stats of interest. Prepare a plot for *all* statistics vs maf for the supplementary material.
 
 This will plot the maf filter results (if run with the provided `filt_parms.txt`, filter indices 3:12). A `ggplot2` object will be generated named `PA_maf` for panel A, an object name `maf_SI` for the supplementary material, and an interactive figure generated and saved that are not directly part of the paper.
 
@@ -181,7 +239,7 @@ maf_indices <- 3:12
 maf_ref <- 3
 
 pstats <- prepare_one_filter(stats, fst, maf_indices, maf_ref)
-
+pstats <- exclude_dataset(pstats)
 
 ## plot
 PA_maf <- ggplot(pstats[statistic %in% plot_stats &
@@ -190,7 +248,7 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats &
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 1) +
+  facet_wrap(~adj_stat_names, scales = "free_y", labeller = label_parsed, nrow = 1) +
   scale_color_manual(values = colors) +
   theme_bw() +
   theme(axis.title = element_text(size = 20),
@@ -225,23 +283,30 @@ maf_SI <- ggplot(pstats,
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
+
 maf_interactive <- plotly::ggplotly(ggplot(pstats, aes(x = maf, y = zero_normed, group = interaction(dataset, subfacet), color = dataset, linetype = type)) +
                                       geom_line() +
                                       facet_wrap(~statistic, scales = "free_y", labeller = label_parsed) +
                                       khroma::scale_color_batlow(discrete = TRUE) +
                                       ylab(expression(Delta ~ 'Statistic')))
 
-maf_interactive
-htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
+# maf_interactive
+# htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
 
 ```
 
-### Prepare the plot for filters vs seg sites.
+## prepare the insets for PA, top
+```{r pa_top_insets}
+insets_PA_top <- c("weighted_mean_fis", "weighted_mean_fst", "weighted_mean_ho", "global_D")
+insets_PA_top <- lapply(insets_PA_top, function(x) inset_plots(pstats, x))
+```
+
+## Prepare the plot for filters vs seg sites.
 Creates a plot named "PA_ss" for seg-sites vs every filter. This will also prepare and plot the remaining SI figures for every other stat vs each summary statistic, named hwe_SI, min_ind_SI, min_loci_SI, missing_SI.
 
 ```{r seg_sites_vs_filters}
 #=======================HWE=======================
-hwe_indices <- c(2, 13, 14)
+hwe_indices <- c(2, 13, 14, 43, 44, 45, 46)
 hwe_ref <- 13
 
 hwe_pstats <- prepare_one_filter(stats, fst, hwe_indices, hwe_ref)
@@ -253,8 +318,8 @@ miss_indices <- 15:23
 miss_ref <- 15
 
 miss_pstats <- prepare_one_filter(stats, fst, miss_indices, miss_ref)
-miss_pstats$focus_stat <- "Missing Data"
-miss_pstats$focus_value <- miss_pstats$min_ind
+miss_pstats$focus_stat <- "Required % Genotyped"
+miss_pstats$focus_value <- miss_pstats$min_ind * 100
 
 #=======================missing data--inds=======================
 imiss_indices <- 25:33
@@ -272,21 +337,233 @@ lmiss_pstats <- prepare_one_filter(stats, fst, lmiss_indices, lmiss_ref)
 lmiss_pstats$focus_stat <- "Bad Individuals"
 lmiss_pstats$focus_value <- lmiss_pstats$min_loci
 
+#=======================contour==================================
+contour_indices <- 1:50
+contour_ref <- 1
+
+contour <- prepare_one_filter(contour_stats, 
+                              fst_contour, 
+                              contour_indices, contour_ref)
+contour <- contour[statistic == "P[seg]",]
+
 #=======================combine data and plot, pseg====================
 pstats$focus_stat <- "MAF"
 pstats$focus_value <- pstats$maf
 
-all_pstats <- rbind(pstats, hwe_pstats, miss_pstats, lmiss_pstats)
-all_pstats[,focus_stat := factor(focus_stat, c("MAF", "log10(HWE)", "Missing Data", "Bad Individuals"))]
+all_pstats <- rbind(pstats, hwe_pstats, miss_pstats)
+all_pstats[,focus_stat := factor(focus_stat, c("MAF", "log10(HWE)", "Required % Genotyped"))]
 ss_pstats <- all_pstats[statistic == "P[seg]",]
+
+total_range <- c(min(c(ss_pstats$value, contour$value)),
+                     max(c(ss_pstats$value, contour$value)))
 
 PA_ss <- ggplot(ss_pstats, 
        aes(x = focus_value, y = value, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
-  facet_wrap(~focus_stat, scales = "free", nrow = 1) +
+  facet_wrap(~focus_stat, scales = "free_x", nrow = 1, strip.position = "bottom") +
   scale_color_manual(values = colors) +
+  theme_bw() +
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 90),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 20),
+        strip.placement = "bottom",
+        strip.background = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  scale_y_continuous(limits = total_range) + 
+  ylab(expression(Delta ~ P[seg])) +
+  xlab("Filter Threshold") +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title= "Data Type"))
+
+PA_ss_l <- ggpubr::get_legend(PA_ss)
+PA_ss <- PA_ss + guides(color = "none", linetype = "none")
+
+PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies", "Mountain Goats RAD"),],
+                     aes(x = maf, y = value, color = log10(hwe), 
+                         group = interaction(hwe, dataset, subfacet),  
+                         linetype = dataset)) +
+  geom_line(size = 1.5) +
+  khroma::scale_color_batlow() +
+  khroma::scale_fill_batlow() +
+  theme_bw() +
+  scale_y_continuous(limits = total_range) +
+  theme(axis.title.x = element_text(size = 20),
+        axis.text = element_text(size = 16),
+        axis.text.x = element_text(angle = 90),
+        axis.title.y = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  guides(linetype = guide_legend(title = "Data Source"),
+         color = guide_legend(title = "log10(HWE)")) +
+  xlab("MAF")
+
+PA_contour_l <- ggpubr::get_legend(PA_contour)
+PA_contour <- PA_contour + guides(linetype = "none",
+                                  color = "none")
+
+```
+
+## Combine Panel A
+
+Create the final Panel A
+
+```{r panel_A}
+PA_bottom <- plot_grid(PA_ss, PA_contour, rel_widths = c(.75, .25), align = "h", axis = "b") # manually place the legend as an inset
+
+PA <- plot_grid(plot_grid(PA_maf + guides(color = "none", linetype = "none"), PA_bottom, ncol = 1), 
+                PA_ss_l, nrow = 1,
+                rel_widths = c(1, .2)) # manually place insets on top plot
+
+insets <- c(insets_PA_top, list(PA_contour_l))
+names(insets) <- c("top1.pdf", "top2.pdf", "top3.pdf", "top4.pdf", "bottomL.pdf")
+for(i in 1:length(insets)){
+  save_plot(paste0("../manuscript/final_figures/Figure_Box1A_inset_", names(insets)[i]),
+            insets[[i]], base_height = 10, base_width = 12)
+}
+
+save_plot("../manuscript/final_figures/Figure_Box1_PA.pdf", PA, base_height = 11, base_width = 18)
+
+```
+
+# Panel B
+
+## Read in the site frequency spectra for the three simulated datasets
+
+This will read in the site frequence spectra data for each filter set in the three simulated data scenarios
+
+```{r read_sfs}
+sfs_files <- list.files("../data/simulated/outfiles/", "expansion.+sfs\\.txt$", full.names = TRUE)
+sfs_files <- c(sfs_files, list.files("../data/simulated/outfiles/", "bottleneck.+sfs\\.txt$", full.names = TRUE))
+sfs_files <- c(sfs_files, list.files("../data/simulated/outfiles/", "neutral.+sfs\\.txt$", full.names = TRUE))
+
+
+sfs <- lapply(sfs_files, data.table::fread)
+names(sfs) <- sfs_files
+sfs <- rbindlist(sfs, idcol = "demography")
+sfs$filter_ID <- gsub(".+__r", "", sfs$demography)
+sfs$filter_ID <- gsub("_sfs\\.txt", "", sfs$filter_ID)
+sfs$demography <- ifelse(grepl("expansion", sfs$demography), "Expansion", ifelse(grepl("bottleneck", sfs$demography), "Bottleneck", "Neutral"))
+sfs <- sfs[pop == "C",]
+```
+
+## Generate the three plots (neutral, expansion, bottleneck)
+
+Generates plots for each demography, making sure that the axes are the same
+
+```{r plot_sfs}
+maf_indices <- 3:12
+
+range <- range(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min_alleles > 1,]$count)
+range <- log10(range)
+
+sfs_netural <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min_alleles > 1 &
+                            demography == "Neutral",],
+       aes(x = num_min_alleles, y = log10(count), color = maf, group = filter_ID)) +
+  geom_line(linewidth = 1.5) +
+  theme_bw() +
+  khroma::scale_color_batlow(range = c(0, .8)) +
+  guides(color = guide_legend(title = "MAF filter")) +
+  xlab("Minor Allele Count") +
+  ylab(expression(log[10](Loci))) +
+  theme(axis.title = element_text(size = 10),
+        axis.text = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  scale_y_continuous(limits = range)
+
+sfs_legend <- ggpubr::get_legend(sfs_netural)
+sfs_netural <- sfs_netural +
+  guides(color = "none")
+
+sfs_bottle <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min_alleles > 1 &
+                            demography == "Bottleneck",],
+       aes(x = num_min_alleles, y = log10(count), color = maf, group = filter_ID)) +
+  geom_line(linewidth = 1.5) +
+  theme_bw() +
+  khroma::scale_color_batlow(range = c(0, .8)) +
+  guides(color = guide_legend(title = "MAF filter")) +
+  xlab("Minor Allele Count") +
+  ylab(expression(log[10](Loci))) +
+  theme(axis.title = element_text(size = 10),
+        axis.text = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  scale_y_continuous(limits = range) +
+  guides(color = "none")
+
+
+sfs_expansion <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min_alleles > 1 &
+                            demography == "Expansion",],
+       aes(x = num_min_alleles, y = log10(count), color = maf, group = filter_ID)) +
+  geom_line(linewidth = 1.5) +
+  theme_bw() +
+  khroma::scale_color_batlow(range = c(0, .8)) +
+  guides(color = guide_legend(title = "MAF filter")) +
+  xlab("Minor Allele Count") +
+  ylab(expression(log[10](Loci))) +
+  theme(axis.title = element_text(size = 10),
+        axis.text = element_blank(),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 20)) +
+  scale_y_continuous(limits = range) +
+  guides(color = "none")
+```
+
+## Generate curves for the demographic history
+
+This generates the demographic data curve. Ensure that the parameters match those used to
+simulate the data in `simulate_data.rmd`, as they should by default. This chunk sets those
+
+```{r demo_curves_parameters}
+N0 <- 10000 # starting population size (at present)
+mu <- 1e-8 # per-base mutation rate
+len <- 10000000 # chromosome length
+r <- 1 # average number of recombination events per chr
+g <- 1 # years per gen
+t1 <- 500 # time of ingroup split
+t2 <- 1000 # time of outgroup split
+tb <- 50 # time of bottleneck/growth for size change models -- for the slection model this is 50
+m <- .1/N0 # number of migrants per gen, near isolation (Fst ~ .1); 10/N0, 50/N0, 100/N0 for low geneflow, mod geneflow, high geneflow
+g_size <- 10 # proportion change, .05 for bottle, 10 for expansion
+b_size <- .05 # proportion change, .05 for bottle, 10 for expansion
+samples <- 50 # sample size
+length_growth <- 5 # number of generations where population size is ramping up or down
+```
+
+And this chunk does the lines, plotting for twice the time since the bottleneck/growth:
+
+```{r demo_curves}
+curve_neutral <- rep(N0, (tb/g)*2)
+
+exp_growth <- function(N0, r, t) N0*exp(r*t)
+solve_rate <- function(N0, Nt, t) log(Nt/N0)/t
+
+curve_bottle <- c(rep(N0, tb/g),
+                  exp_growth(N0, solve_rate(N0, N0*b_size, length_growth/g), 1:(length_growth/g)),
+                  rep(N0*b_size, tb-(length_growth/g)))
+
+curve_exp <- c(rep(N0, tb/g),
+               exp_growth(N0, solve_rate(N0, N0*g_size, length_growth/g), 1:(length_growth/g)),
+               rep(N0*g_size, tb-(length_growth/g)))
+```
+
+This chunk plots those curves on the same plot:
+
+```{r plot_demo}
+demos <- rbind(data.table(Demography = "Bottleneck", N = curve_bottle),
+               data.table(Demography = "Expansion", N = curve_exp))
+demos$Generation <- rep(1:length(curve_neutral), 2)
+demos[, Demography := factor(Demography, c("Bottleneck", "Expansion"))]
+
+demo_plot <- ggplot(demos, aes(x = Generation, y = log10(N), group = Demography)) +
+  geom_line(size = 1.5) +
   theme_bw() +
   theme(axis.title = element_text(size = 20),
         axis.text = element_text(size = 16),
@@ -295,239 +572,106 @@ PA_ss <- ggplot(ss_pstats,
         strip.background = element_blank(),
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 20)) +
-  ylab(expression(Delta ~ P[seg])) +
-  xlab("Filter Threshold") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title= "Data Type"))
+  ylab(expression(log[10](N))) +
+  xlab("Generation") +
+  scale_y_continuous(expand = c(.2, .2))
+  
 
 ```
 
-# Combine Panel A
+## Add on the SFS plots--generate Panel B
 
-Create the final Panel A
+```{r PB}
+inset_size <- .3
+PB <-  ggdraw() +
+  draw_plot(demo_plot) +
+  draw_plot(sfs_netural, x = .15, y = .59, width = inset_size, height = inset_size/2) +
+  draw_plot(sfs_bottle, x = .64, y = .08, width = inset_size, height = inset_size/2) +
+  draw_plot(sfs_expansion, x = .64, y = .84, width = inset_size, height = inset_size/2)
 
-```{r panel_A}
-PA <- plot_grid(PA_maf, PA_ss, nrow = 2)
 
-save_plot("../manuscript/final_figures/Figure_Box1.pdf", PA, base_height = 11, base_width = 15)
+PB <- plot_grid(PB,
+                sfs_legend,
+                rel_widths = c(1, .2))
 
+save_plot("../manuscript/final_figures/Figure_Box1_PB.pdf", PB, base_height = 11, base_width = 7.5)
 ```
 
 
-# Clean the results for plotting
-This code will transform the data for ease of plotting. We also ran PCAs, SFSs, and LD distributions (and HWE p-value as a filtering parameter), but decided not to include them for space reasons. Processing them is commented out below.
-```{r}
-# read back in, map, and bind.
-r <- readRDS("../data/processed/filt_results.RDS")
-stats <- purrr::map(r, "stats")
-# pca <- purrr::map(r, "pca")
-# sfs <- purrr::map(r, "sfs")
-# ld <- purrr::map(r, "ld")
+# Panel C -- PCA
 
-stats <- data.table::rbindlist(stats)
-# pca <- data.table::rbindlist(pca, fill = TRUE)
-# sfs <- data.table::rbindlist(sfs, fill = TRUE)
-# ld <- data.table::rbindlist(ld)
+## Read in the data
 
-# clean up and note dataset
-stats$variable <- gsub("weighted_mean_", "", stats$variable)
+This is 50000k SNPs from the monarch data set, all populations. It was pre-filtered like this:
 
-multigrepl <- function(pattern, x){
-  return(Reduce(f = "|", lapply(c(pattern), function(y) grepl(y, x))))
+* a minimum HWE p-value of $1 \times 10^{-6}$ with the facet `pop`.
+* a minimum MGC of 1.
+* keep individuals sequenced only in 50% of loci
+* keep loci sequenced only in 50% of individuals
+
+```{r read_pca}
+pcad <- readRDS("../data/monarchs_for_pca.RDS")
+```
+
+## prepre PCAs with missing data and maf
+
+We'll compare this to a stricter maf (0.05 in any population) and to a sticter missingness cuttoff (25% missing only allowed in either loci or individuals).
+
+```{r pca_prep}
+# base
+pcad_base <- pcad
+pcad_basep <- plot_clusters(pcad_base, "pop", simplify_output = TRUE, verbose = FALSE)
+
+
+# strict maf
+pcad_maf05 <- filter_snps(pcad,
+                         maf = 0.05, maf_facets = "pop",
+                         min_ind = .5, min_loci = .5)
+pcad_maf05p <- plot_clusters(pcad_maf05, "pop", simplify_output = TRUE, verbose = FALSE)
+
+# strict missingness
+# pcad_miss50 <- pcad
+# pcad_miss50p <- plot_clusters(pcad_miss50, "pop", simplify_output = TRUE, verbose = FALSE)
+
+
+pcad_miss75 <- filter_snps(pcad,
+                           min_ind = .75, min_loci = .75)
+pcad_miss75p <- plot_clusters(pcad_miss75, "pop", simplify_output = TRUE, verbose = FALSE)
+
+```
+
+## prepare the plot
+
+```{r PC}
+std_additions <- function(x){
+  x <- x +
+    scale_color_manual(values = colors) +
+    guides(color = "none") +
+    theme(axis.title = element_blank(),
+          axis.text = element_blank())
+  return(x)
 }
 
-stats$dataset <- ifelse(multigrepl(c("IMC", "GBT", "NUB"), stats$subfacet), "Yellow Perch", 
-                        ifelse(multigrepl(c("WAL", "QUI", "ROC"), stats$subfacet),
-                               "Cutthroat",
-                               "Monarchs"))
+PC <- plot_grid(std_additions(pcad_basep$pca) + ggtitle("MGC = 1, Max % Missing = 50") + 
+                  theme(plot.title = element_text(size = 18, hjust = .5)),
+                plot_grid(std_additions(pcad_maf05p$pca) + ggtitle("MAF = 0.05") + 
+                            theme(plot.title = element_text(size = 18, hjust = .5)),
+                          std_additions(pcad_miss75p$pca) + ggtitle("Max % Missing = 25%") + 
+                            theme(plot.title = element_text(size = 18, hjust = .5)),
+                          ncol = 1),
+                ncol = 2)
 
-# get the number of seg sites, since we didn't run that directly (but did get prop poly and total N snps)
-num_seg <- stats[stats$variable == "prop_poly",]
-num_seg <- merge(num_seg, unique(stats[stats$variable == "nsnps",c("value", "i")]),
-                 by = "i")
-num_seg[, value := value.x * value.y]
-num_seg[,variable := "num_seg"]
-num_seg <- num_seg[,c("facet", "subfacet", "variable", "value", "maf", "mac", "hwe", "miss", "i", "dataset")]
-
-stats <- stats[-which(stats$variable == "num_seg"),]
-stats <- rbind(stats, num_seg)
-stats <- stats[-which(stats$variable == "prop_poly"),]
-
-# turn num_seg into a proportion of the max across all filtering sets for ease of comparison
-stats$mnseg <- 0
-stats[,mnseg := max(as.numeric(value), na.rm = TRUE), by = .(dataset, subfacet, variable)]
-stats$mnseg[stats$variable != "num_seg"] <- NA
-stats$value[stats$variable == "num_seg"] <- stats$value[stats$variable == "num_seg"]/stats$mnseg[stats$variable == "num_seg"]
-stats$mnseg <- NULL
-
-# make pretty, parseable variable names for the plots
-var_tab <- data.frame(ref = unique(stats$variable),
-                      var_p = c("pi", "H[O]", "F[IS]", "F[ST]", "Tajima*'\\''*'s'*' D'", "Tajima*'\\''*'s'*' 'theta",
-                                "Watterson*'\\''*'s'*' 'theta", "N[e]", "N[snp]", "P[seg]"))
-
-stats$variable <- var_tab$var_p[match(stats$variable, var_tab$ref)]
-
-# specify the stats we want to show
-plot_stats <- c("Tajima*'\\''*'s'*' D'", "H[O]", "P[seg]", "F[ST]")
+save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 11, base_width = 7.5)
 
 ```
+# Combine everything into the final plot
 
-# Plot the simulation results
+```{r final_plot}
+FB1 <- plot_grid(PA,
+                 plot_grid(PB, PC, nrow = 1),
+                 ncol = 1)
 
-This will generate plots for all of our variables and arrange them, including pulling in the structure data. The final plot is saved to:
-`data/processed/box2.pdf`, [here](data/processed/box2.pdf).
-
-```{r}
-pa <- ggplot(stats[stats$mac == FALSE  & stats$variable %in% plot_stats &
-                     stats$hwe == 1e-6 & stats$miss == .5,], 
-             aes(x = maf, y = value, color = dataset, group = subfacet)) +
-  geom_line(size = 1) +
-  geom_point(size = 3) +
-  facet_wrap(~variable, scales = "free_y", strip.position = "left", labeller = label_parsed, ncol = 1) +
-  theme_bw() +
-  khroma::scale_color_highcontrast() +
-  theme(axis.title.y = element_blank(),
-        strip.background = element_blank(), 
-        strip.placement = "outside",
-        strip.text = element_text(size = 18),
-        axis.title.x = element_text(size = 18),
-        axis.text = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 18)) +
-  xlab("MAF filter")
-
-# miss
-pb <- ggplot(stats[stats$mac == 1 & stats$variable %in% plot_stats &
-               stats$hwe == 1e-6,], 
-       aes(x = (1-miss)*100, y = value, color = dataset, group = subfacet)) +
-  geom_line(size = 1) +
-  geom_point(size = 3) +
-  facet_wrap(~variable, scales = "free_y", strip.position = "left", labeller = label_parsed, ncol = 1) +
-  scale_x_reverse() +
-  theme_bw() +
-  khroma::scale_color_highcontrast() +
-  theme(axis.title.y = element_blank(),
-        strip.background = element_blank(), 
-        strip.placement = "outside",
-        strip.text = element_text(size = 18),
-        axis.title.x = element_text(size = 18),
-        axis.text = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 18)) +
-  xlab("% Missing Data")
-
-
-
-
-
-pl1 <- ggpubr::get_legend(pa)
-
-
-str <- readRDS("../data/processed/monarch_structure/plot.RDS")
-
-# plot everything
-g1 <- arrangeGrob(pa + guides(color = "none") + ggtitle("A") + 
-                    theme(plot.title = element_text(size = 18, hjust = -.16)
-                          , panel.spacing.y = unit(.7, "lines")), 
-                  pb + guides(color = "none") + ggtitle("B")+ 
-                    theme(plot.title = element_text(size = 18, hjust = -.16), 
-                          panel.spacing.y = unit(.7, "lines")),
-                  pl1,
-                  nrow = 1,
-                  widths = c(1, 1, .3))
-
-gb <- arrangeGrob(g1, str$p + guides(color = "none", fill = "none") +
-                    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-                          strip.text = element_text(angle = 0),
-                          plot.title = element_text(size = 18, hjust = -.02)) +
-                    ylab("Cluster")  +
-                    ggtitle("C"),
-                  heights = c(1.5, .3))
-
-ggsave("../data/processed/box2.jpg", gb, "jpg", height = 20, width = 12, dpi = 1000)
-```
-
-# Plot the Wahlund effect data for box 1
-
-We'll also prepare the Wahlund effect demo for box 1 here, also with the monarch data. First, pull in the data, calculate $F_{IS}$ and a $p$-value for HWE both globally and within groups, and clean:
-```{r}
-# pull in and calculate stats
-alpha <- .35
-mon <- readRDS("data/monarch_nomaf.RDS")
-mon <- mon[pop = c("GUA", "ROT")]
-mon <- filter_snps(mon, non_poly = TRUE)
-
-mon <- calc_fis(mon)
-mon <- calc_fis(mon, "pop")
-mon <- calc_pairwise_fst(mon, "pop")
-mon <- calc_hwe(mon)
-mon <- calc_hwe(mon, "pop")
-
-# fetch and clean, merging the global and within-group statistics
-rp <- get.snpR.stats(mon, "pop", c("fst"))
-rs <- get.snpR.stats(mon, stats = c("ho", "he", "fis", "hwe"))
-
-pd <- merge(rp$pairwise, rs$single, by = c("group", "position"))
-pd$fst[pd$fst < 0] <- 0
-
-rsp <- get.snpR.stats(mon, "pop", c("fis", "hwe"))$single
-rsp <- merge(rsp[which(rsp$subfacet == "GUA"),], rsp[which(rsp$subfacet == "ROT"),], by = c("group", "position"), 
-             suffixes = c("_GUA", "_ROT"))
-rsp <- as.data.table(rsp)
-rsp[,mfis := rowMeans(cbind(fis_GUA, fis_ROT), na.rm = TRUE)]
-rsp[,mHWE := rowMeans(cbind(pHWE_ROT, pHWE_GUA), na.rm = TRUE)]
-
-pd2 <- merge(pd, rsp, by = c("group", "position"))
-pd2 <- as.data.table(pd2)
-
-
-pd3_1 <- melt(pd2[,c("group", "position", "fis", "fis_ROT", "fis_GUA")], id.vars = c("group", "position"))
-pd3_1$level <- ifelse(grepl("ROT", pd3_1$variable), "ROT", ifelse(grepl("GUA", pd3_1$variable), "GUA", "Combined"))
-colnames(pd3_1) <- c("group", "position", "variable", "fis", "level")
-pd3_1$variable <- NULL
-
-pd3_2 <- melt(pd2[,c("group", "position", "pHWE", "pHWE_ROT", "pHWE_GUA")], id.vars = c("group", "position"))
-pd3_2$level <- ifelse(grepl("ROT", pd3_2$variable), "ROT", ifelse(grepl("GUA", pd3_2$variable), "GUA", "Combined"))
-colnames(pd3_2) <- c("group", "position", "variable", "pHWE", "level")
-pd3_2$variable <- NULL
-
-pd3_3 <- pd2[,c("group", "position", "fst")]
-
-pd3 <- merge(pd3_1, pd3_2, by = c("group", "position", "level"))
-pd3 <- merge(pd3, pd3_3, by = c("group", "position"))
-```
-
-Then, plot the result and save to `data/processed/whalund_plot.pdf`, [here](data/processed/whalund_plot.pdf).
-
-```{r}
-ldm <- gam(formula = fis ~ s(fst, bs = "cs") + 
-             # s(level, bs = "re", k = 3) +
-             s(level, fst, bs = "re"),  data = pd3, silent = TRUE)
-nd <- predict_gam(ldm, 1000)
-
-pal <- khroma::color("batlow")
-
-wp <- ggplot(nd, aes(x = fst, y = fis, color = level)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = lower_ci, ymax = upper_ci, fill = level), alpha = .5, color = NA) +
-  scale_color_manual(values = pal(4)[1:3]) +
-  scale_fill_manual(values = pal(4)[1:3]) +
-  theme_bw() +
-  ylab(bquote(F[IS])) +
-  xlab(bquote("Pairwise " ~ F[ST])) +
-  theme(axis.text = element_text(size = 16),
-        axis.title = element_text(size = 18),
-        strip.background = element_blank(),
-        strip.text = element_text(size = 20),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 18)) +
-  guides(color = "none", fill = guide_legend(title = "Population"))
-
-ggsave("../data/processed/whalund_plot.pdf", wp, "pdf", width = 15, height = 11)
+save_plot("../manuscript/final_figures/Box_1_Figure.pdf", FB1, base_width = 15, base_height = 22)
 ```
 
 
-# Data sources:
-Monarchs: [Hemstrom et al. 2022](https://doi.org/10.1111/mec.16592)
-Cutthroat: [Hemstrom et al. 2022](https://doi.org/10.1111/eva.13473)
-Yellow Perch: Euclide et al. 2022 *in review*
