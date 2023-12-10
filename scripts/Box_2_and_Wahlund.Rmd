@@ -9,7 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(data.table); library(ggplot2); library(cowplot); library(snpR)
 ```
 
-
 # Prepare the data:
 ## Run the simulations
 
@@ -30,7 +29,7 @@ These scripts are separate from this `.Rmd` to allow for SLURM job handling and 
 
 This chunk prepares some information for plotting the figure for Box 1. Specifically, it reads in the filtering parameters in case such are requested, then sets up aliases for statistics and lists the populations to analyze.
 
-```{r setup}
+```{r setup_values}
 filter_parms <- fread("filt_parms.txt")
 filter_parms[,filter_ID := 1:nrow(filter_parms)]
 
@@ -436,7 +435,7 @@ save_plot("../manuscript/final_figures/Figure_Box1_PA.pdf", PA, base_height = 11
 
 ## Read in the site frequency spectra for the three simulated datasets
 
-This will read in the site frequence spectra data for each filter set in the three simulated data scenarios
+This will read in the site frequency spectra data for each filter set in the three simulated data scenarios
 
 ```{r read_sfs}
 sfs_files <- list.files("../data/simulated/outfiles/", "expansion.+sfs\\.txt$", full.names = TRUE)
@@ -562,7 +561,7 @@ demos <- rbind(data.table(Demography = "Bottleneck", N = curve_bottle),
 demos$Generation <- rep(1:length(curve_neutral), 2)
 demos[, Demography := factor(Demography, c("Bottleneck", "Expansion"))]
 
-demo_plot <- ggplot(demos, aes(x = Generation, y = log10(N), group = Demography)) +
+demo_plot <- ggplot(demos, aes(x = Generation, y = N, group = Demography)) +
   geom_line(size = 1.5) +
   theme_bw() +
   theme(axis.title = element_text(size = 20),
@@ -572,9 +571,8 @@ demo_plot <- ggplot(demos, aes(x = Generation, y = log10(N), group = Demography)
         strip.background = element_blank(),
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 20)) +
-  ylab(expression(log[10](N))) +
   xlab("Generation") +
-  scale_y_continuous(expand = c(.2, .2))
+  scale_y_continuous(limits = c(-1000,120000))
   
 
 ```
@@ -585,93 +583,165 @@ demo_plot <- ggplot(demos, aes(x = Generation, y = log10(N), group = Demography)
 inset_size <- .3
 PB <-  ggdraw() +
   draw_plot(demo_plot) +
-  draw_plot(sfs_netural, x = .15, y = .59, width = inset_size, height = inset_size/2) +
-  draw_plot(sfs_bottle, x = .64, y = .08, width = inset_size, height = inset_size/2) +
-  draw_plot(sfs_expansion, x = .64, y = .84, width = inset_size, height = inset_size/2)
+  draw_plot(sfs_netural, x = .2, y = .265, width = inset_size, height = inset_size/2) +
+  draw_plot(sfs_bottle, x = .64, y = .205, width = inset_size, height = inset_size/2) +
+  draw_plot(sfs_expansion, x = .64, y = .827, width = inset_size, height = inset_size/2)
 
 
 PB <- plot_grid(PB,
                 sfs_legend,
                 rel_widths = c(1, .2))
 
-save_plot("../manuscript/final_figures/Figure_Box1_PB.pdf", PB, base_height = 11, base_width = 7.5)
+save_plot("../manuscript/final_figures/Figure_Box1_PB.pdf", PB, base_height = 5.5, base_width = 7.5)
+```
+# Panel C -- selection PCAs
+
+## read in data
+```{r panel_c_read}
+d_.1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_0.1.RDS")
+d_1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_1.RDS")
+d_7 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_7.RDS")
 ```
 
 
-# Panel C -- PCA
+## plot overall PCAs for the target iters (base filter)
 
-## Read in the data
+For each dataset, do these things:
 
-This is 50000k SNPs from the monarch data set, all populations. It was pre-filtered like this:
+1. Filter with `mgc = 1` and `hwe = 1e-6` (the standard background filters for all of the filtering parameter sets, but there's no missing data here).
+2. Calculate pairwise fst.
+3. Plot PCAs
 
-* a minimum HWE p-value of $1 \times 10^{-6}$ with the facet `pop`.
-* a minimum MGC of 1.
-* keep individuals sequenced only in 50% of loci
-* keep loci sequenced only in 50% of individuals
+```{r pcas}
+datsets <- list(d_.1, d_1, d_7)
+names(datsets) <- c(".1", "1", "7")
 
-```{r read_pca}
-pcad <- readRDS("../data/monarchs_for_pca.RDS")
+datasets <- lapply(datsets, function(x){
+  x <- filter_snps(x, mgc = 1, hwe = 1e-6)
+  x <- calc_pairwise_fst(x, "pop")
+})
+
+pcas <- lapply(datsets, function(x) plot_clusters(x, "pop", simplify_output = TRUE))
 ```
 
-## prepre PCAs with missing data and maf
+## Plot Manhattan plots
 
-We'll compare this to a stricter maf (0.05 in any population) and to a sticter missingness cuttoff (25% missing only allowed in either loci or individuals).
-
-```{r pca_prep}
-# base
-pcad_base <- pcad
-pcad_basep <- plot_clusters(pcad_base, "pop", simplify_output = TRUE, verbose = FALSE)
-
-
-# strict maf
-pcad_maf05 <- filter_snps(pcad,
-                         maf = 0.05, maf_facets = "pop",
-                         min_ind = .5, min_loci = .5)
-pcad_maf05p <- plot_clusters(pcad_maf05, "pop", simplify_output = TRUE, verbose = FALSE)
-
-# strict missingness
-# pcad_miss50 <- pcad
-# pcad_miss50p <- plot_clusters(pcad_miss50, "pop", simplify_output = TRUE, verbose = FALSE)
-
-
-pcad_miss75 <- filter_snps(pcad,
-                           min_ind = .75, min_loci = .75)
-pcad_miss75p <- plot_clusters(pcad_miss75, "pop", simplify_output = TRUE, verbose = FALSE)
-
+Plot manhattan plots for each dataset
+```{r manhattans}
+manhattans <- lapply(datasets, function(x) plot_manhattan(x, "fst", facets = "pop", simplify_output = TRUE))
 ```
 
-## prepare the plot
+## Remove SNPs by position, then re-plot PCAs.
+Positions to remove basically just select the peak in each dataset as narrowly as possible.
 
-```{r PC}
-std_additions <- function(x){
-  x <- x +
-    scale_color_manual(values = colors) +
-    guides(color = "none") +
-    theme(axis.title = element_blank(),
-          axis.text = element_blank())
-  return(x)
+To ensure consistent PCAs, select the same number of SNPs in each, since we will subset down to very different numbers.
+
+```{r position_filter_and_pca}
+remove_ranges <- list(c(1, 5245000),
+                      c(1683300, 2733600),
+                      c(2350000,2650000))
+
+num_keep <- 7000
+subset_datasets <- datasets
+
+for(i in 1:length(subset_datasets)){
+  keeps <- snp.meta(subset_datasets[[i]])
+  keeps <- which(keeps$position < remove_ranges[[i]][1] |
+                   keeps$position > remove_ranges[[i]][2])
+  keeps <- sort(sample(keeps, num_keep, FALSE))
+  subset_datasets[[i]] <- subset_datasets[[i]][keeps,]
 }
 
-PC <- plot_grid(std_additions(pcad_basep$pca) + ggtitle("MGC = 1, Max % Missing = 50") + 
-                  theme(plot.title = element_text(size = 18, hjust = .5)),
-                plot_grid(std_additions(pcad_maf05p$pca) + ggtitle("MAF = 0.05") + 
-                            theme(plot.title = element_text(size = 18, hjust = .5)),
-                          std_additions(pcad_miss75p$pca) + ggtitle("Max % Missing = 25%") + 
-                            theme(plot.title = element_text(size = 18, hjust = .5)),
-                          ncol = 1),
-                ncol = 2)
-
-save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 11, base_width = 7.5)
+subset_pcas <- lapply(subset_datasets, function(x) plot_clusters(x, "pop", simplify_output = TRUE))
 
 ```
-# Combine everything into the final plot
+## Color in the manhattan plots with the regions removes:
+```{r PC}
+color_regions <- function(x, y){
+  td <- x$data
+  cat(y[1], "\t") # needed to force ggplot to evaluate y now
+  cat(y[2], "\n")
+  out <- ggplot(td, aes(x = position, y = pvar)) + 
+    geom_rect(aes(xmin = y[1],
+                  xmax = y[2],
+                  ymin = -Inf,
+                  ymax = Inf),
+              color = "darkorange",
+              fill = "darkorange",
+              alpha = .1,
+              inherit.aes = FALSE) +
+    geom_point() +
+    theme_bw() +
+    theme(axis.title.y = element_text(size = 20),
+          axis.text.y = element_text(size = 16),
+          axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank()) +
+    ylab(expression(F[ST])) +
+    xlab("Position (bp)")
+ 
+  return(out)
+}
 
-```{r final_plot}
-FB1 <- plot_grid(PA,
-                 plot_grid(PB, PC, nrow = 1),
-                 ncol = 1)
+colored_manhattans <- manhattans
+for(i in 1:length(manhattans)){
+  cat(i, "\n") # needed to force ggplot to evaluate y now
+  colored_manhattans[[i]] <- color_regions(manhattans[[i]], remove_ranges[[i]])
+}
 
-save_plot("../manuscript/final_figures/Box_1_Figure.pdf", FB1, base_width = 15, base_height = 22)
+```
+
+## Align everything to produce panel C
+
+```{r PC}
+pre_pcas_ready <- lapply(pcas, function(x){
+  x <- x$pca + khroma::scale_color_highcontrast() +
+    geom_point(aes(color = pop), size = 3) +
+    theme(axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          legend.position = "none")
+  
+  return(x)
+})
+
+post_pcas_ready <- lapply(subset_pcas, function(x){
+  x <- x$pca + khroma::scale_color_highcontrast() +
+    geom_point(aes(color = pop), size = 3) +
+    theme(axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          legend.position = "none")
+  
+  return(x)
+}) 
+
+PC <- plot_grid(colored_manhattans[[1]], 
+                pre_pcas_ready[[1]] + 
+                  ggtitle("Pre-filter") + 
+                  theme(plot.title = element_text(size = 20)), 
+                post_pcas_ready[[1]]+ 
+                  ggtitle("Post-filter") + 
+                  theme(plot.title = element_text(size = 20)),
+                colored_manhattans[[2]], pre_pcas_ready[[2]], post_pcas_ready[[2]],
+                colored_manhattans[[3]], pre_pcas_ready[[3]], post_pcas_ready[[3]],
+                nrow = 3, ncol = 3, axis = "tl", align = "h")
+
+save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 5.5, base_width = 7.5)
+
+```
+
+# Combine the final plot
+
+```{r final_box_1_fig}
+Pfinal_bottom <- plot_grid(PB, PC, axis = "tr", align = "h")
+Pfinal <- plot_grid(PA,
+                    Pfinal_bottom,
+                    ncol = 1)
+
+save_plot("../manuscript/final_figures/Box_1_Figure.pdf", Pfinal, base_height = 15, base_width = 20)
+save_plot("../manuscript/final_figures/Box_1_Figure.jpg", Pfinal, base_height = 15, base_width = 20)
+
 ```
 
 
