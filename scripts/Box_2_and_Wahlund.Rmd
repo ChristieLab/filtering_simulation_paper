@@ -240,6 +240,27 @@ maf_ref <- 3
 pstats <- prepare_one_filter(stats, fst, maf_indices, maf_ref)
 pstats <- exclude_dataset(pstats)
 
+## figure out where tajima's D crosses zero
+Ds <- pstats[statistic == stat_key[which(stat_key$stat == "global_D"),2],]
+ulevs <- unique(Ds[,c("subfacet", "dataset")])
+ulevs$cross_maf <- NA
+ulevs$cross_maf <- as.numeric(ulevs$cross_maf)
+ulevs$cross_dd <- ulevs$cross_maf
+for(i in 1:nrow(ulevs)){
+  tzc <- Ds[subfacet == ulevs$subfacet[i] &
+              dataset == ulevs$dataset[i],]
+  tzc[,sign := sign(value)]
+  tzc <- dplyr::arrange(tzc, maf)
+  if(length(unique(tzc$sign)) > 1){
+    cross <- which(tzc$sign == 1)[1]
+    ulevs[i,cross_maf := tzc$maf[cross]]
+    ulevs[i,cross_dd := tzc$zero_normed[cross]]
+  }
+}
+ulevs$adj_stat_names <- tzc$adj_stat_names[1]
+
+## inf out high monarch FSTs
+
 ## plot
 PA_maf <- ggplot(pstats[statistic %in% plot_stats &
                 !(statistic == "F[ST]" & dataset == "Monarchs"),], 
@@ -247,9 +268,14 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats &
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
+  geom_point(data = ulevs, aes(y = cross_dd, x = cross_maf,
+                               group = interaction(dataset, subfacet), 
+                               color = dataset), 
+             inherit.aes = FALSE, shape = 18, size = 8, show.legend = FALSE) +
   facet_wrap(~adj_stat_names, scales = "free_y", labeller = label_parsed, nrow = 1) +
   scale_color_manual(values = colors) +
   theme_bw() +
+  scale_x_continuous(breaks = seq(0, .1, by = .02)) +
   theme(axis.title = element_text(size = 20),
         axis.text = element_text(size = 16),
         axis.text.x = element_text(angle = 90),
@@ -258,7 +284,7 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats &
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 20)) +
   ylab(expression(Delta ~ 'Statistic')) +
-  xlab("MAF filter") +
+  xlab("MAF") +
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
@@ -283,11 +309,11 @@ maf_SI <- ggplot(pstats,
          linetype = guide_legend(title = "Data Type"))
 
 
-maf_interactive <- plotly::ggplotly(ggplot(pstats, aes(x = maf, y = zero_normed, group = interaction(dataset, subfacet), color = dataset, linetype = type)) +
-                                      geom_line() +
-                                      facet_wrap(~statistic, scales = "free_y", labeller = label_parsed) +
-                                      khroma::scale_color_batlow(discrete = TRUE) +
-                                      ylab(expression(Delta ~ 'Statistic')))
+# maf_interactive <- plotly::ggplotly(ggplot(pstats, aes(x = maf, y = zero_normed, group = interaction(dataset, subfacet), color = dataset, linetype = type)) +
+#                                       geom_line() +
+#                                       facet_wrap(~statistic, scales = "free_y", labeller = label_parsed) +
+#                                       khroma::scale_color_batlow(discrete = TRUE) +
+#                                       ylab(expression(Delta ~ 'Statistic')))
 
 # maf_interactive
 # htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
@@ -382,6 +408,7 @@ PA_ss <- ggplot(ss_pstats,
 PA_ss_l <- ggpubr::get_legend(PA_ss)
 PA_ss <- PA_ss + guides(color = "none", linetype = "none")
 
+contour$filter_focus <- "MAF"  # doing the MAF as a strip to even out title heights
 PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies", "Mountain Goats RAD"),],
                      aes(x = maf, y = value, color = log10(hwe), 
                          group = interaction(hwe, dataset, subfacet),  
@@ -390,13 +417,17 @@ PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies
   khroma::scale_color_batlow() +
   khroma::scale_fill_batlow() +
   theme_bw() +
+  facet_wrap(~filter_focus, strip.position = "bottom") +
   scale_y_continuous(limits = total_range) +
-  theme(axis.title.x = element_text(size = 20),
+  theme(axis.title.x = element_blank(),
         axis.text = element_text(size = 16),
         axis.text.x = element_text(angle = 90),
         axis.title.y = element_blank(),
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 20),
+        strip.text = element_text(size = 20),
+        strip.placement = "bottom",
+        strip.background = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
   guides(linetype = guide_legend(title = "Data Source"),
@@ -571,8 +602,7 @@ demo_plot <- ggplot(demos, aes(x = Generation, y = N, group = Demography)) +
         strip.background = element_blank(),
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 20)) +
-  xlab("Generation") +
-  scale_y_continuous(limits = c(-1000,120000))
+  xlab("Generation")
   
 
 ```
@@ -583,9 +613,9 @@ demo_plot <- ggplot(demos, aes(x = Generation, y = N, group = Demography)) +
 inset_size <- .3
 PB <-  ggdraw() +
   draw_plot(demo_plot) +
-  draw_plot(sfs_netural, x = .2, y = .265, width = inset_size, height = inset_size/2) +
-  draw_plot(sfs_bottle, x = .64, y = .205, width = inset_size, height = inset_size/2) +
-  draw_plot(sfs_expansion, x = .64, y = .827, width = inset_size, height = inset_size/2)
+  draw_plot(sfs_netural, x = .2, y = .279, width = inset_size, height = inset_size/1.2) +
+  draw_plot(sfs_bottle, x = .64, y = .205, width = inset_size, height = inset_size/1.2) +
+  draw_plot(sfs_expansion, x = .64, y = .68, width = inset_size, height = inset_size/1.2)
 
 
 PB <- plot_grid(PB,
@@ -597,10 +627,13 @@ save_plot("../manuscript/final_figures/Figure_Box1_PB.pdf", PB, base_height = 5.
 # Panel C -- selection PCAs
 
 ## read in data
+
+Read in two of the simulation datasets and set the number of SNPs to use for the plots (want to use the same number before and after filtering and between both sims to control for power).
+
 ```{r panel_c_read}
 d_.1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_0.1.RDS")
 d_1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_1.RDS")
-d_7 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_7.RDS")
+num_keep <- 7000
 ```
 
 
@@ -613,15 +646,16 @@ For each dataset, do these things:
 3. Plot PCAs
 
 ```{r pcas}
-datsets <- list(d_.1, d_1, d_7)
-names(datsets) <- c(".1", "1", "7")
+set.seed(123621)
+datsets <- list(d_.1, d_1)
+names(datsets) <- c(".1", "1")
 
 datasets <- lapply(datsets, function(x){
   x <- filter_snps(x, mgc = 1, hwe = 1e-6)
   x <- calc_pairwise_fst(x, "pop")
 })
 
-pcas <- lapply(datsets, function(x) plot_clusters(x, "pop", simplify_output = TRUE))
+pcas <- lapply(datsets, function(x) plot_clusters(x[sample(nrow(x), num_keep, FALSE),], "pop", simplify_output = TRUE))
 ```
 
 ## Plot Manhattan plots
@@ -638,10 +672,8 @@ To ensure consistent PCAs, select the same number of SNPs in each, since we will
 
 ```{r position_filter_and_pca}
 remove_ranges <- list(c(1, 5245000),
-                      c(1683300, 2733600),
-                      c(2350000,2650000))
+                      c(1683300, 2733600))
 
-num_keep <- 7000
 subset_datasets <- datasets
 
 for(i in 1:length(subset_datasets)){
@@ -670,7 +702,7 @@ color_regions <- function(x, y){
               fill = "darkorange",
               alpha = .1,
               inherit.aes = FALSE) +
-    geom_point() +
+    geom_point(alpha = .5) +
     theme_bw() +
     theme(axis.title.y = element_text(size = 20),
           axis.text.y = element_text(size = 16),
@@ -716,16 +748,19 @@ post_pcas_ready <- lapply(subset_pcas, function(x){
   return(x)
 }) 
 
-PC <- plot_grid(colored_manhattans[[1]], 
-                pre_pcas_ready[[1]] + 
-                  ggtitle("Pre-filter") + 
-                  theme(plot.title = element_text(size = 20)), 
-                post_pcas_ready[[1]]+ 
-                  ggtitle("Post-filter") + 
-                  theme(plot.title = element_text(size = 20)),
-                colored_manhattans[[2]], pre_pcas_ready[[2]], post_pcas_ready[[2]],
-                colored_manhattans[[3]], pre_pcas_ready[[3]], post_pcas_ready[[3]],
-                nrow = 3, ncol = 3, axis = "tl", align = "h")
+PC <- plot_grid(plot_grid(colored_manhattans[[1]], 
+                          pre_pcas_ready[[1]] + 
+                            ggtitle("PCA: Pre-filter") + 
+                            theme(plot.title = element_text(size = 20)), 
+                          post_pcas_ready[[1]]+ 
+                            ggtitle("PCA: Post-filter") + 
+                            theme(plot.title = element_text(size = 20)),
+                          ncol = 3, axis = "tl", align = "h"),
+                plot_grid(colored_manhattans[[2]], 
+                          pre_pcas_ready[[2]], 
+                          post_pcas_ready[[2]],
+                          ncol = 3, axis = "tl", align = "h"),
+                nrow = 2, axis = "tl", align = "h")
 
 save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 5.5, base_width = 7.5)
 
@@ -737,7 +772,8 @@ save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 5.
 Pfinal_bottom <- plot_grid(PB, PC, axis = "tr", align = "h")
 Pfinal <- plot_grid(PA,
                     Pfinal_bottom,
-                    ncol = 1)
+                    ncol = 1,
+                    rel_heights = c(.66, .33))
 
 save_plot("../manuscript/final_figures/Box_1_Figure.pdf", Pfinal, base_height = 15, base_width = 20)
 save_plot("../manuscript/final_figures/Box_1_Figure.jpg", Pfinal, base_height = 15, base_width = 20)
