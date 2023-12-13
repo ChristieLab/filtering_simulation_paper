@@ -1,0 +1,284 @@
+---
+title: "Pre-variant Pipeline"
+output: html_notebook
+---
+
+This document will work you through a basic variant calling pipeline with `samtools` and `GATK`, calling out specific locations where filtering choices are made. The following software packages are required:
+
+* `GATK`
+* `picard`
+* `samtools`
+* `bwa`
+* `vcftools`
+* `bcftools`
+
+And, for fetching data,
+
+* `sratoolkit`
+
+As this notebook is written, these are all expected to be available on the system path.
+
+The following R packages are also required:
+
+* `data.table`
+* `foreach`
+* `parallel`
+* `doParallel`
+
+Please note that this notebook is set-up to use a small dataset--while it is written to run moderately in parallel, it may be too slow for use with very large datasets. If access to a computing cluster is available, custom scripts based on these which use run management tools like `slurm` may be preferable.
+
+Please note that some of this code is and scripts are adapted from the R package `alignR` by W Hemstrom, which is not yet fully released. The `bash` scripts we are going to use are:
+
+* `run_align.sh`: This will run the alignments and initial mapping filters.
+* `run_haplotype_caller.sh`: This will run `GATK`'s `HaplotypeCaller` on each sample.
+* `run_genomedb.sh`: This will run `GATK`'s `GenomicsDBImport`
+
+If you use these scripts for publication, please cite this paper for now. These scripts must be located in the working directory, and are available at: ENTER GITHUB REPO...
+
+```{r setup}
+library(data.table); library(foreach)
+```
+
+
+# Parameter control
+
+The following R chunk controls the filtering parameters this script will use. To run this entire analysis with a different set of filters, they can simply be changed here! Everything that follows can then be re-run as written with no further changes necissary.
+
+```{r set_filters}
+# run parameters
+par <- 4 # for all of these jobs, how many processing threads should we use?
+mem <- 4 # number of GB of ram to allow for alignment and calling jobs
+temp_dir <- tempdir() # temporary directory for alignment and calling jobs
+run_chrs <- 29 # which chromosomes will we run?
+java_path <- "~/bin/jdk-17.0.9/bin/java" # path to a java 17+ install
+picard_path <- "~/bin/picard.jar" # path to picard .jar
+gatk4_path <- "~/bin/gatk-4.4.0.0/gatk-package-4.4.0.0-local.jar" # path to gatk
+platform <- "ILLUMINA" # sequencing platform
+
+# alignment filters
+samtools_min_map_q <- 5 # Mapping quality cuttoff for samtools. A low pass is useful to speed up further analysis.
+remove_PCR_duplicates <- TRUE # Set to TRUE to remove PCR duplicates
+remove_improperly_paired_reads <- TRUE # Set to TRUE to remove improperly paired reads
+
+# Post-calling hard filters, see below
+QD <- 30
+FS <- 60
+SOR <- 3
+MQ <- 40
+MQRankSum <- -12.5
+ReadPosRankSum <- -8
+first_pass_missingness <- 0.2
+min_genotype_quality <- 13.0103
+```
+
+# Fetch example data
+
+We are going to use a small example dataset of 5 individuals from two different populations of monarch butterflies located on Guam and Rota Islands, which are part of the Mariana Islands. These are from the paper [here](https://doi.org/10.1111/mec.16592).
+
+Below is the list of accession numbers for the data we will be using and their populations of origin:
+
+```{r define_SRAs}
+SRA_info <- data.table(SRA = c("SRR19628125", "SRR19628055", "SRR19628192", "SRR19628238", "SRR19628132", "SRR19628059", "SRR19628194", "SRR19628231", "SRR19628224", "SRR19628056"),
+                       pop = rep(c("Rota", "Guam"), each = 5))
+SRA_info$new_name <- paste0(SRA_info$pop, "_", rep(1:5, length.out = nrow(SRA_info)))
+
+```
+
+We will use the `sratoolkit` to fetch these. 
+
+```{r fetch_data}
+# fetch and rename each file, looping in parallel for efficiency:
+cl <- parallel::makePSOCKcluster(par)
+doParallel::registerDoParallel(cl)
+
+foreach(q = 1:nrow(SRA_info)) %dopar% {
+  # prefetch
+  cmd <- paste0("fasterq-dump --split-files ", SRA_info[q,1])
+  system(cmd)
+  
+  # rename
+  file.rename(paste0(SRA_info[q,1], "_1.fastq"), paste0(SRA_info[q,3], "_1.fastq"))
+  file.rename(paste0(SRA_info[q,1], "_2.fastq"), paste0(SRA_info[q,3], "_2.fastq"))
+}
+
+parallel::stopCluster(cl)
+```
+
+# Align and run initial filters
+
+In this section, we will align each of our fastq files to the monarch butterfly genome, which we will first download and index with both `bwa`...:
+
+```{bash download_genome}
+# Download and index the genome
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/009/731/565/GCA_009731565.1_Dplex_v4/GCA_009731565.1_Dplex_v4_genomic.fna.gz
+
+# rename, rezip as bgzip, and index
+mv GCA_009731565.1_Dplex_v4_genomic.fna.gz monarch_genome.fna.gz
+gunzip monarch_genome.fna.gz
+bgzip monarch_genome.fna
+bwa index monarch_genome.fna.gz
+```
+
+`picard`...:
+
+```{r picard_index}
+cmd <- paste0(java_path, " -jar ", picard_path, " CreateSequenceDictionary R= monarch_genome.fna.gz O= monarch_genome.dict")
+system(cmd)
+```
+
+and `samtools faidx`:
+
+```{r samtools_index}
+cmd <- "samtools faidx monarch_genome.fna.gz"
+system(cmd)
+```
+
+
+Next, we'll run the script `run_align.sh` for each set of paired reads we downloaded to align and filter our data based on the parameters we set above using `bwa` and `samtools`, then use the `add_RGs.sh` script to add read-group information to each resulting `bam` file with `picard`.
+
+```{r run_align}
+cl <- parallel::makePSOCKcluster(par)
+doParallel::registerDoParallel(cl)
+
+foreach(q = 1:nrow(SRA_info)) %dopar% {
+  
+  run the alignment
+  cmd <- paste0("bash run_align.sh ",
+                paste0(SRA_info[q,3], "_1"), " ",
+                paste0(SRA_info[q,3], "_2"), " ",
+                "monarch_genome.fna.gz ",
+                samtools_min_map_q, " ",
+                as.numeric(remove_PCR_duplicates), " ",
+                as.numeric(remove_improperly_paired_reads), " ")
+  cat("Running: ", cmd, "\n")
+  system(cmd)
+
+  # rename file
+  file.rename(paste0(SRA_info[q,3], "_1.sort.flt.bam"),
+              paste0(SRA_info[q,3], ".sort.flt.bam"))
+  file.rename(paste0(SRA_info[q,3], "_1.sort.flt.bam.bai"),
+              paste0(SRA_info[q,3], ".sort.flt.bam.bai"))
+  
+  # add read groups
+  cmd2 <- paste0("bash add_RGs.sh ",
+                 paste0(SRA_info[q,3], ".sort.flt"), " ",
+                 paste0(SRA_info[q,3], "_1.fastq"), " ",
+                 SRA_info[q,3], " ",
+                 java_path, " ",
+                 picard_path, " ",
+                 platform)
+  
+  system(cmd2)
+}
+
+parallel::stopCluster(cl)
+```
+
+# Run HaplotypeCaller
+
+Running `GATK` is a multi-step process. First, we need to call haplotypes on each sample, which we can do using the `run_HaplotypeCaller.sh` script. There are no filtering steps here:
+
+```{r run_HaplotypeCaller}
+for(q in 1:nrow(SRA_info)) {
+  # run Haplotype Caller
+  
+  ttempdir <- file.path(temp_dir, paste0("HC_q", q))
+  dir.create(ttempdir)
+  cmd <- paste0("bash run_HaplotypeCaller.sh ", 
+                paste0(SRA_info[q,3], ".sort.flt.RG.bam"), " ", 
+                "monarch_genome.fna.gz ",
+                ttempdir, " ",
+                mem, " ",
+                java_path, " ",
+                gatk4_path, " ")
+  
+  system(cmd)
+  unlink(ttempdir, recursive = TRUE)
+}
+```
+
+# Run GenomeDBImport
+
+Next, we will make databases from the `gvcf` files we produced for each individual in the previous step. For this example, we will prepare to run this for each chr, but will actually only run the first chromosome to save some time and memory. If you wish to run everything, change the object `run_chrs` in the first chunk from `29` to `1:29`. First, we need to build a sample map and a bed file for each region:
+
+```{r prepare_import}
+# prepare sample map and save
+sample_map <- data.table(samp = SRA_info$new_name, file = paste0(SRA_info$new_name, ".sort.flt.RG.bam.hapcalls.gvcf.gz"))
+fwrite(sample_map, "hapmap.txt", sep = "\t")
+
+# prepare bedfiles
+bed <- data.table(chr = c("CM019184.1", "CM019185.1", "CM019186.1", "CM019187.1", "CM019188.1", "CM019189.1", "CM019190.1", "CM019191.1", "CM019192.1", "CM019193.1", "CM019194.1", "CM019195.1", "CM019196.1", "CM019197.1", "CM019198.1", "CM019199.1", "CM019200.1", "CM019201.1", "CM019202.1", "CM019203.1", "CM019204.1", "CM019205.1", "CM019206.1", "CM019207.1", "CM019208.1", "CM019209.1", "CM019210.1", "CM019211.1", "CM019212.1"),
+                  start = 1,
+                  end = c("10631990", "10450245", "10414450", "10184249", "10039743", "9950675", "9826000", "9622331", "9320052", "9273636", "9209872", "8907986", "8886595", "8615111", "8545482", "8449262", "8166185", "7845940", "7367651", "7243763", "7084546", "6814233", "6514101", "5644642", "5380037", "4150802", "3992836", "3625418", "3411326"))
+bed <- bed[run_chrs,]
+
+for(i in 1:nrow(bed)){
+  fwrite(bed[i,], paste0(bed$chr[i], ".bed"), col.names = F, row.names = F, quote = F, sep = "\t")
+}
+```
+
+We'll now run `GenomeDBImport` for each bed file to make our final bed files, using the `run_GenomicsDBImport.sh` script.
+
+```{r run_GenomicsDBImport}
+for(i in 1:nrow(bed)){
+  cmd3 <- paste0("bash run_GenomicsDBImport.sh ",
+                "hapmap.txt ",
+                paste0(bed$chr[q], ".bed"), " ",
+                mem, " ",
+                temp_dir, " ",
+                par, " ",
+                java_path, " ",
+                gatk4_path, " ",
+                5) # batch size for processing, number of samples at a time
+  
+  system(cmd3)
+}
+
+```
+
+# Run GenotypeGVCFs
+Lastly, we'll run `GenotypeGVCFs` to call genotypes for each db we produced in the previous step.
+
+```{r run_GenotypeGVCFs}
+for(i in 1:nrow(bed)){
+  cmd4 <- paste0("bash run_GenomicsDBImport.sh ",
+                "hapmap.txt ",
+                paste0(bed$chr[q], ".bed"), " ",
+                mem, " ",
+                temp_dir, " ",
+                par, " ",
+                java_path, " ",
+                gatk4_path, " ",
+                5) # batch size for processing, number of samples at a time
+  
+  system(cmd4)
+}
+```
+
+# Run hard-filters
+
+Now we will run a set of filters on our variant calls to produce our final set of genotypes. Specifically, we're going to first apply `GATK`'s [hard filters](https://gatk.broadinstitute.org/hc/en-us/articles/360035890471-Hard-filtering-germline-short-variants), select only bi-allelic SNPs, and then do a first, quick filter to remove loci sequenced in very few individuals. We use the
+`run_VariantFiltration.sh` script to do this, which calls `GATK`'s `VariantFiltration` tool, `vcftools`, and `bcftools`.
+
+This is where we use most of the filtering parameters that we set at the start of this document.
+
+```{r hard_filters}
+foreach(q = 1:nrow(SRA_info)) %dopar% {
+  cmd5 <- paste0("bash run_VarinatFiltration.sh ", 
+                paste0(SRA_info[q,3], ".bed.vcf"), " ", 
+                "monarch_genome.fna.gz ",
+                QD, " ",
+                FS, " ",
+                SOR, " ",
+                MQ, " ",
+                MQRS, " ",
+                RPRS, " ",
+                min_ind, " ",
+                GQ, " ")
+  
+  system(cmd5)
+}
+
+```
+
+Our final VCF file will then be stored in files named `hard_filt_pass_[CHRNAME].bed.recode.vcf.gz`. We will use this script in the second notebook, `post_variant_notebook.rmd`.
