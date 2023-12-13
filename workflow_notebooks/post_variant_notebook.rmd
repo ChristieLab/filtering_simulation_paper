@@ -1,0 +1,182 @@
+---
+title: "Post-variant Pipeline"
+output: html_notebook
+---
+
+This document will work you through a basic analysis of called genotypic data using the `snpR` R package. Filtering thresholds and options are set up-front, and the entirety of the rest of the script, which produces a range of variance parameters and plots, can be easily re-run after tweaking these values to compare outputs.
+
+This pipeline uses the `final_monarch_variants.vcf` and `hapmap.txt` files we produced in the `pre_variant_notebook.rmd` document as inputs.
+
+`snpR` can be installed using the following commands via the `remotes` package:
+
+`install.packages("remotes")`
+`remotes::install_github("hemstrow/snpR")`
+
+The following R packages are also required:
+
+* `hexbin`
+* `data.table` (installed automatically alongside `snpR`)
+* `viridis`
+
+For more detailed information on `snpR`, please check out the package's vignette.
+
+```{r setup_and_load}
+library(snpR); library(data.table)
+
+# read in data
+monarchs <- read_vcf("final_monarch_variants.vcf")
+populations <- fread("hapmap.txt", header = F)
+
+# set new sample metadata
+sample.meta(monarchs)$pop <- substr(populations[[1]], 1, 4)
+
+# snpR doesn't like "." in metadata we plan to use (like chromosomes), so we
+# will get rid of that
+new_snp_meta <- snp.meta(monarchs)
+new_snp_meta$CHROM <- gsub("\\.", "_", new_snp_meta$CHROM)
+new_snp_meta$QUAL <- NULL # clear this off to avoid warnings later. Optional
+new_snp_meta$REF <- NULL # clear this off to avoid warnings later. Optional
+new_snp_meta$ALT <- NULL # clear this off to avoid warnings later. Optional
+snp.meta(monarchs) <- new_snp_meta
+
+```
+
+
+# Parameter control
+
+Here we can set a range of possible filtering options. The entire pipeline can be re-run by tweaking these parameters and then re-running the following chunks.
+
+These filters are:
+
+* `maf`: A minor allele frequency filter (MAF).
+* `maf_group`: Controls if MAF should be filtered within-group or study-wide. Setting "pop" specifies that the filter will be applied within-group by population, with loci removed only if they fall below `maf` in all populations.
+* `mac`: A minor allele count filter (MAC).
+* `mgc`: A special version of a MAC filter which counts the number of individuals carrying the minor allele. Any loci where less individuals carry the allele than specified will be removed.
+* `hwe`: A HWP filter, excluding loci with *p*-values less than requested.
+* `hwe_group`: Controls if HWP should be filtered within-group or study-wide. Setting "pop" specifies that the filter will be applied within-group by population, with loci removed if they fall below `hwe` in any population.
+* `hwe_correction`: Controls family-wise error rate (multiple-testing) corrections for HWP. "none" uses no correction, "holm" does sequential-bonferroni, "BH" does Benjamini and Hochberg false discovery rate correction, and so on. See `?p.adjust` for details on the available methods.
+* `min_ind`: Removes loci sequenced in less than the proportion of individuals specified. `min_ind = 0.75` would remove loci sequenced in less than 75% of individuals, for example.
+* `min_loci`: Removes individuals sequenced in less than the proportion of lcoi specified. `min_loci = 0.75` would remove individuals sequenced in less than 75% of loci, for example.
+* `inds_fist`: Controls the filtering order. If TRUE, individuals will be filtered first, the loci.
+* `garbage`: If not FALSE, removes loci and individuals jointly who are genotyped in less than the given proportion of individuals or loci, respecitvely, before doing any other filtering. Useful for getting rid of terrible data that might bias other filters.
+* `LD_cut`, `LD_simga`, and `LD_facet`: Controls LD filtering. If `LD_sigma` is an integer, loci will be filtered via a sliding window approach, greedily removing until no pairs of loci have an $r^{2}$ > `LD_cut` within `LD_sigma` bp of each other within the facet `LD_facet`. The default `LD_facet`, `"pop.CHROM"` will check within chromosomes within each population for high LD. Other parameters about LD pruning can also be changed: check out `?filter_snps` for details.
+
+```{r parameters}
+maf <- 0
+maf_group <- "pop"
+mac <- 0
+mgc <- 1
+hwe <- 1e-6
+hwe_group <- "pop"
+hwe_correction <- "none"
+min_ind <- .70
+min_loci <- .70
+inds_first <- FALSE
+garbage <- .2
+LD_sigma <- FALSE # 100 is a good number to use if you wish to try this.
+LD_cut <- .7
+LD_facet <- "pop.CHROM"
+```
+
+# Filter the data
+We use `filter_snps` to filter the data according to the arugments above. The filtered dataset will be in the object `fmonarchs`, even though I quite like monarch butterflies.
+
+```{r filter}
+fmonarchs <- filter_snps(monarchs, 
+                         maf = maf, 
+                         maf_facets = maf_group,
+                         mac = mac,
+                         mgc = mgc,
+                         hwe = hwe,
+                         hwe_facets = hwe_group, 
+                         fwe_method = hwe_correction,
+                         min_ind = min_ind,
+                         min_loci = min_loci, 
+                         inds_first = inds_first, 
+                         remove_garbage = garbage, 
+                         LD_prune_sigma = LD_sigma, 
+                         LD_prune_r = LD_cut, 
+                         LD_prune_facet = LD_facet)
+```
+
+# Generate diagnostic plots
+
+We'll generate some diagnostic plots next. These can be useful for searching for any issues in our data, like high heterozygote excesses, outlier samples, etc.
+
+```{r diagnostic_plots}
+diagnostic <- plot_diagnostic(fmonarchs, "pop")
+diagnostic
+```
+
+# Generate a PCA
+
+We actually already generated a PCA (it's one of the diagnostic plots), but we will do so formally here for future reference
+
+```{r pca}
+pca <- plot_clusters(fmonarchs, "pop", 
+                     simplify_output = TRUE) # this arg just simplifies the returned stuff a bit
+pca$pca
+```
+
+# Calculate a range of genetic diversity statistics
+
+Next, we'll calculate:
+
+* $H_{O}$: observed heterozygosity
+* $H_{E}$: expected heterozygosity
+* $\pi$: nucleotide diversity
+* $F_{IS}$: inbreeding coefficients ($F_{IT}$ can be calculated by running this without considering populations)
+* $F_{ST}$: fixation index
+* $S$: the number of segregating sites
+* $P_{a}$: private alleles
+* Tajima's D: a measure of the site frequency spectrum skew that can indicate either selection or demographic changes.
+
+```{r basic_stats}
+fmonarchs <- calc_ho(fmonarchs, "pop")
+fmonarchs <- calc_he(fmonarchs, "pop")
+fmonarchs <- calc_pi(fmonarchs, "pop")
+fmonarchs <- calc_fis(fmonarchs, "pop")
+fmonarchs <- calc_pairwise_fst(fmonarchs, "pop")
+fmonarchs <- calc_seg_sites(fmonarchs, "pop")
+fmonarchs <- calc_private(fmonarchs, "pop")
+fmonarchs <- calc_tajimas_d(fmonarchs, "pop", 
+                            global = TRUE) # if FALSE, will use sliding windows.
+
+res <- get.snpR.stats(fmonarchs, "pop", c("ho", "he", "pi",
+                                          "fis", "fst",
+                                          "seg_sites", "private",
+                                          "tajimas_d"))
+```
+
+The results are stored in the `res` object--here's a table of the mean values per population for most of these statistics:
+
+```{r plot_means}
+means <- res$weighted.means
+means <- as.data.frame(t(means[,5:ncol(means)]))
+colnames(means) <- res$weighted.means$subfacet
+
+means
+```
+
+# plot $F_{ST}$ genome-wide
+
+Lastly, we'll do a quick sliding window analysis of $F_{ST}$ genome wide. First, we calculate windowed averages using `calc_smoothed_averages`. This function will automatically do windowed averages for all of our statistics.
+
+Note that the default behavior is for non-overlapping windows. We could change that with the `step` argument if we wished.
+```{r genome_wide_fst_calc}
+fmonarchs <- 
+  calc_smoothed_averages(fmonarchs, "pop.CHROM", 
+                         sigma = 100, # 100 kbp windows
+                         triple_sigma = FALSE, # sigma is tripled by default, this stops that
+                         gaussian = FALSE) # raw averages, not weighted
+```
+
+We can then plot with `plot_manhattan`. If we wish to fetch the values directly, we can do so with `get.snpR.stats`, as above.
+```{r manhattan}
+plot_manhattan(fmonarchs, "fst", facets = "pop.CHROM", chr = "CHROM", window = TRUE, 
+               highlight = FALSE, simplify_output = TRUE)
+```
+
+
+
+

@@ -3,18 +3,15 @@ bedfile=$2
 mem=$3
 tmp_dir=$4
 par=$5
+javapath=$6
+gatkpath=$7
+batchsize=$8
 
-basebed=$(basename ${bedfile})
-
-gatk --java-options "-Xmx${mem}g -Xms${mem}g" GenomicsDBImport  \
-       --genomicsdb-workspace-path ${bedbed}_db \
-       --batch-size 15 \
+$javapath -jar -Xmx${mem}g -Xms${mem}g $gatkpath GenomicsDBImport \
+       --genomicsdb-workspace-path ${bedfile}_db \
+       --batch-size $batchsize \
        -L ${bedfile} \
        --sample-name-map ${samplemap} \
        --tmp-dir $tmp_dir \
        --reader-threads ${par}
-
-
-echo "build database done at: `date`"
-echo ""
 

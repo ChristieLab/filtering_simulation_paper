@@ -47,9 +47,9 @@ The following R chunk controls the filtering parameters this script will use. To
 ```{r set_filters}
 # run parameters
 par <- 4 # for all of these jobs, how many processing threads should we use?
-mem <- 4 # number of GB of ram to allow for alignment and calling jobs
+mem <- 8 # number of GB of ram to allow for alignment and calling jobs
 temp_dir <- tempdir() # temporary directory for alignment and calling jobs
-run_chrs <- 29 # which chromosomes will we run?
+run_chrs <- 1:29 # which chromosomes will we run?
 java_path <- "~/bin/jdk-17.0.9/bin/java" # path to a java 17+ install
 picard_path <- "~/bin/picard.jar" # path to picard .jar
 gatk4_path <- "~/bin/gatk-4.4.0.0/gatk-package-4.4.0.0-local.jar" # path to gatk
@@ -61,14 +61,13 @@ remove_PCR_duplicates <- TRUE # Set to TRUE to remove PCR duplicates
 remove_improperly_paired_reads <- TRUE # Set to TRUE to remove improperly paired reads
 
 # Post-calling hard filters, see below
-QD <- 30
+QD <- 2
 FS <- 60
 SOR <- 3
 MQ <- 40
 MQRankSum <- -12.5
 ReadPosRankSum <- -8
-first_pass_missingness <- 0.2
-min_genotype_quality <- 13.0103
+min_genotype_quality <- 13
 ```
 
 # Fetch example data
@@ -101,7 +100,8 @@ foreach(q = 1:nrow(SRA_info)) %dopar% {
   file.rename(paste0(SRA_info[q,1], "_2.fastq"), paste0(SRA_info[q,3], "_2.fastq"))
 }
 
-parallel::stopCluster(cl)
+cl <- parallel::makePSOCKcluster(par)
+doParallel::registerDoParallel(cl)
 ```
 
 # Align and run initial filters
@@ -199,12 +199,12 @@ for(q in 1:nrow(SRA_info)) {
 
 # Run GenomeDBImport
 
-Next, we will make databases from the `gvcf` files we produced for each individual in the previous step. For this example, we will prepare to run this for each chr, but will actually only run the first chromosome to save some time and memory. If you wish to run everything, change the object `run_chrs` in the first chunk from `29` to `1:29`. First, we need to build a sample map and a bed file for each region:
+Next, we will make databases from the `gvcf` files we produced for each individual in the previous step. First, we need to build a sample map for our samples and a bed file for each chromosome:
 
 ```{r prepare_import}
 # prepare sample map and save
 sample_map <- data.table(samp = SRA_info$new_name, file = paste0(SRA_info$new_name, ".sort.flt.RG.bam.hapcalls.gvcf.gz"))
-fwrite(sample_map, "hapmap.txt", sep = "\t")
+fwrite(sample_map, "hapmap.txt", sep = "\t", col.names = F, row.names = F)
 
 # prepare bedfiles
 bed <- data.table(chr = c("CM019184.1", "CM019185.1", "CM019186.1", "CM019187.1", "CM019188.1", "CM019189.1", "CM019190.1", "CM019191.1", "CM019192.1", "CM019193.1", "CM019194.1", "CM019195.1", "CM019196.1", "CM019197.1", "CM019198.1", "CM019199.1", "CM019200.1", "CM019201.1", "CM019202.1", "CM019203.1", "CM019204.1", "CM019205.1", "CM019206.1", "CM019207.1", "CM019208.1", "CM019209.1", "CM019210.1", "CM019211.1", "CM019212.1"),
@@ -223,7 +223,7 @@ We'll now run `GenomeDBImport` for each bed file to make our final bed files, us
 for(i in 1:nrow(bed)){
   cmd3 <- paste0("bash run_GenomicsDBImport.sh ",
                 "hapmap.txt ",
-                paste0(bed$chr[q], ".bed"), " ",
+                paste0(bed$chr[i], ".bed"), " ",
                 mem, " ",
                 temp_dir, " ",
                 par, " ",
@@ -241,15 +241,13 @@ Lastly, we'll run `GenotypeGVCFs` to call genotypes for each db we produced in t
 
 ```{r run_GenotypeGVCFs}
 for(i in 1:nrow(bed)){
-  cmd4 <- paste0("bash run_GenomicsDBImport.sh ",
-                "hapmap.txt ",
-                paste0(bed$chr[q], ".bed"), " ",
+  cmd4 <- paste0("bash run_GenotypeGVCFs.sh ",
+                paste0(bed$chr[i], ".bed"), " ",
+                "monarch_genome.fna.gz ",
                 mem, " ",
                 temp_dir, " ",
-                par, " ",
                 java_path, " ",
-                gatk4_path, " ",
-                5) # batch size for processing, number of samples at a time
+                gatk4_path)
   
   system(cmd4)
 }
@@ -257,28 +255,48 @@ for(i in 1:nrow(bed)){
 
 # Run hard-filters
 
-Now we will run a set of filters on our variant calls to produce our final set of genotypes. Specifically, we're going to first apply `GATK`'s [hard filters](https://gatk.broadinstitute.org/hc/en-us/articles/360035890471-Hard-filtering-germline-short-variants), select only bi-allelic SNPs, and then do a first, quick filter to remove loci sequenced in very few individuals. We use the
-`run_VariantFiltration.sh` script to do this, which calls `GATK`'s `VariantFiltration` tool, `vcftools`, and `bcftools`.
+Now we will run a set of filters on our variant calls to produce our final set of genotypes. Specifically, we're going to first apply `GATK`'s [hard filters](https://gatk.broadinstitute.org/hc/en-us/articles/360035890471-Hard-filtering-germline-short-variants), select only bi-allelic SNPs, and then mask out individual genotypes where the sequencing confidence is low given the coverage we have. We use the `run_VariantFiltration.sh` script to do this, which calls `GATK`'s `VariantFiltration` tool, `vcftools`, and `bcftools`.
 
 This is where we use most of the filtering parameters that we set at the start of this document.
 
 ```{r hard_filters}
-foreach(q = 1:nrow(SRA_info)) %dopar% {
-  cmd5 <- paste0("bash run_VarinatFiltration.sh ", 
-                paste0(SRA_info[q,3], ".bed.vcf"), " ", 
+
+cl <- parallel::makePSOCKcluster(par)
+doParallel::registerDoParallel(cl)
+
+
+foreach(q = 1:nrow(bed)) %dopar% {
+  cmd5 <- paste0("bash run_VariantFiltration.sh ", 
+                paste0("raw_", bed[q,1], ".bed"), " ", 
                 "monarch_genome.fna.gz ",
-                QD, " ",
-                FS, " ",
-                SOR, " ",
-                MQ, " ",
-                MQRS, " ",
-                RPRS, " ",
-                min_ind, " ",
-                GQ, " ")
+                format(QD, nsmall = 1), " ",
+                format(FS, nsmall = 1), " ",
+                format(SOR, nsmall = 1), " ",
+                format(MQ, nsmall = 1), " ",
+                format(MQRankSum, nsmall = 1), " ",
+                format(ReadPosRankSum, nsmall = 1), " ",
+                min_genotype_quality, " ",
+                mem, " ",
+                java_path, " ",
+                gatk4_path)
   
   system(cmd5)
 }
 
+cl <- parallel::makePSOCKcluster(par)
+doParallel::registerDoParallel(cl)
+
 ```
 
-Our final VCF file will then be stored in files named `hard_filt_pass_[CHRNAME].bed.recode.vcf.gz`. We will use this script in the second notebook, `post_variant_notebook.rmd`.
+Our final VCF files for each chromosome will then be stored in files named `hard_filt_pass_raw_[CHRNAME].bed.recode.vcf`. 
+
+# Merging across chromosomes to create the final VCF file
+Lastly, we will merge across chromosomes to create a complete VCF file. We'll use `bcftools` for this
+
+```{bash concat}
+bcftools concat hard_filt_pass_raw_*.bed.recode.vcf > final_monarch_variants.vcf
+```
+
+The final, concatenated genotypes will then be located in `final_monarch_variants.vcf`.
+
+We will use this data in the second notebook, `post_variant_notebook.rmd`.
