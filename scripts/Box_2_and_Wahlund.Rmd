@@ -94,6 +94,7 @@ stats <- stats[dataset %in% keep_data,]
 stats[,dataset := gsub("_", " ", dataset)]
 stats[,dataset := gsub("goats", "Mountain Goats", dataset)]
 stats[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
+stats[,dataset := gsub("orcas", "Killer Whales", dataset)]
 
 
 
@@ -121,6 +122,8 @@ fst <- fst[dataset %in% keep_data,]
 fst[,dataset := gsub("_", " ", dataset)]
 fst[,dataset := gsub("goats", "Mountain Goats", dataset)]
 fst[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
+fst[,dataset := gsub("orcas", "Killer Whales", dataset)]
+
 fst$mean_fst <- NULL
 
 fst_contour <- fst[which(contour),]
@@ -200,27 +203,6 @@ exclude_dataset <- function(d, dataset = "arabidopsis", exlusion = list(arabidop
   
   return(d)
 }
-
-inset_plots <- function(pstats, target_statistic){
-  target_statistic <- stat_key$fix[match(target_statistic, stat_key$stat)]
-  pstats <- pstats[statistic == target_statistic,]
-  fis_range <- pstats[,.(min = min(value), max = max(value)), by = .(dataset, subfacet, type)]
-  p <- ggplot(fis_range, aes(ymin = min, ymax = max, x = dataset, group =
-                               interaction(dataset, subfacet), color = dataset)) +
-    geom_linerange(linewidth = 8, position = position_dodge(width = .7)) +
-    geom_point(aes(y = min), position = position_dodge(width = .7), size = 7) +
-    geom_point(aes(y = max), position = position_dodge(width = .7), size = 7) +
-    scale_color_manual(values = colors) +
-    guides(color = "none") +
-    theme_bw() +
-    theme(axis.text.x = element_blank(),
-          axis.title = element_blank(),
-          axis.text.y = element_text(size = 60),
-          axis.ticks.x = element_blank())
-  
-  return(p)
-}
-
 ```
 
 
@@ -313,12 +295,6 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats ,],
 # maf_interactive
 # htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
 
-```
-
-## prepare the insets for PA, top
-```{r pa_top_insets}
-insets_PA_top <- c("weighted_mean_fis", "weighted_mean_fst", "weighted_mean_ho", "global_D")
-insets_PA_top <- lapply(insets_PA_top, function(x) inset_plots(pstats, x))
 ```
 
 ## Prepare the plot for filters vs seg sites.
@@ -450,17 +426,9 @@ PA_bottom <- plot_grid(PA_ss, PA_contour, rel_widths = c(.75, .25), align = "h",
 
 PA <- plot_grid(plot_grid(PA_maf + guides(color = "none", linetype = "none"), PA_bottom, ncol = 1), 
                 PA_ss_l, nrow = 1,
-                rel_widths = c(1, .2)) # manually place insets on top plot
+                rel_widths = c(1, .2))
 
-insets <- c(insets_PA_top, list(PA_contour_l))
-names(insets) <- c("top1.pdf", "top2.pdf", "top3.pdf", "top4.pdf", "bottomL.pdf")
-for(i in 1:length(insets)){
-  save_plot(paste0("../manuscript/final_figures/Figure_Box1A_inset_", names(insets)[i]),
-            insets[[i]], base_height = 10, base_width = 12)
-}
-
-save_plot("../manuscript/final_figures/Figure_Box1_PA.pdf", PA, base_height = 11, base_width = 18)
-
+save_plot("../manuscript/final_figures/Figure_Box1A_inset_bottomL.pdf", PA_contour_l, base_height = 10, base_width = 12)
 ```
 
 # Panel B
@@ -623,7 +591,6 @@ PB <- plot_grid(PB,
                 sfs_legend,
                 rel_widths = c(1, .2))
 
-save_plot("../manuscript/final_figures/Figure_Box1_PB.pdf", PB, base_height = 5.5, base_width = 7.5)
 ```
 # Panel C -- selection PCAs
 
@@ -763,7 +730,6 @@ PC <- plot_grid(plot_grid(colored_manhattans[[1]],
                           ncol = 3, axis = "tl", align = "h"),
                 nrow = 2, axis = "tl", align = "h")
 
-save_plot("../manuscript/final_figures/Figure_Box1_PC.pdf", PC, base_height = 5.5, base_width = 7.5)
 
 ```
 
@@ -1031,6 +997,7 @@ pca[,pop_simplified := pop_key$simplified[match(paste0(pop, "_", dataset),
 
 pca[,dataset := gsub("goats", "Mountain Goats", dataset)]
 pca[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
+pca[,dataset := gsub("orcas", "Killer Whales", dataset)]
 pca[,dataset := gsub("_", "", dataset)]
 pca[,dataset := R.utils::capitalize(dataset)]
 
