@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+Combined_pops~MtEvans	0.0120102156292785	0.0119703064882998	0	1	0.01	0.7	0.7	FALSE

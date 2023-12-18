@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+GUA~NAM	0.31347355303991	0.313599188690812	0.09	0	0.01	0.7	0.7	FALSE

@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+ARKW~SRKW	0.139921360141682	0.139894778674247	0	1	0.000001	0.7	0.9	FALSE

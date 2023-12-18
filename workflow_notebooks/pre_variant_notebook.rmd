@@ -3,37 +3,40 @@ title: "Pre-variant Pipeline"
 output: html_notebook
 ---
 
-This document will work you through a basic variant calling pipeline with `samtools` and `GATK`, calling out specific locations where filtering choices are made. The following software packages are required:
+This document will work you through a basic variant calling pipeline with `samtools` and `GATK`, calling out specific locations where filtering choices are made. The following software packages are required, with the versions used here noted:
 
-* `GATK`
-* `picard`
-* `samtools`
-* `bwa`
-* `vcftools`
-* `bcftools`
+* `GATK` v4.4.0.0
+* `picard` v3.1.1
+* `samtools` v1.13
+* `bwa` v0.7.17-r1188
+* `vcftools` v0.1.16
+* `bcftools` v1.13
 
 And, for fetching data,
 
-* `sratoolkit`
+* `sratoolkit` v2.11.3
 
 As this notebook is written, these are all expected to be available on the system path.
 
 The following R packages are also required:
 
-* `data.table`
-* `foreach`
-* `parallel`
-* `doParallel`
+* `data.table` v1.14.8
+* `foreach` v1.5.2
+* `parallel` v4.2.3
+* `doParallel` v1.0.17
 
 Please note that this notebook is set-up to use a small dataset--while it is written to run moderately in parallel, it may be too slow for use with very large datasets. If access to a computing cluster is available, custom scripts based on these which use run management tools like `slurm` may be preferable.
 
 Please note that some of this code is and scripts are adapted from the R package `alignR` by W Hemstrom, which is not yet fully released. The `bash` scripts we are going to use are:
 
 * `run_align.sh`: This will run the alignments and initial mapping filters.
+* `add_RGs.sh`: This will use `picard` to add read-groups to our data. Note that this script is customized slightly for this particular dataset and should be tweaked if used with other data.
 * `run_haplotype_caller.sh`: This will run `GATK`'s `HaplotypeCaller` on each sample.
-* `run_genomedb.sh`: This will run `GATK`'s `GenomicsDBImport`
+* `run_GenomicsDBImport.sh`: This will run `GATK`'s `GenomicsDBImport` on each sample.
+* `run_GenotypGVCFs.sh`: This will run `GATK`'s `GenotypeGVCFs` on each database created by `GenomicsDBImport`.
+* `run_VariantFiltration.sh`: We'll use this to filter the final resulting data using `GATK`'s `VariantFiltration` tool.
 
-If you use these scripts for publication, please cite this paper for now. These scripts must be located in the working directory, and are available at: ENTER GITHUB REPO...
+If you use this notebook or these scripts for publication, please cite this paper for now. These scripts must be located in the working directory, and are available at [here](https://github.com/ChristieLab/filtering_simulation_paper/tree/main/workflow_notebooks).
 
 ```{r setup}
 library(data.table); library(foreach)

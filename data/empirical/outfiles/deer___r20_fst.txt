@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+Ontario~SWUS	0.0241570821717095	0.0241570821717088	0	1	0.000001	0.6	0.6	FALSE

@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+North~South	0.00470660602383924	0.00488443398478219	0.08	0	0.01	0.7	0.7	FALSE

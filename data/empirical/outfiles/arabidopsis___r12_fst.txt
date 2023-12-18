@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+spain~western_europe	0.0901237409123249	0.0898460848081982	0.1	0	0.000001	0.7	0.7	FALSE

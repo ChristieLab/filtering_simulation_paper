@@ -1,0 +1,2 @@
+subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
+GBT~NUB	0.0764726521519928		0	1	0.000001	0.1	0.7	FALSE

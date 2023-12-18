@@ -1,0 +1,2 @@
+subfacet	weighted_mean_he	weighted_mean_ho	weighted_mean_pi	weighted_mean_fis	global_ws.theta	global_ts.theta	global_D	seg_sites	total_pa_corrected	LDNe_0	maf	mgc	hwe	min_ind	min_loci	LD
+CHQ	0.347376751300331	0.514004113455619	0.357609576937339	-0.459844073307074	220713.309354986	359624.213075656	2.38773568082345	927346	0	Inf	0	1	0.000001	0.4	0.7	FALSE

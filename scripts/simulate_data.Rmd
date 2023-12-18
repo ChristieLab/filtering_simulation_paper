@@ -123,8 +123,8 @@ srd <- import.snpR.data(genos, sample.meta = data.frame(pop = rep(c("A", "B", "C
 
 # 
 plot_clusters(srd, "pop")$plot
-# srd <- calc_tajimas_d(srd, "pop", global = TRUE)
-# get.snpR.stats(srd, "pop", "tajimas_d")$weighted.means
+srd <- calc_tajimas_d(srd, "pop", global = TRUE)
+get.snpR.stats(srd, "pop", "tajimas_d")$weighted.means
 
 # plot_sfs(srd, facet = "pop", pops = c("C", "B"), projection = c(90, 90), log = TRUE)
 srd <- calc_pairwise_fst(srd, "pop")
@@ -134,5 +134,13 @@ get.snpR.stats(srd, "pop", "fst")$weighted.means
 # # srd <- calc_pi(srd, "pop")
 # # srd <- calc_fis(srd, "pop")
 plot_manhattan(srd, "fst", facets = "pop")
+
+
+# srd <- srd[pop = c("B", "C")]
+# keep_samps <- sort(c(sample(1:50, 30, FALSE), sample(51:100, 30, FALSE)))
+# srd <- srd[,keep_samps]
+# srd <- calc_maf(srd)
+# srd <- filter_snps(srd, non_poly = TRUE)
+# saveRDS(srd, "../data/simulated/neutral.RDS")
 
 ```

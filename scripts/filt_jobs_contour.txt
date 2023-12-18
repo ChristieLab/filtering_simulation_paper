@@ -1,0 +1,3 @@
+/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/snpR_RDS/O_americanus_RAD_prep.RDS	/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/outfiles/goats_RAD_contour__	40	FALSE	FALSE
+/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/snpR_RDS/stoneflies.RDS	/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/outfiles/stoneflies_contour__	220	FALSE	FALSE
+/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/snpR_RDS/monarchs_prep.RDS	/scratch/negishi/whemstro/filtering_simulation_paper/data/emperical/outfiles/monarchs_contour__	40	FALSE	FALSE

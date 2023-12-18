@@ -12,13 +12,20 @@ This pipeline uses the `final_monarch_variants.vcf` and `hapmap.txt` files we pr
 `install.packages("remotes")`
 `remotes::install_github("hemstrow/snpR")`
 
-The following R packages are also required:
+For this notebook, we used `snpR` version 1.2.9.
 
-* `hexbin`
-* `data.table` (installed automatically alongside `snpR`)
-* `viridis`
+The following R packages are also required, with the version we used here listed:
+
+* `hexbin` v1.28.3
+* `data.table` (installed automatically alongside `snpR`) v1.14.8
+* `viridis` v0.6.4
 
 For more detailed information on `snpR`, please check out the package's vignette.
+
+# Read in data
+First, we are going to read in the data we'll use here, which is the `final_monarch_variants.vcf` file we produced in the `pre_variant_notebook`. If you wish to skip those steps, that dataset is also available (in zipped form) at: [here](https://github.com/ChristieLab/filtering_simulation_paper/tree/main/workflow_notebooks).
+
+We're going to clean up the data a bit, then import it into `snpR`.
 
 ```{r setup_and_load}
 library(snpR); library(data.table)
