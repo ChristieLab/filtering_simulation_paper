@@ -58,7 +58,7 @@ stat_key <- data.frame(stat = c("weighted_mean_he",
 
 keep_data <- c("humans", "monarchs", "goats_WGS", "goats_RAD",
                "orcas", "stoneflies", "yellowperch", "mice", "deer",
-               "expansion", "bottleneck", "neutral", "arabidopsis")
+               "expansion", "bottleneck", "neutral", "arabidopsis", "daphnia")
 
 plot_stats <- c("weighted_mean_fst",
                 "weighted_mean_ho",
@@ -68,7 +68,9 @@ plot_stats <- stat_key$fix[match(plot_stats, stat_key$stat)]
 
 colors <- as.character(khroma::color("muted")(9))
 colors <- c(as.character(khroma::color("bright")(3)),
-            as.character(khroma::color("vibrant")(1)), colors)
+            as.character(khroma::color("vibrant")(2)), colors)
+
+text.sizes <- c("title" = 24, "ticks" = 20)
 ```
 
 ## Read in the filtering results
@@ -77,7 +79,7 @@ This chunk reads in the averages for the different genetic variance statistics. 
 
 ```{r}
 # read in single-pop stats
-stats_files <- list.files("../data/emperical/outfiles/", "stats\\.txt", full.names = TRUE)
+stats_files <- list.files("../data/empirical/outfiles/", "stats\\.txt", full.names = TRUE)
 stats_files <- c(stats_files, list.files("../data/simulated/outfiles/", "^[a-z].+stats\\.txt", full.names = TRUE))
 
 stats <- lapply(stats_files, fread)
@@ -92,9 +94,12 @@ stats[,LDNe_0 := log10(LDNe_0)]
 
 stats <- stats[dataset %in% keep_data,]
 stats[,dataset := gsub("_", " ", dataset)]
-stats[,dataset := gsub("goats", "Mountain Goats", dataset)]
-stats[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
-stats[,dataset := gsub("orcas", "Killer Whales", dataset)]
+stats[,dataset := gsub("goats", "Mountain goats", dataset)]
+stats[,dataset := gsub("yellowperch", "Yellow perch", dataset)]
+stats[,dataset := gsub("orcas", "Killer whales", dataset)]
+stats[,dataset := gsub("mice", "Deer mice", dataset)]
+stats[,dataset := gsub("deer", "White-tailed deer", dataset)]
+stats[,dataset := gsub("monarchs", "Monarch butterflies", dataset)]
 
 
 
@@ -105,8 +110,8 @@ stats <- stats[-which(contour),]
 
 
  # read in fst
-fst_files <- list.files("../data/emperical/outfiles/", "fst\\.txt", full.names = TRUE)
-fst_files <- c(fst_files, list.files("../data/simulated/outfiles/", "^[a-z].+fst\\.txt", full.names = TRUE))
+fst_files <- list.files("../data/empirical/outfiles/", "fst\\.txt", full.names = TRUE)
+fst_files <- c(fst_files, list.files("../data/empirical/outfiles/", "^[a-z].+fst\\.txt", full.names = TRUE))
 
 
 fst <- lapply(fst_files, fread)
@@ -120,9 +125,12 @@ fst[,dataset := gsub("_contour", "", dataset)]
 
 fst <- fst[dataset %in% keep_data,]
 fst[,dataset := gsub("_", " ", dataset)]
-fst[,dataset := gsub("goats", "Mountain Goats", dataset)]
-fst[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
-fst[,dataset := gsub("orcas", "Killer Whales", dataset)]
+fst[,dataset := gsub("goats", "Mountain goats", dataset)]
+fst[,dataset := gsub("yellowperch", "Yellow perch", dataset)]
+fst[,dataset := gsub("orcas", "Killer whales", dataset)]
+fst[,dataset := gsub("mice", "Deer mice", dataset)]
+fst[,dataset := gsub("deer", "White-tailed deer", dataset)]
+fst[,dataset := gsub("monarchs", "Monarch butterflies", dataset)]
 
 fst$mean_fst <- NULL
 
@@ -219,7 +227,7 @@ Notes:
 maf_indices <- 3:12
 maf_ref <- 3
 
-pstats <- prepare_one_filter(stats, fst, maf_indices, maf_ref)
+pstats <- prepare_one_filter(stats = stats, fst = fst, tfilt_indices = maf_indices, tfilt_ref = maf_ref)
 pstats <- exclude_dataset(pstats)
 
 ## figure out where tajima's D crosses zero
@@ -268,18 +276,18 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats ,],
                               zero_normed = 0.025,
                               label = paste0("Monarchs: ", 
                                              round(max(pstats[statistic %in% plot_stats & 
-                                                          dataset == "Monarchs" & 
+                                                          dataset == "Monarch butterflies" & 
                                                           statistic == "F[ST]",]$zero_normed), 3)),
-                              dataset = "Monarchs",
+                              dataset = "Monarch butterflies",
                               subfacet = "GUA ~ ROT",
                               type = "Empirical"), aes(label = label), show.legend = FALSE) +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("MAF") +
   guides(color = guide_legend(title = "Data Source"),
@@ -366,15 +374,15 @@ PA_ss <- ggplot(ss_pstats,
     scale_x_continuous(breaks = seq(-6, -2, by = 1)),
     scale_x_continuous(breaks = c(25, 50, 75))
   )) +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
         axis.title.x = element_blank(),
-        strip.text = element_text(size = 20),
+        strip.text = element_text(size = text.sizes[2]),
         strip.placement = "bottom",
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   scale_y_continuous(limits = total_range) + 
   ylab(expression(Delta ~ P[seg])) +
   xlab("Filter Threshold") +
@@ -385,7 +393,7 @@ PA_ss_l <- ggpubr::get_legend(PA_ss)
 PA_ss <- PA_ss + guides(color = "none", linetype = "none")
 
 contour$filter_focus <- "MAF"  # doing the MAF as a strip to even out title heights
-PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies", "Mountain Goats RAD"),],
+PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies", "Mountain goats RAD"),],
                      aes(x = maf, y = value, color = log10(hwe), 
                          group = interaction(hwe, dataset, subfacet),  
                          linetype = dataset)) +
@@ -397,18 +405,18 @@ PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies
   scale_y_continuous(limits = total_range) +
   scale_x_continuous(breaks = seq(0, .1, by = .02)) +
   theme(axis.title.x = element_blank(),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
         axis.title.y = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20),
-        strip.text = element_text(size = 20),
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1]),
+        strip.text = element_text(size = text.sizes[1]),
         strip.placement = "bottom",
         strip.background = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
   guides(linetype = guide_legend(title = "Data Source"),
-         color = guide_legend(title = "log10(HWE)")) +
+         color = guide_legend(title = "log10(HWP)")) +
   xlab("MAF")
 
 PA_contour_l <- ggpubr::get_legend(PA_contour)
@@ -473,8 +481,8 @@ sfs_netural <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min
   ylab(expression(log[10](Loci))) +
   theme(axis.title = element_text(size = 10),
         axis.text = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   scale_y_continuous(limits = range)
 
 sfs_legend <- ggpubr::get_legend(sfs_netural)
@@ -492,8 +500,8 @@ sfs_bottle <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_min_
   ylab(expression(log[10](Loci))) +
   theme(axis.title = element_text(size = 10),
         axis.text = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   scale_y_continuous(limits = range) +
   guides(color = "none")
 
@@ -509,8 +517,8 @@ sfs_expansion <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_m
   ylab(expression(log[10](Loci))) +
   theme(axis.title = element_text(size = 10),
         axis.text = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   scale_y_continuous(limits = range) +
   guides(color = "none")
 ```
@@ -564,13 +572,13 @@ demos[, Demography := factor(Demography, c("Bottleneck", "Expansion"))]
 demo_plot <- ggplot(demos, aes(x = Generation, y = N, group = Demography)) +
   geom_line(size = 1.5) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   xlab("Generation")
   
 
@@ -672,8 +680,8 @@ color_regions <- function(x, y){
               inherit.aes = FALSE) +
     geom_point(alpha = .5) +
     theme_bw() +
-    theme(axis.title.y = element_text(size = 20),
-          axis.text.y = element_text(size = 16),
+    theme(axis.title.y = element_text(size = text.sizes[1]),
+          axis.text.y = element_text(size = text.sizes[2]),
           axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank()) +
@@ -719,10 +727,10 @@ post_pcas_ready <- lapply(subset_pcas, function(x){
 PC <- plot_grid(plot_grid(colored_manhattans[[1]], 
                           pre_pcas_ready[[1]] + 
                             ggtitle("PCA: Pre-filter") + 
-                            theme(plot.title = element_text(size = 20)), 
+                            theme(plot.title = element_text(size = text.sizes[1])), 
                           post_pcas_ready[[1]]+ 
                             ggtitle("PCA: Post-filter") + 
-                            theme(plot.title = element_text(size = 20)),
+                            theme(plot.title = element_text(size = text.sizes[1])),
                           ncol = 3, axis = "tl", align = "h"),
                 plot_grid(colored_manhattans[[2]], 
                           pre_pcas_ready[[2]], 
@@ -762,13 +770,13 @@ maf_SI_normed <- ggplot(pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("MAF filter") +
   guides(color = guide_legend(title = "Data Source"),
@@ -782,13 +790,13 @@ maf_SI_raw <- ggplot(pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab('Statistic') +
   xlab("MAF filter") +
   guides(color = guide_legend(title = "Data Source"),
@@ -805,13 +813,13 @@ hwe_SI_normed <- ggplot(hwe_pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("Log10(HWP) filter") +
   guides(color = guide_legend(title = "Data Source"),
@@ -825,13 +833,13 @@ hwe_SI_raw <- ggplot(hwe_pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab('Statistic') +
   xlab("Log10(HWP) filter") +
   guides(color = guide_legend(title = "Data Source"),
@@ -848,13 +856,13 @@ miss_SI_normed <- ggplot(miss_pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("% Required Genotypes") +
   guides(color = guide_legend(title = "Data Source"),
@@ -868,13 +876,13 @@ miss_SI_raw <- ggplot(miss_pstats,
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab('Statistic') +
   xlab("% Required Genotypes") +
   guides(color = guide_legend(title = "Data Source"),
@@ -884,40 +892,40 @@ ggsave("../manuscript/final_figures/SI_figures/FS5_miss_SI_normed.jpg", miss_SI_
 ggsave("../manuscript/final_figures/SI_figures/FS6_miss_SI_raw.jpg", miss_SI_raw, height = 11, width = 15)
 #==============missing-bad loci===========
 imiss_SI_normed <- ggplot(imiss_pstats, 
-       aes(x = min_ind*10, y = zero_normed, 
+       aes(x = min_ind*100, y = zero_normed, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("% Required Individuals Genotyped") +
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
 imiss_SI_raw <- ggplot(imiss_pstats, 
-       aes(x = min_ind*10, y = value, 
+       aes(x = min_ind*100, y = value, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab('Statistic') +
   xlab("% Required Individuals Genotyped") +
   guides(color = guide_legend(title = "Data Source"),
@@ -927,40 +935,40 @@ ggsave("../manuscript/final_figures/SI_figures/FS7_imiss_SI_normed.jpg", imiss_S
 ggsave("../manuscript/final_figures/SI_figures/FS8_imiss_SI_raw.jpg", imiss_SI_raw, height = 11, width = 15)
 #==============missing-bad inidividuals===========
 lmiss_SI_normed <- ggplot(lmiss_pstats, 
-       aes(x = min_loci*10, y = zero_normed, 
+       aes(x = min_loci*100, y = zero_normed, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab(expression(Delta ~ 'Statistic')) +
   xlab("% Required Loci Genotyped") +
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
 lmiss_SI_raw <- ggplot(lmiss_pstats, 
-       aes(x = min_loci*10, y = value, 
+       aes(x = min_loci*100, y = value, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
   facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
   scale_color_manual(values = colors) +
   theme_bw() +
-  theme(axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        axis.text.x = element_text(angle = 90),
-        strip.text = element_text(size = 20),
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
-        legend.text = element_text(size = 16),
-        legend.title = element_text(size = 20)) +
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
   ylab('Statistic') +
   xlab("% Required Loci Genotyped") +
   guides(color = guide_legend(title = "Data Source"),
@@ -968,15 +976,15 @@ lmiss_SI_raw <- ggplot(lmiss_pstats,
 
 
 
-ggsave("../manuscript/final_figures/SI_figures/FS9_imiss_SI_normed.jpg", lmiss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS10_imiss_SI_raw.jpg", lmiss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS9_lmiss_SI_normed.jpg", lmiss_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS10_lmiss_SI_raw.jpg", lmiss_SI_raw, height = 11, width = 15)
 ```
 
 ## PCAs across filters
 
 ```{r PCA across filter}
 # read in single-pop stats
-pca_files <- list.files("../data/emperical/outfiles/", "pca\\.txt", full.names = TRUE)
+pca_files <- list.files("../data/empirical/outfiles/", "pca\\.txt", full.names = TRUE)
 pca_files <- c(pca_files, list.files("../data/simulated/outfiles/", "^[a-z].+pca\\.txt", full.names = TRUE))
 
 pca <- lapply(pca_files, fread)
@@ -995,9 +1003,12 @@ pca[,pop_simplified := pop_key$simplified[match(paste0(pop, "_", dataset),
                                                 paste0(pop_key$pop, "_", pop_key$dataset))]]
 
 
-pca[,dataset := gsub("goats", "Mountain Goats", dataset)]
-pca[,dataset := gsub("yellowperch", "Yellow Perch", dataset)]
-pca[,dataset := gsub("orcas", "Killer Whales", dataset)]
+pca[,dataset := gsub("goats", "Mountain goats", dataset)]
+pca[,dataset := gsub("yellowperch", "Yellow perch", dataset)]
+pca[,dataset := gsub("orcas", "Killer whales", dataset)]
+pca[,dataset := gsub("mice", "Deer mice", dataset)]
+pca[,dataset := gsub("deer", "White-tailed deer", dataset)]
+pca[,dataset := gsub("monarchs", "Monarch butterflies", dataset)]
 pca[,dataset := gsub("_", "", dataset)]
 pca[,dataset := R.utils::capitalize(dataset)]
 
