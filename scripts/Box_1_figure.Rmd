@@ -23,7 +23,7 @@ text file, named `filt_jobs.txt` contains information on the jobs to run, with t
 These scripts are separate from this `.Rmd` to allow for SLURM job handling and more efficient parallelization.
 
 
-# Panel A
+# Box 1 Figure
 
 ## Set-up parameters
 
@@ -60,9 +60,9 @@ keep_data <- c("humans", "monarchs", "goats_WGS", "goats_RAD",
                "orcas", "stoneflies", "yellowperch", "mice", "deer",
                "expansion", "bottleneck", "neutral", "arabidopsis", "daphnia")
 
-plot_stats <- c("weighted_mean_fst",
+plot_stats <- c("weighted_mean_fis",
+                "weighted_mean_fst",
                 "weighted_mean_ho",
-                "weighted_mean_fis",
                 "global_D")
 plot_stats <- stat_key$fix[match(plot_stats, stat_key$stat)]
 
@@ -111,7 +111,7 @@ stats <- stats[-which(contour),]
 
  # read in fst
 fst_files <- list.files("../data/empirical/outfiles/", "fst\\.txt", full.names = TRUE)
-fst_files <- c(fst_files, list.files("../data/empirical/outfiles/", "^[a-z].+fst\\.txt", full.names = TRUE))
+fst_files <- c(fst_files, list.files("../data/simulated/outfiles/", "^[a-z].+fst\\.txt", full.names = TRUE))
 
 
 fst <- lapply(fst_files, fread)
@@ -214,14 +214,15 @@ exclude_dataset <- function(d, dataset = "arabidopsis", exlusion = list(arabidop
 ```
 
 
-## Prepare the plot for maf vs all of the stats of interest. Prepare a plot for *all* statistics vs maf for the supplementary material.
+## Prepare the plot for maf vs all of the stats of interest (Panel A).
 
-This will plot the maf filter results (if run with the provided `filt_parms.txt`, filter indices 3:12). A `ggplot2` object will be generated named `PA_maf` for panel A, an object name `maf_SI` for the supplementary material, and an interactive figure generated and saved that are not directly part of the paper.
+This will plot the maf filter results (if run with the provided `filt_parms.txt`, filter indices 3:12). A `ggplot2` object will be generated named `PA_maf` for panel A.
 
 Notes: 
 
-1) Tajima's D alone is not normalized to show the change rather than the raw value, since the flip from negative to positive is biologically important and everything is similar in scale (due to how Tajima's D works).
-2) The monarch data are excluded from $F_{ST}$ since they change notably more and thus make everything else difficult to see. They start far more differentiated ($F_{ST} > 0.3$) at maf = 0 as well.
+1) Tajima's D will have tick marks that show the flip from negative to positive.
+2) $F_{ST}$ for the monarch data is cleaved since it goes so much higher. A label is inserted to show the maximum change.
+3) Sperate plots are made for each plot panel, unfortunately. This is needed to ensure correct spacing/sizes for everything.
 
 ```{r maf_vs_variance}
 maf_indices <- 3:12
@@ -251,27 +252,37 @@ ulevs$adj_stat_names <- tzc$adj_stat_names[1]
 
 ## inf out high monarch FSTs
 
-## plot
-PA_maf <- ggplot(pstats[statistic %in% plot_stats ,], 
+## plot for each stat
+PA_plots <- vector("list", length(plot_stats))
+for(i in 1:length(plot_stats)){
+  tylab <- pstats[statistic %in% plot_stats[i],]$adj_stat_names[1]
+  PA_plots[[i]] <- ggplot(pstats[statistic %in% plot_stats[i],], 
        aes(x = maf, y = zero_normed, 
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
-  geom_point(data = ulevs, aes(y = cross_dd, x = cross_maf,
-                               group = interaction(dataset, subfacet), 
-                               color = dataset), 
-             inherit.aes = FALSE, shape = 18, size = 8, show.legend = FALSE) +
-  facet_wrap(~adj_stat_names, scales = "free_y", labeller = label_parsed, nrow = 1) +
   scale_color_manual(values = colors) +
   theme_bw() +
   scale_x_continuous(breaks = seq(0, .1, by = .02)) +
-  ggh4x::facetted_pos_scales(y = list(
-    NULL,
-    scale_y_continuous(limits = c(0,.025)),
-    NULL,
-    NULL
-  )) +
-  geom_label(data = data.frame(adj_stat_names = "Delta ~ F[ST]",
+  theme(axis.title = element_text(size = text.sizes[1]),
+        axis.text = element_text(size = text.sizes[2]),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.text = element_text(size = text.sizes[1]),
+        strip.background = element_blank(),
+        legend.text = element_text(size = text.sizes[2]),
+        legend.title = element_text(size = text.sizes[1])) +
+  ylab(parse(text = tylab)) + 
+  xlab("MAF") +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title = "Data Type"))
+  
+  
+  if(plot_stats[i] == "F[ST]"){
+    
+    
+    PA_plots[[i]] <- 
+      PA_plots[[i]] + coord_cartesian(ylim = c(0,.025)) +
+      geom_label(data = data.frame(adj_stat_names = "Delta ~ F[ST]",
                               maf = 0.07,
                               zero_normed = 0.025,
                               label = paste0("Monarchs: ", 
@@ -280,32 +291,27 @@ PA_maf <- ggplot(pstats[statistic %in% plot_stats ,],
                                                           statistic == "F[ST]",]$zero_normed), 3)),
                               dataset = "Monarch butterflies",
                               subfacet = "GUA ~ ROT",
-                              type = "Empirical"), aes(label = label), show.legend = FALSE) +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("MAF") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
-
-
-# maf_interactive <- plotly::ggplotly(ggplot(pstats, aes(x = maf, y = zero_normed, group = interaction(dataset, subfacet), color = dataset, linetype = type)) +
-#                                       geom_line() +
-#                                       facet_wrap(~statistic, scales = "free_y", labeller = label_parsed) +
-#                                       khroma::scale_color_batlow(discrete = TRUE) +
-#                                       ylab(expression(Delta ~ 'Statistic')))
-
-# maf_interactive
-# htmlwidgets::saveWidget(maf_interactive, file = "results/interactive_maf.html", selfcontained = TRUE)
+                              type = "Empirical"), aes(label = label), show.legend = FALSE)
+  }
+  
+  if(plot_stats[i] == "Tajima*'\\''*'s'*' D'"){
+    PA_plots[[i]] +
+      geom_point(data = ulevs, aes(y = cross_dd, x = cross_maf,
+                               group = interaction(dataset, subfacet), 
+                               color = dataset), 
+             inherit.aes = FALSE, shape = 18, size = 8, show.legend = FALSE)
+  }
+  
+  if(i == 1){
+    PA_legend <- ggpubr::get_legend(PA_plots[[i]])
+  }
+  
+  PA_plots[[i]] <- PA_plots[[i]] + guides(color = "none", fill = "none", linetype = "none")
+}
 
 ```
 
-## Prepare the plot for filters vs seg sites.
+# Prepare the plot for filters vs seg sites (Panel B).
 Creates a plot named "PA_ss" for seg-sites vs every filter. This will also prepare and plot the remaining SI figures for every other stat vs each summary statistic, named hwe_SI, min_ind_SI, min_loci_SI, missing_SI.
 
 ```{r seg_sites_vs_filters}
@@ -314,7 +320,7 @@ hwe_indices <- c(2, 13, 14, 43, 44, 45, 46)
 hwe_ref <- 13
 
 hwe_pstats <- prepare_one_filter(stats, fst, hwe_indices, hwe_ref)
-hwe_pstats$focus_stat <- "log10(HWP)"
+hwe_pstats$focus_stat <- "Log[10](HWP)"
 hwe_pstats$focus_value <- hwe_pstats$hwe
 hwe_pstats[,focus_value := log10(focus_value)]
 #=======================missing data--both=======================
@@ -322,7 +328,7 @@ miss_indices <- 15:23
 miss_ref <- 15
 
 miss_pstats <- prepare_one_filter(stats, fst, miss_indices, miss_ref)
-miss_pstats$focus_stat <- "Required % Genotyped"
+miss_pstats$focus_stat <- "'Required'*' '*'%'*'Genotyped'"
 miss_pstats$focus_value <- miss_pstats$min_ind * 100
 
 #=======================missing data--inds=======================
@@ -355,93 +361,84 @@ pstats$focus_stat <- "MAF"
 pstats$focus_value <- pstats$maf
 
 all_pstats <- rbind(pstats, hwe_pstats, miss_pstats)
-all_pstats[,focus_stat := factor(focus_stat, c("MAF", "log10(HWP)", "Required % Genotyped"))]
+all_pstats[,focus_stat := factor(focus_stat, c("MAF", "Log[10](HWP)", "'Required'*' '*'%'*'Genotyped'"))]
 ss_pstats <- all_pstats[statistic == "P[seg]",]
 
 total_range <- c(min(c(ss_pstats$value, contour$value)),
                      max(c(ss_pstats$value, contour$value)))
 
-PA_ss <- ggplot(ss_pstats, 
-                aes(x = focus_value, y = value, 
-                    group = interaction(dataset, subfacet), 
-                    color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~focus_stat, scales = "free_x", nrow = 1, strip.position = "bottom") +
-  scale_color_manual(values = colors) +
-  theme_bw() + 
-  ggh4x::facetted_pos_scales(x = list(
-    scale_x_continuous(breaks = seq(0, .1, by = .02)),
-    scale_x_continuous(breaks = seq(-6, -2, by = 1)),
-    scale_x_continuous(breaks = c(25, 50, 75))
-  )) +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        axis.title.x = element_blank(),
-        strip.text = element_text(size = text.sizes[2]),
-        strip.placement = "bottom",
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  scale_y_continuous(limits = total_range) + 
-  ylab(expression(Delta ~ P[seg])) +
-  xlab("Filter Threshold") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title= "Data Type"))
-
-PA_ss_l <- ggpubr::get_legend(PA_ss)
-PA_ss <- PA_ss + guides(color = "none", linetype = "none")
+u_f_s <- unique(ss_pstats$focus_stat)
+PB_plots_ss <- vector("list", length(u_f_s))
+for(i in 1:length(u_f_s)){
+  
+  tfs <- ss_pstats[focus_stat == u_f_s[[i]]]$focus_stat[1]
+  PB_plots_ss[[i]] <- ggplot(ss_pstats[focus_stat == u_f_s[[i]]], 
+                             aes(x = focus_value, y = value, 
+                                 group = interaction(dataset, subfacet), 
+                                 color = dataset, linetype = type)) + 
+    geom_line(size = 1.5) +
+    scale_color_manual(values = colors) +
+    theme_bw() +
+    scale_y_continuous(limits = total_range) + 
+    ylab(expression(Delta ~ P[seg])) +
+    xlab(parse(text = as.character(tfs))) +
+    guides(color = "none",
+           linetype = "none") +
+    theme(axis.title = element_text(size = text.sizes[1]),
+          axis.text = element_text(size = text.sizes[2]),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          legend.text = element_text(size = text.sizes[2]),
+          legend.title = element_text(size = text.sizes[1]))
+  
+  if(tfs == "MAF"){
+    PB_plots_ss[[i]] <- PB_plots_ss[[i]] +
+      scale_x_continuous(breaks = seq(0, .1, by = .02))
+  }
+}
 
 contour$filter_focus <- "MAF"  # doing the MAF as a strip to even out title heights
-PA_contour <- ggplot(contour[statistic == "P[seg]"  & dataset %in% c("Stoneflies", "Mountain goats RAD"),],
-                     aes(x = maf, y = value, color = log10(hwe), 
-                         group = interaction(hwe, dataset, subfacet),  
-                         linetype = dataset)) +
-  geom_line(size = 1.5) +
+
+PB_contour <- ggplot(as.data.frame(contour[statistic == "P[seg]",]),
+                     aes(x = maf, z = value, y = log10(hwe))) +
+  metR::geom_contour_fill(aes(z = value), show.legend = FALSE) +
+  geomtextpath::geom_textcontour(textcolour = "white", size = 6, angle = 180, upright = TRUE) +
   khroma::scale_color_batlow() +
   khroma::scale_fill_batlow() +
   theme_bw() +
-  facet_wrap(~filter_focus, strip.position = "bottom") +
-  scale_y_continuous(limits = total_range) +
-  scale_x_continuous(breaks = seq(0, .1, by = .02)) +
-  theme(axis.title.x = element_blank(),
-        axis.text = element_text(size = text.sizes[2]),
+  scale_y_continuous(expand = c(0,0)) +
+  scale_x_continuous(expand = c(0,0), breaks = seq(0, .1, by = .02)) +
+  theme(axis.text = element_text(size = text.sizes[2]),
+        axis.title = element_text(size = text.sizes[1]),
         axis.text.x = element_text(angle = 90, vjust = 0.5),
-        axis.title.y = element_blank(),
         legend.text = element_text(size = text.sizes[2]),
         legend.title = element_text(size = text.sizes[1]),
         strip.text = element_text(size = text.sizes[1]),
         strip.placement = "bottom",
-        strip.background = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
-  guides(linetype = guide_legend(title = "Data Source"),
-         color = guide_legend(title = "log10(HWP)")) +
-  xlab("MAF")
-
-PA_contour_l <- ggpubr::get_legend(PA_contour)
-PA_contour <- PA_contour + guides(linetype = "none",
-                                  color = "none")
+        strip.background = element_blank()) +
+  xlab("MAF") +
+  ylab(bquote(log[10](HWP)))
 
 ```
 
-## Combine Panel A
+## Combine Figure
 
-Create the final Panel A
+Create the final Box 1 figure
 
 ```{r panel_A}
-PA_bottom <- plot_grid(PA_ss, PA_contour, rel_widths = c(.75, .25), align = "h", axis = "b") # manually place the legend as an inset
+FB1 <- plot_grid(plotlist = c(PA_plots, PB_plots_ss, list(PB_contour)), 
+                     nrow = 2, axis = "tl", align = "vh")
 
-PA <- plot_grid(plot_grid(PA_maf + guides(color = "none", linetype = "none"), PA_bottom, ncol = 1), 
-                PA_ss_l, nrow = 1,
+FB1 <- plot_grid(FB1, PA_legend, nrow = 1,
                 rel_widths = c(1, .2))
 
-save_plot("../manuscript/final_figures/Figure_Box1A_inset_bottomL.pdf", PA_contour_l, base_height = 10, base_width = 12)
+save_plot("../manuscript/final_figures/Box_1_Figure.pdf", FB1, base_height = 10, base_width = 20)
+
 ```
 
-# Panel B
+# Supplementary Figures
 
-## Read in the site frequency spectra for the three simulated datasets
+## SFS
+### Read in the site frequency spectra for the three simulated datasets
 
 This will read in the site frequency spectra data for each filter set in the three simulated data scenarios
 
@@ -460,7 +457,7 @@ sfs$demography <- ifelse(grepl("expansion", sfs$demography), "Expansion", ifelse
 sfs <- sfs[pop == "C",]
 ```
 
-## Generate the three plots (neutral, expansion, bottleneck)
+### Generate the three plots (neutral, expansion, bottleneck)
 
 Generates plots for each demography, making sure that the axes are the same
 
@@ -523,7 +520,7 @@ sfs_expansion <- ggplot(sfs[filter_ID %in% maf_indices & proj_prop == .7 & num_m
   guides(color = "none")
 ```
 
-## Generate curves for the demographic history
+### Generate curves for the demographic history
 
 This generates the demographic data curve. Ensure that the parameters match those used to
 simulate the data in `simulate_data.rmd`, as they should by default. This chunk sets those
@@ -584,36 +581,38 @@ demo_plot <- ggplot(demos, aes(x = Generation, y = N, group = Demography)) +
 
 ```
 
-## Add on the SFS plots--generate Panel B
+### Add on the SFS plots--generate Figure S1
 
-```{r PB}
+```{r FS1}
 inset_size <- .3
-PB <-  ggdraw() +
+FS1 <-  ggdraw() +
   draw_plot(demo_plot) +
-  draw_plot(sfs_netural, x = .2, y = .2795, width = inset_size, height = inset_size*.9) +
-  draw_plot(sfs_bottle, x = .64, y = .206, width = inset_size, height = inset_size*.9) +
-  draw_plot(sfs_expansion, x = .64, y = .667, width = inset_size, height = inset_size*.9)
+  draw_plot(sfs_netural, x = .14, y = .22, width = inset_size, height = inset_size*.9) +
+  draw_plot(sfs_bottle, x = .6, y = .135, width = inset_size, height = inset_size*.9) +
+  draw_plot(sfs_expansion, x = .6, y = .68, width = inset_size, height = inset_size*.9)
 
 
-PB <- plot_grid(PB,
+FS1 <- plot_grid(FS1,
                 sfs_legend,
                 rel_widths = c(1, .2))
 
-```
-# Panel C -- selection PCAs
+save_plot("../manuscript/final_figures/SI_figures/FS1_SFS.jpg", FS1, base_height = 11, base_width = 15)
 
-## read in data
+```
+## Selection PCAs
+
+### read in data
 
 Read in two of the simulation datasets and set the number of SNPs to use for the plots (want to use the same number before and after filtering and between both sims to control for power).
 
-```{r panel_c_read}
+```{r sel_read}
 d_.1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_0.1.RDS")
 d_1 <- readRDS("../data/simulated/snpR_RDS/0.00005_50_0.2_1.RDS")
 num_keep <- 7000
 ```
 
 
-## plot overall PCAs for the target iters (base filter)
+### plot overall PCAs for the target iters (base filter)
 
 For each dataset, do these things:
 
@@ -634,14 +633,14 @@ datasets <- lapply(datsets, function(x){
 pcas <- lapply(datsets, function(x) plot_clusters(x[sample(nrow(x), num_keep, FALSE),], "pop", simplify_output = TRUE))
 ```
 
-## Plot Manhattan plots
+### Plot Manhattan plots
 
 Plot manhattan plots for each dataset
 ```{r manhattans}
 manhattans <- lapply(datasets, function(x) plot_manhattan(x, "fst", facets = "pop", simplify_output = TRUE))
 ```
 
-## Remove SNPs by position, then re-plot PCAs.
+### Remove SNPs by position, then re-plot PCAs.
 Positions to remove basically just select the peak in each dataset as narrowly as possible.
 
 To ensure consistent PCAs, select the same number of SNPs in each, since we will subset down to very different numbers.
@@ -663,7 +662,7 @@ for(i in 1:length(subset_datasets)){
 subset_pcas <- lapply(subset_datasets, function(x) plot_clusters(x, "pop", simplify_output = TRUE))
 
 ```
-## Color in the manhattan plots with the regions removes:
+### Color in the manhattan plots with the regions removes:
 ```{r PC}
 color_regions <- function(x, y){
   td <- x$data
@@ -699,9 +698,9 @@ for(i in 1:length(manhattans)){
 
 ```
 
-## Align everything to produce panel C
+### Align everything to produce FS2
 
-```{r PC}
+```{r FS2}
 pre_pcas_ready <- lapply(pcas, function(x){
   x <- x$pca + khroma::scale_color_highcontrast() +
     geom_point(aes(color = pop), size = 3) +
@@ -724,7 +723,7 @@ post_pcas_ready <- lapply(subset_pcas, function(x){
   return(x)
 }) 
 
-PC <- plot_grid(plot_grid(colored_manhattans[[1]], 
+FS2 <- plot_grid(plot_grid(colored_manhattans[[1]], 
                           pre_pcas_ready[[1]] + 
                             ggtitle("PCA: Pre-filter") + 
                             theme(plot.title = element_text(size = text.sizes[1])), 
@@ -738,24 +737,9 @@ PC <- plot_grid(plot_grid(colored_manhattans[[1]],
                           ncol = 3, axis = "tl", align = "h"),
                 nrow = 2, axis = "tl", align = "h")
 
+save_plot("../manuscript/final_figures/SI_figures/FS2_selection_pcas.jpg", FS2, base_height = 10, base_width = 20)
 
 ```
-
-# Combine the final plot
-
-```{r final_box_1_fig}
-Pfinal_bottom <- plot_grid(PB, PC, axis = "tr", align = "h")
-Pfinal <- plot_grid(PA,
-                    Pfinal_bottom,
-                    ncol = 1,
-                    rel_heights = c(.66, .33))
-
-save_plot("../manuscript/final_figures/Box_1_Figure.pdf", Pfinal, base_height = 15, base_width = 20)
-save_plot("../manuscript/final_figures/Box_1_Figure.jpg", Pfinal, base_height = 15, base_width = 20)
-
-```
-
-# Supplementary Figures
 
 ## Each statistic vs each filter:
 
@@ -802,8 +786,8 @@ maf_SI_raw <- ggplot(pstats,
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
-ggsave("../manuscript/final_figures/SI_figures/FS1_maf_SI_normed.jpg", maf_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS2_maf_SI_raw.jpg", maf_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS3_maf_SI_normed.jpg", maf_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS4_maf_SI_raw.jpg", maf_SI_raw, height = 11, width = 15)
 #======================HWE======================================================
 hwe_SI_normed <- ggplot(hwe_pstats, 
        aes(x = log10(hwe), y = zero_normed, 
@@ -845,8 +829,8 @@ hwe_SI_raw <- ggplot(hwe_pstats,
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
-ggsave("../manuscript/final_figures/SI_figures/FS3_hwe_SI_normed.jpg", hwe_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS4_hwe_SI_raw.jpg", hwe_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS5_hwe_SI_normed.jpg", hwe_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS6_hwe_SI_raw.jpg", hwe_SI_raw, height = 11, width = 15)
 #==============missing-both===========
 miss_SI_normed <- ggplot(miss_pstats, 
        aes(x = min_ind*10, y = zero_normed, 
@@ -888,8 +872,8 @@ miss_SI_raw <- ggplot(miss_pstats,
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
-ggsave("../manuscript/final_figures/SI_figures/FS5_miss_SI_normed.jpg", miss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS6_miss_SI_raw.jpg", miss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS7_miss_SI_normed.jpg", miss_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS8_miss_SI_raw.jpg", miss_SI_raw, height = 11, width = 15)
 #==============missing-bad loci===========
 imiss_SI_normed <- ggplot(imiss_pstats, 
        aes(x = min_ind*100, y = zero_normed, 
@@ -931,8 +915,8 @@ imiss_SI_raw <- ggplot(imiss_pstats,
   guides(color = guide_legend(title = "Data Source"),
          linetype = guide_legend(title = "Data Type"))
 
-ggsave("../manuscript/final_figures/SI_figures/FS7_imiss_SI_normed.jpg", imiss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS8_imiss_SI_raw.jpg", imiss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS9_imiss_SI_normed.jpg", imiss_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS10_imiss_SI_raw.jpg", imiss_SI_raw, height = 11, width = 15)
 #==============missing-bad inidividuals===========
 lmiss_SI_normed <- ggplot(lmiss_pstats, 
        aes(x = min_loci*100, y = zero_normed, 
@@ -976,8 +960,8 @@ lmiss_SI_raw <- ggplot(lmiss_pstats,
 
 
 
-ggsave("../manuscript/final_figures/SI_figures/FS9_lmiss_SI_normed.jpg", lmiss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS10_lmiss_SI_raw.jpg", lmiss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS11_lmiss_SI_normed.jpg", lmiss_SI_normed, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS12_lmiss_SI_raw.jpg", lmiss_SI_raw, height = 11, width = 15)
 ```
 
 ## PCAs across filters
@@ -1020,7 +1004,7 @@ pca_maf <- ggplot(pca[filter_ID %in% maf_indices,], aes(x = PC1, y = PC2, color 
   theme_bw() +
   theme(strip.background = element_blank())
 
-ggsave("../manuscript/final_figures/SI_figures/FS11_maf_SI_pca.jpg", pca_maf, height = 20, width = 20)
+ggsave("../manuscript/final_figures/SI_figures/FS13_maf_SI_pca.jpg", pca_maf, height = 20, width = 20)
 
 
 #=======================HWE=======================
@@ -1031,7 +1015,7 @@ pca_hwe <- ggplot(pca[filter_ID %in% hwe_indices,], aes(x = PC1, y = PC2, color 
   theme_bw() +
   theme(strip.background = element_blank())
 
-ggsave("../manuscript/final_figures/SI_figures/FS12_hwe_SI_pca.jpg", pca_hwe, height = 20, width = 20)
+ggsave("../manuscript/final_figures/SI_figures/FS14_hwe_SI_pca.jpg", pca_hwe, height = 20, width = 20)
 
 #=======================missingness--both=======================
 # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
@@ -1042,7 +1026,7 @@ pca_miss <- ggplot(pca[filter_ID %in% miss_indices,], aes(x = PC1, y = PC2, colo
   theme_bw() +
   theme(strip.background = element_blank())
 
-ggsave("../manuscript/final_figures/SI_figures/FS13_miss_SI_pca.jpg", pca_miss, height = 20, width = 20)
+ggsave("../manuscript/final_figures/SI_figures/FS15_miss_SI_pca.jpg", pca_miss, height = 20, width = 20)
 
 #=======================missingness--individuals=======================
 # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
@@ -1053,7 +1037,7 @@ pca_imiss <- ggplot(pca[filter_ID %in% imiss_indices,], aes(x = PC1, y = PC2, co
   theme_bw() +
   theme(strip.background = element_blank())
 
-ggsave("../manuscript/final_figures/SI_figures/FS14_imiss_SI_pca.jpg", pca_imiss, height = 20, width = 20)
+ggsave("../manuscript/final_figures/SI_figures/FS16_imiss_SI_pca.jpg", pca_imiss, height = 20, width = 20)
 
 #=======================missingness--loci=======================
 # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
@@ -1064,7 +1048,7 @@ pca_lmiss <- ggplot(pca[filter_ID %in% lmiss_indices,], aes(x = PC1, y = PC2, co
   theme_bw() +
   theme(strip.background = element_blank())
 
-ggsave("../manuscript/final_figures/SI_figures/FS15_lmiss_SI_pca.jpg", pca_lmiss, height = 20, width = 20)
+ggsave("../manuscript/final_figures/SI_figures/FS17_lmiss_SI_pca.jpg", pca_lmiss, height = 20, width = 20)
 
 ```
 
