@@ -145,7 +145,7 @@ doParallel::registerDoParallel(cl)
 
 foreach(q = 1:nrow(SRA_info)) %dopar% {
   
-  run the alignment
+  # run the alignment
   cmd <- paste0("bash run_align.sh ",
                 paste0(SRA_info[q,3], "_1"), " ",
                 paste0(SRA_info[q,3], "_2"), " ",

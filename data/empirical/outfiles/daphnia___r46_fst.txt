@@ -1,2 +1,2 @@
 subfacet	weighted_mean_fst	mean_fst	maf	mgc	hwe	min_ind	min_loci	LD
-CHQ~LPB	0.167904062936916	0.171213453601429	0	1	0.01	0.7	0.7	FALSE
+KAP~PA	0.0608597244579094	0.0617033056219758	0	1	0.01	0.7	0.7	FALSE
