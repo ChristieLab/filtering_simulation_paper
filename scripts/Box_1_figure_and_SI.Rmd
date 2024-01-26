@@ -71,6 +71,7 @@ colors <- c(as.character(khroma::color("bright")(3)),
             as.character(khroma::color("vibrant")(2)), colors)
 
 text.sizes <- c("title" = 24, "ticks" = 20)
+x_axis_margin <- 15
 ```
 
 ## Read in the filtering results
@@ -266,7 +267,7 @@ for(i in 1:length(plot_stats)){
   scale_x_continuous(breaks = seq(0, .1, by = .02)) +
   theme(axis.title = element_text(size = text.sizes[1]),
         axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, margin = margin(b = x_axis_margin)),
         strip.text = element_text(size = text.sizes[1]),
         strip.background = element_blank(),
         legend.text = element_text(size = text.sizes[2]),
@@ -386,7 +387,7 @@ for(i in 1:length(u_f_s)){
            linetype = "none") +
     theme(axis.title = element_text(size = text.sizes[1]),
           axis.text = element_text(size = text.sizes[2]),
-          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, margin = margin(b = x_axis_margin)),
           legend.text = element_text(size = text.sizes[2]),
           legend.title = element_text(size = text.sizes[1]))
   
@@ -409,7 +410,7 @@ PB_contour <- ggplot(as.data.frame(contour[statistic == "P[seg]",]),
   scale_x_continuous(expand = c(0,0), breaks = seq(0, .1, by = .02)) +
   theme(axis.text = element_text(size = text.sizes[2]),
         axis.title = element_text(size = text.sizes[1]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, margin = margin(b = x_axis_margin)),
         legend.text = element_text(size = text.sizes[2]),
         legend.title = element_text(size = text.sizes[1]),
         strip.text = element_text(size = text.sizes[1]),
@@ -432,6 +433,8 @@ FB1 <- plot_grid(FB1, PA_legend, nrow = 1,
                 rel_widths = c(1, .2))
 
 save_plot("../manuscript/final_figures/Box_1_Figure.pdf", FB1, base_height = 10, base_width = 20)
+save_plot("../manuscript/final_figures/Box_1_Figure.jpg", FB1, base_height = 10, base_width = 20)
+
 
 ```
 
@@ -744,311 +747,173 @@ save_plot("../manuscript/final_figures/SI_figures/FS2_selection_pcas.jpg", FS2, 
 ## Each statistic vs each filter:
 
 ```{r stat_per_filter}
+all_stat_plot_func <- function(stats, x, y, xlab, log10x = FALSE){
+  levs <- unique(stats$statistic)
+  plots <- vector("list", length(levs))
+  names(plots) <- levs
+  x <- ensym(x)
+  y <- ensym(y)
+  
+  for(i in 1:length(plots)){
+    tlev <- as.character(levs[i])
+    
+    if(log10x){
+      plots[[i]] <- ggplot(stats[statistic == levs[i],], 
+                         aes(x = log10(!!x), y = !!y, 
+                             group = interaction(dataset, subfacet), 
+                             color = dataset, linetype = type))
+    }
+    else{
+      plots[[i]] <- ggplot(stats[statistic == levs[i],], 
+                         aes(x = !!x, y = !!y, 
+                             group = interaction(dataset, subfacet), 
+                             color = dataset, linetype = type))
+    }
+    
+    plots[[i]] <- plots[[i]] + 
+      geom_line(size = 1.5) +
+      scale_color_manual(values = colors) +
+      theme_bw() +
+      theme(axis.title = element_text(size = text.sizes[1]*.75),
+            axis.text = element_text(size = text.sizes[2]*.75),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, margin = margin(b = x_axis_margin - 5)),
+            legend.text = element_text(size = text.sizes[2]*.75),
+            legend.title = element_text(size = text.sizes[1]*.75)) +
+      xlab(parse(text = xlab)) +
+      ylab(parse(text = tlev))
+    
+    if(i == 1){
+      plots[[i]] <- plots[[i]] + guides(color = guide_legend(title = "Data Source"),
+             linetype = guide_legend(title = "Data Type"))
+      l <- ggpubr::get_legend(plots[[i]])
+    }
+    
+    plots[[i]] <- plots[[i]] + guides(color = "none", linetype = "none")
+  }
+  
+  fig <- plot_grid(plotlist = plots, axis = "tl", align = "vh", ncol = 3)
+  return(list(fig = fig, legend = l))
+}
 
 #======================MAF======================================================
-maf_SI_normed <- ggplot(pstats, 
-       aes(x = maf, y = zero_normed, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("MAF filter") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+maf_SI_normed <- all_stat_plot_func(pstats, "maf", "zero_normed", "'MAF'*' '*'filter'")
+maf_SI_normed <- plot_grid(maf_SI_normed$fig, maf_SI_normed$legend,
+                           rel_widths = c(1, .2))
 
-maf_SI_raw <- ggplot(pstats, 
-       aes(x = maf, y = value, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab('Statistic') +
-  xlab("MAF filter") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+maf_SI_raw <- all_stat_plot_func(pstats, "maf", "value", "'MAF'*' '*'filter'")
+maf_SI_raw <- plot_grid(maf_SI_raw$fig, maf_SI_raw$legend,
+                           rel_widths = c(1, .2))
 
-ggsave("../manuscript/final_figures/SI_figures/FS3_maf_SI_normed.jpg", maf_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS4_maf_SI_raw.jpg", maf_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS3_maf_SI_normed.jpg", maf_SI_normed, height = 20, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS4_maf_SI_raw.jpg", maf_SI_raw, height = 20, width = 15)
 #======================HWE======================================================
-hwe_SI_normed <- ggplot(hwe_pstats, 
-       aes(x = log10(hwe), y = zero_normed, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("Log10(HWP) filter") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+hwe_SI_normed <- all_stat_plot_func(hwe_pstats, "hwe", "zero_normed", "log[10](HWP) * ' ' * 'filter'", log10x = TRUE)
+hwe_SI_normed <- plot_grid(hwe_SI_normed$fig, hwe_SI_normed$legend,
+                           rel_widths = c(1, .2))
 
-hwe_SI_raw <- ggplot(hwe_pstats, 
-       aes(x = log10(hwe), y = value, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab('Statistic') +
-  xlab("Log10(HWP) filter") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
-
-ggsave("../manuscript/final_figures/SI_figures/FS5_hwe_SI_normed.jpg", hwe_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS6_hwe_SI_raw.jpg", hwe_SI_raw, height = 11, width = 15)
-#==============missing-both===========
-miss_SI_normed <- ggplot(miss_pstats, 
-       aes(x = min_ind*10, y = zero_normed, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("% Required Genotypes") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
-
-miss_SI_raw <- ggplot(miss_pstats, 
-       aes(x = min_ind*10, y = value, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab('Statistic') +
-  xlab("% Required Genotypes") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
-
-ggsave("../manuscript/final_figures/SI_figures/FS7_miss_SI_normed.jpg", miss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS8_miss_SI_raw.jpg", miss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS5_hwe_SI_normed.jpg", hwe_SI_normed, height = 20, width = 15)
 #==============missing-bad loci===========
-imiss_SI_normed <- ggplot(imiss_pstats, 
-       aes(x = min_ind*100, y = zero_normed, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("% Required Individuals Genotyped") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+imiss_pstats[,min_ind := min_ind*100]
+imiss_SI_normed <- all_stat_plot_func(imiss_pstats, "min_ind", "zero_normed", "'%'*' '*'Required'*' '*'Individuals'")
+imiss_SI_normed <- plot_grid(imiss_SI_normed$fig, imiss_SI_normed$legend,
+                           rel_widths = c(1, .2))
 
-imiss_SI_raw <- ggplot(imiss_pstats, 
-       aes(x = min_ind*100, y = value, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab('Statistic') +
-  xlab("% Required Individuals Genotyped") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+ggsave("../manuscript/final_figures/SI_figures/FS6_imiss_SI_normed.jpg", imiss_SI_normed, height = 20, width = 15)
 
-ggsave("../manuscript/final_figures/SI_figures/FS9_imiss_SI_normed.jpg", imiss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS10_imiss_SI_raw.jpg", imiss_SI_raw, height = 11, width = 15)
 #==============missing-bad inidividuals===========
-lmiss_SI_normed <- ggplot(lmiss_pstats, 
-       aes(x = min_loci*100, y = zero_normed, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab(expression(Delta ~ 'Statistic')) +
-  xlab("% Required Loci Genotyped") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
+lmiss_pstats[,min_loci := min_loci*100]
+lmiss_SI_normed <- all_stat_plot_func(lmiss_pstats, "min_loci", "zero_normed", "'%'*' '*'Required'*' '*'Loci'")
+lmiss_SI_normed <- plot_grid(lmiss_SI_normed$fig, lmiss_SI_normed$legend,
+                           rel_widths = c(1, .2))
 
-lmiss_SI_raw <- ggplot(lmiss_pstats, 
-       aes(x = min_loci*100, y = value, 
-           group = interaction(dataset, subfacet), 
-           color = dataset, linetype = type)) + 
-  geom_line(size = 1.5) +
-  facet_wrap(~statistic, scales = "free_y", labeller = label_parsed, nrow = 4) +
-  scale_color_manual(values = colors) +
-  theme_bw() +
-  theme(axis.title = element_text(size = text.sizes[1]),
-        axis.text = element_text(size = text.sizes[2]),
-        axis.text.x = element_text(angle = 90, vjust = 0.5),
-        strip.text = element_text(size = text.sizes[1]),
-        strip.background = element_blank(),
-        legend.text = element_text(size = text.sizes[2]),
-        legend.title = element_text(size = text.sizes[1])) +
-  ylab('Statistic') +
-  xlab("% Required Loci Genotyped") +
-  guides(color = guide_legend(title = "Data Source"),
-         linetype = guide_legend(title = "Data Type"))
-
-
-
-ggsave("../manuscript/final_figures/SI_figures/FS11_lmiss_SI_normed.jpg", lmiss_SI_normed, height = 11, width = 15)
-ggsave("../manuscript/final_figures/SI_figures/FS12_lmiss_SI_raw.jpg", lmiss_SI_raw, height = 11, width = 15)
+ggsave("../manuscript/final_figures/SI_figures/FS7_lmiss_SI_normed.jpg", imiss_SI_normed, height = 20, width = 15)
 ```
 
 ## PCAs across filters
 
 ```{r PCA across filter}
-# read in single-pop stats
-pca_files <- list.files("../data/empirical/outfiles/", "pca\\.txt", full.names = TRUE)
-pca_files <- c(pca_files, list.files("../data/simulated/outfiles/", "^[a-z].+pca\\.txt", full.names = TRUE))
-
-pca <- lapply(pca_files, fread)
-names(pca) <- pca_files
-
-pca <- rbindlist(pca, idcol = "run_ID")
-pca[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
-pca[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
-
-pca <- pca[dataset %in% keep_data,]
-
-pop_key <- unique(pca[,c("dataset", "pop")])
-pop_key <- dplyr::arrange(pop_key, "dataset")
-pop_key$simplified <- rep(c("A", "B"), length.out = nrow(pop_key))
-pca[,pop_simplified := pop_key$simplified[match(paste0(pop, "_", dataset),
-                                                paste0(pop_key$pop, "_", pop_key$dataset))]]
-
-
-pca[,dataset := gsub("goats", "Mountain goats", dataset)]
-pca[,dataset := gsub("yellowperch", "Yellow perch", dataset)]
-pca[,dataset := gsub("orcas", "Killer whales", dataset)]
-pca[,dataset := gsub("mice", "Deer mice", dataset)]
-pca[,dataset := gsub("deer", "White-tailed deer", dataset)]
-pca[,dataset := gsub("monarchs", "Monarch butterflies", dataset)]
-pca[,dataset := gsub("_", "", dataset)]
-pca[,dataset := R.utils::capitalize(dataset)]
-
-#=======================MAF=======================
-pca_maf <- ggplot(pca[filter_ID %in% maf_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
-  geom_point(show.legend = FALSE) +
-  facet_grid(dataset~maf) +
-  khroma::scale_color_highcontrast() +
-  theme_bw() +
-  theme(strip.background = element_blank())
-
-ggsave("../manuscript/final_figures/SI_figures/FS13_maf_SI_pca.jpg", pca_maf, height = 20, width = 20)
-
-
-#=======================HWE=======================
-pca_hwe <- ggplot(pca[filter_ID %in% hwe_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
-  geom_point(show.legend = FALSE) +
-  facet_grid(dataset~hwe) +
-  khroma::scale_color_highcontrast() +
-  theme_bw() +
-  theme(strip.background = element_blank())
-
-ggsave("../manuscript/final_figures/SI_figures/FS14_hwe_SI_pca.jpg", pca_hwe, height = 20, width = 20)
-
-#=======================missingness--both=======================
-# table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
-pca_miss <- ggplot(pca[filter_ID %in% miss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
-  geom_point(show.legend = FALSE) +
-  facet_grid(dataset~min_ind) +
-  khroma::scale_color_highcontrast() +
-  theme_bw() +
-  theme(strip.background = element_blank())
-
-ggsave("../manuscript/final_figures/SI_figures/FS15_miss_SI_pca.jpg", pca_miss, height = 20, width = 20)
-
-#=======================missingness--individuals=======================
-# table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
-pca_imiss <- ggplot(pca[filter_ID %in% imiss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
-  geom_point(show.legend = FALSE) +
-  facet_grid(dataset~min_ind) +
-  khroma::scale_color_highcontrast() +
-  theme_bw() +
-  theme(strip.background = element_blank())
-
-ggsave("../manuscript/final_figures/SI_figures/FS16_imiss_SI_pca.jpg", pca_imiss, height = 20, width = 20)
-
-#=======================missingness--loci=======================
-# table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
-pca_lmiss <- ggplot(pca[filter_ID %in% lmiss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
-  geom_point(show.legend = FALSE) +
-  facet_grid(dataset~min_loci) +
-  khroma::scale_color_highcontrast() +
-  theme_bw() +
-  theme(strip.background = element_blank())
-
-ggsave("../manuscript/final_figures/SI_figures/FS17_lmiss_SI_pca.jpg", pca_lmiss, height = 20, width = 20)
+# # read in single-pop stats
+# pca_files <- list.files("../data/empirical/outfiles/", "pca\\.txt", full.names = TRUE)
+# pca_files <- c(pca_files, list.files("../data/simulated/outfiles/", "^[a-z].+pca\\.txt", full.names = TRUE))
+# 
+# pca <- lapply(pca_files, fread)
+# names(pca) <- pca_files
+# 
+# pca <- rbindlist(pca, idcol = "run_ID")
+# pca[, filter_ID := as.numeric(gsub("r", "", stringr::str_extract(run_ID, "r[0-9]+")))]
+# pca[, dataset := gsub("outfiles/", "", gsub("___", "", stringr::str_extract(run_ID, "outfiles/.+___")))]
+# 
+# pca <- pca[dataset %in% keep_data,]
+# 
+# pop_key <- unique(pca[,c("dataset", "pop")])
+# pop_key <- dplyr::arrange(pop_key, "dataset")
+# pop_key$simplified <- rep(c("A", "B"), length.out = nrow(pop_key))
+# pca[,pop_simplified := pop_key$simplified[match(paste0(pop, "_", dataset),
+#                                                 paste0(pop_key$pop, "_", pop_key$dataset))]]
+# 
+# 
+# pca[,dataset := gsub("goats", "Mountain goats", dataset)]
+# pca[,dataset := gsub("yellowperch", "Yellow perch", dataset)]
+# pca[,dataset := gsub("orcas", "Killer whales", dataset)]
+# pca[,dataset := gsub("mice", "Deer mice", dataset)]
+# pca[,dataset := gsub("deer", "White-tailed deer", dataset)]
+# pca[,dataset := gsub("monarchs", "Monarch butterflies", dataset)]
+# pca[,dataset := gsub("_", "", dataset)]
+# pca[,dataset := R.utils::capitalize(dataset)]
+# 
+# #=======================MAF=======================
+# pca_maf <- ggplot(pca[filter_ID %in% maf_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
+#   geom_point(show.legend = FALSE) +
+#   facet_grid(dataset~maf) +
+#   khroma::scale_color_highcontrast() +
+#   theme_bw() +
+#   theme(strip.background = element_blank())
+# 
+# ggsave("../manuscript/final_figures/SI_figures/FS13_maf_SI_pca.jpg", pca_maf, height = 20, width = 20)
+# 
+# 
+# #=======================HWE=======================
+# pca_hwe <- ggplot(pca[filter_ID %in% hwe_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
+#   geom_point(show.legend = FALSE) +
+#   facet_grid(dataset~hwe) +
+#   khroma::scale_color_highcontrast() +
+#   theme_bw() +
+#   theme(strip.background = element_blank())
+# 
+# ggsave("../manuscript/final_figures/SI_figures/FS14_hwe_SI_pca.jpg", pca_hwe, height = 20, width = 20)
+# 
+# #=======================missingness--both=======================
+# # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
+# pca_miss <- ggplot(pca[filter_ID %in% miss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
+#   geom_point(show.legend = FALSE) +
+#   facet_grid(dataset~min_ind) +
+#   khroma::scale_color_highcontrast() +
+#   theme_bw() +
+#   theme(strip.background = element_blank())
+# 
+# ggsave("../manuscript/final_figures/SI_figures/FS15_miss_SI_pca.jpg", pca_miss, height = 20, width = 20)
+# 
+# #=======================missingness--individuals=======================
+# # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
+# pca_imiss <- ggplot(pca[filter_ID %in% imiss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
+#   geom_point(show.legend = FALSE) +
+#   facet_grid(dataset~min_ind) +
+#   khroma::scale_color_highcontrast() +
+#   theme_bw() +
+#   theme(strip.background = element_blank())
+# 
+# ggsave("../manuscript/final_figures/SI_figures/FS16_imiss_SI_pca.jpg", pca_imiss, height = 20, width = 20)
+# 
+# #=======================missingness--loci=======================
+# # table(pca[filter_ID %in% miss_indices & dataset == "mice", c("pop", "min_ind")])
+# pca_lmiss <- ggplot(pca[filter_ID %in% lmiss_indices,], aes(x = PC1, y = PC2, color = pop_simplified)) +
+#   geom_point(show.legend = FALSE) +
+#   facet_grid(dataset~min_loci) +
+#   khroma::scale_color_highcontrast() +
+#   theme_bw() +
+#   theme(strip.background = element_blank())
+# 
+# ggsave("../manuscript/final_figures/SI_figures/FS17_lmiss_SI_pca.jpg", pca_lmiss, height = 20, width = 20)
 
 ```
 
