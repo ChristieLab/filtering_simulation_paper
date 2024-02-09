@@ -69,6 +69,12 @@ plot_stats <- stat_key$fix[match(plot_stats, stat_key$stat)]
 colors <- as.character(khroma::color("muted")(9))
 colors <- c(as.character(khroma::color("bright")(3)),
             as.character(khroma::color("vibrant")(2)), colors)
+color_datasets <- c("Neutral", "Bottleneck", "Expansion",
+                    "Arabidopsis", "Daphnia", 
+                    "White-tailed deer", "Mountain goats RAD",
+                    "Mountain goats WGS", "Humans", "Deer mice",
+                    "Monarch butterflies", "Killer whales",
+                    "Stoneflies", "Yellow perch")
 
 text.sizes <- c("title" = 24, "ticks" = 20)
 x_axis_margin <- 15
@@ -262,7 +268,7 @@ for(i in 1:length(plot_stats)){
            group = interaction(dataset, subfacet), 
            color = dataset, linetype = type)) + 
   geom_line(size = 1.5) +
-  scale_color_manual(values = colors) +
+  scale_color_manual(values = colors[which(color_datasets %in% unique(pstats[statistic %in% plot_stats[i],]$dataset))]) +
   theme_bw() +
   scale_x_continuous(breaks = seq(0, .1, by = .02)) +
   theme(axis.title = element_text(size = text.sizes[1]),
@@ -282,10 +288,10 @@ for(i in 1:length(plot_stats)){
     
     
     PA_plots[[i]] <- 
-      PA_plots[[i]] + coord_cartesian(ylim = c(0,.025)) +
+      PA_plots[[i]] + coord_cartesian(ylim = c(0,.022)) +
       geom_label(data = data.frame(adj_stat_names = "Delta ~ F[ST]",
-                              maf = 0.07,
-                              zero_normed = 0.025,
+                              maf = 0.065,
+                              zero_normed = 0.022,
                               label = paste0("Monarchs: ", 
                                              round(max(pstats[statistic %in% plot_stats & 
                                                           dataset == "Monarch butterflies" & 
@@ -301,10 +307,6 @@ for(i in 1:length(plot_stats)){
                                group = interaction(dataset, subfacet), 
                                color = dataset), 
              inherit.aes = FALSE, shape = 18, size = 8, show.legend = FALSE)
-  }
-  
-  if(i == 1){
-    PA_legend <- ggpubr::get_legend(PA_plots[[i]])
   }
   
   PA_plots[[i]] <- PA_plots[[i]] + guides(color = "none", fill = "none", linetype = "none")
@@ -378,23 +380,31 @@ for(i in 1:length(u_f_s)){
                                  group = interaction(dataset, subfacet), 
                                  color = dataset, linetype = type)) + 
     geom_line(size = 1.5) +
-    scale_color_manual(values = colors) +
+    scale_color_manual(values = colors[which(color_datasets %in% unique(ss_pstats[focus_stat == u_f_s[[i]]]$dataset))]) +
     theme_bw() +
     scale_y_continuous(limits = total_range) + 
     ylab(expression(Delta ~ P[seg])) +
     xlab(parse(text = as.character(tfs))) +
-    guides(color = "none",
-           linetype = "none") +
     theme(axis.title = element_text(size = text.sizes[1]),
           axis.text = element_text(size = text.sizes[2]),
           axis.text.x = element_text(angle = 90, vjust = 0.5, margin = margin(b = x_axis_margin)),
           legend.text = element_text(size = text.sizes[2]),
-          legend.title = element_text(size = text.sizes[1]))
+          legend.title = element_text(size = text.sizes[1])) +
+  guides(color = guide_legend(title = "Data Source"),
+         linetype = guide_legend(title = "Data Type"))
   
   if(tfs == "MAF"){
     PB_plots_ss[[i]] <- PB_plots_ss[[i]] +
       scale_x_continuous(breaks = seq(0, .1, by = .02))
   }
+  
+  if(i == 1){
+    PA_legend <- ggpubr::get_legend(PB_plots_ss[[i]])
+  }
+  
+  PB_plots_ss[[i]] <- PB_plots_ss[[i]] + 
+    guides(color = "none",
+           linetype = "none")
 }
 
 contour$filter_focus <- "MAF"  # doing the MAF as a strip to even out title heights
